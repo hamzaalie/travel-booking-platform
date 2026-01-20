@@ -198,26 +198,39 @@ export class PaymentService {
   }
 
   /**
-   * ESEWA: Initiate payment
+   * ESEWA: Initiate payment (New ePay API format)
    */
   async initiateEsewaPayment(data: PaymentIntentData) {
     try {
+      const crypto = require('crypto');
+      const transactionUuid = `${data.bookingId}-${Date.now()}`;
+      const totalAmount = data.amount.toString();
+      
+      // Generate signature for new eSewa API
+      const message = `total_amount=${totalAmount},transaction_uuid=${transactionUuid},product_code=${config.esewa.merchantId}`;
+      const signature = crypto
+        .createHmac('sha256', config.esewa.secretKey)
+        .update(message)
+        .digest('base64');
+
       const paymentData = {
-        amt: data.amount,
-        psc: 0,
-        pdc: 0,
-        txAmt: 0,
-        tAmt: data.amount,
-        pid: data.bookingId,
-        scd: config.esewa.merchantId,
-        su: `${config.frontendUrl}/payment/esewa/success`,
-        fu: `${config.frontendUrl}/payment/esewa/failure`,
+        amount: totalAmount,
+        tax_amount: '0',
+        total_amount: totalAmount,
+        transaction_uuid: transactionUuid,
+        product_code: config.esewa.merchantId,
+        product_service_charge: '0',
+        product_delivery_charge: '0',
+        success_url: `${config.frontendUrl}/payment/esewa/success`,
+        failure_url: `${config.frontendUrl}/payment/esewa/failure`,
+        signed_field_names: 'total_amount,transaction_uuid,product_code',
+        signature: signature,
       };
 
       logger.info(`eSewa payment initiated: ${data.bookingId}`);
 
       return {
-        paymentUrl: config.esewa.url,
+        paymentUrl: `${config.esewa.url}/api/epay/main/v2/form`,
         paymentData,
         bookingId: data.bookingId,
       };
@@ -228,28 +241,20 @@ export class PaymentService {
   }
 
   /**
-   * ESEWA: Verify payment
+   * ESEWA: Verify payment (New API format)
    */
   async verifyEsewaPayment(oid: string, amt: number, refId: string) {
     try {
-      const verificationUrl = `${config.esewa.url}/epay/transrec`;
-
-      const response = await axios.get(verificationUrl, {
-        params: {
-          amt,
-          rid: refId,
-          pid: oid,
-          scd: config.esewa.merchantId,
-        },
-      });
-
-      const isVerified =
-        response.data &&
-        response.data.toString().toLowerCase().includes('success');
-
-      logger.info(`eSewa payment verification: ${oid} - ${isVerified ? 'Success' : 'Failed'}`);
-
-      return isVerified;
+      // New eSewa API uses base64 encoded response
+      const decodedData = JSON.parse(Buffer.from(refId, 'base64').toString());
+      
+      if (decodedData.status === 'COMPLETE') {
+        logger.info(`eSewa payment verification: ${oid} - Success`);
+        return true;
+      }
+      
+      logger.info(`eSewa payment verification: ${oid} - Failed`);
+      return false;
     } catch (error) {
       logger.error('eSewa verification error:', error);
       return false;

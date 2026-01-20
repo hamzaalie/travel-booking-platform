@@ -14,12 +14,34 @@ export default function EsewaCallbackPage() {
   useEffect(() => {
     const verifyPayment = async () => {
       try {
-        // eSewa returns: oid (order id), amt (amount), refId (reference id)
-        const oid = searchParams.get('oid');
-        const amt = searchParams.get('amt');
-        const refId = searchParams.get('refId');
+        // New eSewa API returns: data (base64 encoded response)
+        const encodedData = searchParams.get('data');
+        
+        // Also support legacy format: oid, amt, refId
+        const legacyOid = searchParams.get('oid');
+        const legacyAmt = searchParams.get('amt');
+        const legacyRefId = searchParams.get('refId');
 
-        if (!oid || !amt || !refId) {
+        let transactionId = '';
+        let orderAmount = 0;
+
+        if (encodedData) {
+          // New eSewa API format - decode base64 response
+          try {
+            const decodedData = JSON.parse(atob(encodedData));
+            if (decodedData.status !== 'COMPLETE') {
+              throw new Error('Payment was not completed');
+            }
+            transactionId = decodedData.transaction_code || decodedData.transaction_uuid;
+            orderAmount = parseFloat(decodedData.total_amount);
+          } catch (e) {
+            throw new Error('Invalid eSewa response data');
+          }
+        } else if (legacyOid && legacyAmt && legacyRefId) {
+          // Legacy format
+          transactionId = legacyRefId;
+          orderAmount = parseFloat(legacyAmt);
+        } else {
           throw new Error('Invalid eSewa callback parameters');
         }
 
@@ -31,11 +53,11 @@ export default function EsewaCallbackPage() {
 
         const bookingData = JSON.parse(pendingBookingStr);
 
-        // Verify payment with eSewa
+        // Verify payment with backend
         const verifyResponse = await paymentApi.verifyEsewa({
-          oid,
-          amt: parseFloat(amt),
-          refId,
+          oid: bookingData.bookingId || transactionId,
+          amt: orderAmount,
+          refId: encodedData || transactionId,
         }) as any;
 
         if (!verifyResponse.data.success) {
