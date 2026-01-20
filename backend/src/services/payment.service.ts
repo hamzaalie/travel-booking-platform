@@ -243,7 +243,7 @@ export class PaymentService {
   /**
    * ESEWA: Verify payment (New API format)
    */
-  async verifyEsewaPayment(oid: string, amt: number, refId: string) {
+  async verifyEsewaPayment(oid: string, _amt: number, refId: string) {
     try {
       // New eSewa API uses base64 encoded response
       const decodedData = JSON.parse(Buffer.from(refId, 'base64').toString());
