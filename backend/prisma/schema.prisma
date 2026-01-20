@@ -1,0 +1,519 @@
+// This is your Prisma schema file
+// Learn more: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// USER MANAGEMENT
+// ============================================================================
+
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  password      String
+  firstName     String
+  lastName      String
+  phone         String?
+  role          UserRole
+  isActive      Boolean  @default(true)
+  emailVerified Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  agent             Agent?
+  bookings          Booking[]
+  payments          Payment[]
+  auditLogs         AuditLog[]
+  createdTransactions WalletTransaction[] @relation("TransactionCreator")
+  processedFundRequests FundRequest[] @relation("FundRequestProcessor")
+  processedRefunds  Refund[] @relation("RefundProcessor")
+
+  @@index([email])
+  @@index([role])
+  @@map("users")
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  FINANCE_ADMIN
+  OPERATIONS_TEAM
+  B2B_AGENT
+  B2C_CUSTOMER
+}
+
+// ============================================================================
+// B2B AGENT MANAGEMENT
+// ============================================================================
+
+model Agent {
+  id              String      @id @default(uuid())
+  userId          String      @unique
+  agencyName      String
+  agencyLicense   String?
+  address         String?
+  city            String?
+  country         String?
+  status          AgentStatus @default(PENDING)
+  approvedBy      String?
+  approvedAt      DateTime?
+  rejectionReason String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  // Personal Information
+  dateOfBirth        DateTime?
+  gender             String?
+  panNumber          String?           // Tax identification number
+  
+  // Contact Information
+  secondaryPhone     String?
+  secondaryEmail     String?
+  emergencyContact   String?
+  emergencyPhone     String?
+  
+  // Business Information
+  businessType       String?           // Sole Proprietorship, Partnership, Pvt Ltd, etc.
+  registrationNumber String?           // Company registration number
+  taxVatNumber       String?           // VAT/Tax number
+  websiteUrl         String?
+  yearEstablished    Int?
+  numberOfEmployees  Int?
+  monthlyBookingVolume String?         // Expected monthly booking volume
+  
+  // Bank Details
+  bankName           String?
+  bankBranch         String?
+  bankAccountName    String?
+  bankAccountNumber  String?
+  
+  // Agent-Specific Markup & Discount (Admin Assigned)
+  markupType         MarkupType?       // FIXED or PERCENTAGE
+  markupValue        Decimal?          @db.Decimal(15, 2)  // Markup amount/percentage
+  discountType       MarkupType?       // FIXED or PERCENTAGE
+  discountValue      Decimal?          @db.Decimal(15, 2)  // Discount amount/percentage
+  commissionType     MarkupType?       // Commission structure type
+  commissionValue    Decimal?          @db.Decimal(15, 2)  // Commission amount/percentage
+  creditLimit        Decimal?          @db.Decimal(15, 2)  // Credit limit for the agent
+  
+  // Relations
+  user         User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  wallet       Wallet?
+  bookings     Booking[]
+  fundRequests FundRequest[]
+  markups      Markup[]
+  documents    AgentDocument[]
+
+  @@index([userId])
+  @@index([status])
+  @@map("agents")
+}
+
+// Agent Documents for verification
+model AgentDocument {
+  id              String            @id @default(uuid())
+  agentId         String
+  documentType    DocumentType
+  documentName    String
+  documentUrl     String
+  documentNumber  String?           // Document ID number (e.g., citizenship number)
+  issuedDate      DateTime?
+  expiryDate      DateTime?
+  verificationStatus DocumentStatus @default(PENDING)
+  verifiedBy      String?
+  verifiedAt      DateTime?
+  rejectionReason String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  // Relations
+  agent Agent @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  @@index([agentId])
+  @@index([documentType])
+  @@index([verificationStatus])
+  @@map("agent_documents")
+}
+
+enum DocumentType {
+  CITIZENSHIP_FRONT
+  CITIZENSHIP_BACK
+  PASSPORT
+  PAN_CARD
+  COMPANY_REGISTRATION
+  VAT_CERTIFICATE
+  TAX_CLEARANCE
+  BANK_STATEMENT
+  PROFILE_PHOTO
+  SIGNATURE
+  OTHER
+}
+
+enum DocumentStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum AgentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  SUSPENDED
+}
+
+// ============================================================================
+// WALLET & FINANCIAL SYSTEM (IMMUTABLE LEDGER)
+// ============================================================================
+
+model Wallet {
+  id        String       @id @default(uuid())
+  agentId   String       @unique
+  balance   Decimal      @default(0) @db.Decimal(15, 2)
+  status    WalletStatus @default(ACTIVE)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  // Relations
+  agent        Agent               @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  transactions WalletTransaction[]
+
+  @@index([agentId])
+  @@index([status])
+  @@map("wallets")
+}
+
+enum WalletStatus {
+  ACTIVE
+  FROZEN
+  SUSPENDED
+}
+
+// IMMUTABLE LEDGER - NO UPDATES/DELETES ALLOWED
+model WalletTransaction {
+  id            String            @id @default(uuid())
+  walletId      String
+  type          TransactionType
+  amount        Decimal           @db.Decimal(15, 2)
+  balanceBefore Decimal           @db.Decimal(15, 2)
+  balanceAfter  Decimal           @db.Decimal(15, 2)
+  reason        TransactionReason
+  referenceId   String?
+  description   String?
+  createdBy     String
+  createdAt     DateTime          @default(now())
+
+  // Relations
+  wallet  Wallet @relation(fields: [walletId], references: [id], onDelete: Restrict)
+  creator User   @relation("TransactionCreator", fields: [createdBy], references: [id], onDelete: Restrict)
+  refunds Refund[]
+
+  @@index([walletId])
+  @@index([referenceId])
+  @@index([createdAt])
+  @@map("wallet_transactions")
+}
+
+enum TransactionType {
+  CREDIT
+  DEBIT
+}
+
+enum TransactionReason {
+  FUND_LOAD
+  BOOKING_DEDUCTION
+  BOOKING_REFUND
+  ADMIN_CREDIT
+  ADMIN_DEBIT
+  CANCELLATION_REFUND
+}
+
+model FundRequest {
+  id               String            @id @default(uuid())
+  agentId          String
+  amount           Decimal           @db.Decimal(15, 2)
+  paymentProofUrl  String?
+  paymentMethod    String?
+  status           FundRequestStatus @default(PENDING)
+  requestedAt      DateTime          @default(now())
+  processedBy      String?
+  processedAt      DateTime?
+  rejectionReason  String?
+
+  // Relations
+  agent     Agent  @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  processor User?  @relation("FundRequestProcessor", fields: [processedBy], references: [id], onDelete: SetNull)
+
+  @@index([agentId])
+  @@index([status])
+  @@index([requestedAt])
+  @@map("fund_requests")
+}
+
+enum FundRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// ============================================================================
+// BOOKING SYSTEM
+// ============================================================================
+
+model Booking {
+  id                String        @id @default(uuid())
+  userId            String
+  agentId           String?
+  bookingReference  String        @unique
+  pnr               String?       @unique
+  tripType          TripType
+  origin            String
+  destination       String
+  departureDate     DateTime
+  returnDate        DateTime?
+  passengers        Json          // Array of IPassenger
+  flightDetails     Json          // Complete flight information
+  baseFare          Decimal       @db.Decimal(15, 2)
+  taxes             Decimal       @db.Decimal(15, 2)
+  markup            Decimal       @default(0) @db.Decimal(15, 2)
+  agentMarkup       Decimal       @default(0) @db.Decimal(15, 2)
+  totalAmount       Decimal       @db.Decimal(15, 2)
+  commissionAmount  Decimal       @default(0) @db.Decimal(15, 2)
+  status            BookingStatus @default(PENDING)
+  ticketUrls        String[]
+  cancellationData  Json?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  // Relations
+  user     User      @relation(fields: [userId], references: [id], onDelete: Restrict)
+  agent    Agent?    @relation(fields: [agentId], references: [id], onDelete: SetNull)
+  payments Payment[]
+  refunds  Refund[]
+  ssrs     SSR[]
+
+  @@index([userId])
+  @@index([agentId])
+  @@index([bookingReference])
+  @@index([pnr])
+  @@index([status])
+  @@index([departureDate])
+  @@map("bookings")
+}
+
+enum TripType {
+  ONE_WAY
+  ROUND_TRIP
+  MULTI_CITY
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  TICKETED
+  CANCELLED
+  REFUNDED
+  FAILED
+}
+
+// ============================================================================
+// SSR (SPECIAL SERVICE REQUESTS)
+// ============================================================================
+
+model SSR {
+  id                String   @id @default(uuid())
+  bookingId         String
+  passengerId       String   // Reference to passenger in booking's flightDetails JSON
+  passengerName     String
+  
+  // Seat Selection
+  seatSelections    Json?    // Array of SeatSelection objects
+  seatTotalPrice    Decimal  @default(0) @db.Decimal(15, 2)
+  
+  // Meal Preferences
+  mealSelections    Json?    // Array of MealSelection objects
+  mealTotalPrice    Decimal  @default(0) @db.Decimal(15, 2)
+  
+  // Baggage
+  baggageSelection  Json?    // BaggageSelection object
+  baggageTotalPrice Decimal  @default(0) @db.Decimal(15, 2)
+  
+  // Special Assistance
+  assistanceRequest Json?    // SpecialAssistanceRequest object
+  assistanceTotalPrice Decimal @default(0) @db.Decimal(15, 2)
+  
+  // Totals
+  totalPrice        Decimal  @db.Decimal(15, 2)
+  currency          String   @default("NPR")
+  
+  // Status tracking
+  status            SSRStatus @default(PENDING)
+  confirmedAt       DateTime?
+  cancelledAt       DateTime?
+  cancellationReason String?
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Relations
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@index([bookingId])
+  @@index([passengerId])
+  @@index([status])
+  @@map("ssrs")
+}
+
+enum SSRStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  FAILED
+}
+
+// ============================================================================
+// PAYMENT SYSTEM
+// ============================================================================
+
+model Payment {
+  id            String        @id @default(uuid())
+  bookingId     String
+  userId        String
+  amount        Decimal       @db.Decimal(15, 2)
+  gateway       PaymentGateway
+  transactionId String?
+  status        PaymentStatus @default(PENDING)
+  paymentData   Json?
+  webhookData   Json?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  // Relations
+  booking Booking  @relation(fields: [bookingId], references: [id], onDelete: Restrict)
+  user    User     @relation(fields: [userId], references: [id], onDelete: Restrict)
+  refunds Refund[]
+
+  @@index([bookingId])
+  @@index([userId])
+  @@index([transactionId])
+  @@index([status])
+  @@map("payments")
+}
+
+enum PaymentGateway {
+  ESEWA
+  KHALTI
+  STRIPE
+  PAYPAL
+  WALLET
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+  PARTIALLY_REFUNDED
+}
+
+// ============================================================================
+// REFUND SYSTEM
+// ============================================================================
+
+model Refund {
+  id                   String       @id @default(uuid())
+  bookingId            String
+  paymentId            String?
+  walletTransactionId  String?
+  amount               Decimal      @db.Decimal(15, 2)
+  penaltyAmount        Decimal      @default(0) @db.Decimal(15, 2)
+  refundAmount         Decimal      @db.Decimal(15, 2)
+  status               RefundStatus @default(PENDING)
+  reason               String?
+  refundData           Json?
+  processedBy          String?
+  processedAt          DateTime?
+  createdAt            DateTime     @default(now())
+
+  // Relations
+  booking           Booking            @relation(fields: [bookingId], references: [id], onDelete: Restrict)
+  payment           Payment?           @relation(fields: [paymentId], references: [id], onDelete: SetNull)
+  walletTransaction WalletTransaction? @relation(fields: [walletTransactionId], references: [id], onDelete: SetNull)
+  processor         User?              @relation("RefundProcessor", fields: [processedBy], references: [id], onDelete: SetNull)
+
+  @@index([bookingId])
+  @@index([paymentId])
+  @@index([status])
+  @@map("refunds")
+}
+
+enum RefundStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+// ============================================================================
+// PRICING & MARKUP SYSTEM
+// ============================================================================
+
+model Markup {
+  id          String     @id @default(uuid())
+  name        String
+  type        MarkupType
+  value       Decimal    @db.Decimal(15, 2)
+  isGlobal    Boolean    @default(false)
+  agentId     String?
+  airlineCode String?
+  routeCode   String?
+  isActive    Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  // Relations
+  agent Agent? @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  @@index([agentId])
+  @@index([isGlobal])
+  @@index([isActive])
+  @@index([airlineCode])
+  @@map("markups")
+}
+
+enum MarkupType {
+  FIXED
+  PERCENTAGE
+}
+
+// ============================================================================
+// AUDIT LOG (IMMUTABLE)
+// ============================================================================
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String
+  action    String
+  entity    String
+  entityId  String?
+  changes   Json?
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@index([userId])
+  @@index([entity])
+  @@index([entityId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}

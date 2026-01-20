@@ -1,0 +1,43 @@
+{
+  "name": "travel-booking-platform",
+  "version": "1.0.0",
+  "description": "Production-ready B2B & B2C Travel Booking Platform with GDS integration",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend",
+    "shared"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "npm run dev --workspace=backend",
+    "dev:frontend": "npm run dev --workspace=frontend",
+    "build": "npm run build --workspaces",
+    "build:backend": "npm run build --workspace=backend",
+    "build:frontend": "npm run build --workspace=frontend",
+    "build:production": "npm run build:frontend && npm run build:backend",
+    "start": "cd backend && npm run start",
+    "postinstall": "npm run prisma:generate",
+    "test": "npm run test --workspaces",
+    "test:unit": "npm run test --workspace=frontend && npm run test --workspace=backend",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:component": "npm run test --workspace=frontend",
+    "test:backend": "npm run test --workspace=backend",
+    "test:coverage": "npm run test:coverage --workspace=backend && npm run test --workspace=frontend -- --coverage",
+    "lint": "npm run lint --workspaces",
+    "prisma:generate": "npm run prisma:generate --workspace=backend",
+    "prisma:migrate": "npm run prisma:migrate --workspace=backend",
+    "prisma:migrate:deploy": "cd backend && npx prisma migrate deploy",
+    "prisma:studio": "npm run prisma:studio --workspace=backend"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.57.0",
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}
