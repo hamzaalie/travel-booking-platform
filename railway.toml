@@ -4,8 +4,6 @@ buildCommand = "npm install && npm run build:production"
 
 [deploy]
 startCommand = "npm run prisma:migrate:deploy && npm run start"
-healthcheckPath = "/health"
-healthcheckTimeout = 300
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 10
 
