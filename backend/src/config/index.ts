@@ -40,8 +40,8 @@ export const config = {
   },
 
   khalti: {
-    secretKey: process.env.KHALTI_SECRET_KEY || 'live_secret_key_68791341fdd94846a146f0457ff7b455',
-    publicKey: process.env.KHALTI_PUBLIC_KEY || 'live_public_key_979320ffda734f9f9cb5b02732864746',
+    secretKey: process.env.KHALTI_SECRET_KEY || 'test_secret_key_f59e8b7d18b4499ca40f68195a846e9b',
+    publicKey: process.env.KHALTI_PUBLIC_KEY || 'test_public_key_dc74e0fd57cb46cd93832aee0a507256',
     url: process.env.KHALTI_URL || 'https://a.khalti.com/api/v2',
   },
 

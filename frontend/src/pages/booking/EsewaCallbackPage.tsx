@@ -80,7 +80,7 @@ export default function EsewaCallbackPage() {
             payment: {
               method: 'ESEWA',
               gateway: 'ESEWA',
-              transactionId: refId,
+              transactionId: transactionId,
             },
           }) as any;
         } else if (bookingData.type === 'CAR') {
@@ -89,7 +89,7 @@ export default function EsewaCallbackPage() {
             payment: {
               method: 'ESEWA',
               gateway: 'ESEWA',
-              transactionId: refId,
+              transactionId: transactionId,
             },
           }) as any;
         } else {
