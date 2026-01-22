@@ -6,6 +6,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
+    "start": "serve -s dist -l $PORT",
     "lint": "eslint . --ext ts,tsx",
     "test": "vitest"
   },
@@ -24,6 +25,7 @@
     "react-redux": "^9.1.0",
     "react-router-dom": "^6.21.3",
     "recharts": "^3.6.0",
+    "serve": "^14.2.4",
     "tailwind-merge": "^2.2.0",
     "zod": "^3.22.4"
   },
