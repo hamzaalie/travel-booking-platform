@@ -118,6 +118,7 @@ app.use(errorHandler);
 
 // Start server
 const PORT = config.port;
+const HOST = '0.0.0.0'; // Bind to all interfaces for containerized deployments
 
 const startServer = async () => {
   try {
@@ -125,8 +126,8 @@ const startServer = async () => {
     await prisma.$connect();
     logger.info('Database connected successfully');
 
-    app.listen(PORT, () => {
-      logger.info(`Server running on port ${PORT} in ${config.env} mode`);
+    app.listen(PORT, HOST, () => {
+      logger.info(`Server running on ${HOST}:${PORT} in ${config.env} mode`);
       logger.info(`Frontend URL: ${config.frontendUrl}`);
     });
   } catch (error) {
