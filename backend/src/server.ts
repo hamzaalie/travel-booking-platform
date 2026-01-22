@@ -32,11 +32,18 @@ const app: Application = express();
 // Security middleware
 app.use(helmet());
 
-// CORS
+// CORS - Allow frontend origins
 app.use(
   cors({
     origin: config.env === 'production' 
-      ? [config.frontendUrl, /\.railway\.app$/, /\.vercel\.app$/]
+      ? [
+          config.frontendUrl, 
+          /\.railway\.app$/, 
+          /\.vercel\.app$/,
+          /\.hostingersite\.com$/,
+          /\.hostinger\.com$/,
+          'https://darkslategrey-jay-641616.hostingersite.com'
+        ]
       : config.frontendUrl,
     credentials: true,
   })
