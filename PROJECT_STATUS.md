@@ -31,7 +31,7 @@
   - API integration tests (50+ tests - endpoints)
   - Test helpers and Prisma mocks
   - Coverage thresholds configured (70%)
-  - Complete testing documentation (TESTING.md)
+  - Complete testing documentation (TESTING.md) and then we have to work on the deploymenet, 
 - **CI/CD Pipeline**
   - GitHub Actions workflow configured
   - Automated testing on push/PR

@@ -34,6 +34,7 @@ export default function BookingConfirmationPage() {
   const handleDownload = () => {
     // TODO: Implement PDF download
     toast.success('Downloading ticket...');
+    
   };
 
   const handleEmail = () => {

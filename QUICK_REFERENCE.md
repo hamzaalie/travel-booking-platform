@@ -49,6 +49,7 @@ import {
   HotelAmenity,
   MealPlan,
   HotelSortOption,
+  Meal Plan,
 } from '@travel-platform/shared';
 ```
 

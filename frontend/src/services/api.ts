@@ -203,7 +203,7 @@ export const adminApi = {
   deleteMarkup: (id: string) =>
     api.delete(`/admin/markups/${id}`),
   
-  // Agent Markup Management
+  // Agent Markup Management and then go to the admin panel and then f 
   getAgentsWithMarkupSettings: (params?: { status?: string; search?: string }) =>
     api.get('/admin/agents/markup-settings', { params }),
   

@@ -48,7 +48,7 @@ const multiCitySchema = z.object({
   message: 'Number of infants cannot exceed adults',
   path: ['infants'],
 }).refine((data) => {
-  // Validate date sequence
+  // Validate date sequence across segments and then go to the travel agent page
   for (let i = 1; i < data.segments.length; i++) {
     const prevDate = new Date(data.segments[i - 1].departureDate);
     const currentDate = new Date(data.segments[i].departureDate);
