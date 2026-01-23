@@ -6,7 +6,7 @@ import {
   SeatSelection as SeatSelectionType,
   getSeatLabel,
   validateSeatSelection,
-} from '@travel-platform/shared';
+} from '../../../shared';
 import { Armchair, X, Check, AlertCircle, Info } from 'lucide-react';
 
 interface SeatSelectionProps {

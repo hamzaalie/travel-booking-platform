@@ -7,7 +7,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
-import { UserRole, RoleDisplayNames } from 'shared';
+import { UserRole, RoleDisplayNames } from '../../../shared/types';
 import { getNavigationItems, hasUIPermission, RoleColors, UIPermission } from '@/utils/permissions';
 import {
   LayoutDashboard,

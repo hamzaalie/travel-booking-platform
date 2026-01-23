@@ -3,7 +3,7 @@ import {
   AssistanceOption,
   AssistanceType,
   SpecialAssistanceRequest,
-} from '@travel-platform/shared';
+} from '../../../shared';
 import { Accessibility, FileText, Phone, Check, AlertCircle } from 'lucide-react';
 
 interface SpecialAssistanceFormProps {
@@ -348,7 +348,7 @@ export const SpecialAssistanceForm: React.FC<SpecialAssistanceFormProps> = ({
                 <div key={passId} className="bg-white p-4 rounded-lg">
                   <p className="font-semibold text-gray-900 mb-2">{passenger.name}</p>
                   <div className="space-y-1">
-                    {request.assistance.map((assist, idx) => (
+                    {request.assistance.map((assist: any, idx: number) => (
                       <div key={idx} className="flex justify-between text-sm">
                         <span className="text-gray-600">{assist.name}</span>
                         <span className="font-medium">

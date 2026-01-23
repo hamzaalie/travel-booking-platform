@@ -4,7 +4,7 @@ import {
   MealType,
   MealSelection as MealSelectionType,
   validateMealSelection,
-} from '@travel-platform/shared';
+} from '../../../shared';
 import { UtensilsCrossed, Check, Clock, AlertTriangle, Leaf, Fish } from 'lucide-react';
 
 interface MealSelectionProps {

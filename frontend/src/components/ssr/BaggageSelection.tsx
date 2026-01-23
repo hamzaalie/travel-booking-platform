@@ -4,7 +4,7 @@ import {
   ExtraBaggageOption,
   BaggageSelection as BaggageSelectionType,
   formatBaggageDimensions,
-} from '@travel-platform/shared';
+} from '../../../shared';
 import { Luggage, Plus, Check, AlertCircle } from 'lucide-react';
 
 interface BaggageSelectionProps {

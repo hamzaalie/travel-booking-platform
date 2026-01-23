@@ -3,7 +3,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Plane, Upload, Building, User, CreditCard, FileText, Globe, X, Check } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+// API URL - Use environment variable or default to Railway production backend
+const API_URL = import.meta.env.VITE_API_URL || 'https://web-production-b72c0.up.railway.app/api';
 
 interface DocumentFile {
   file: File;

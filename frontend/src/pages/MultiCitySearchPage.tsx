@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { MultiCitySearchForm } from '@/components/flights/MultiCitySearchForm';
 import { MultiCityResults } from '@/components/flights/MultiCityResults';
-import { type MultiCityFlightOffer } from 'shared/multiCityTypes';
+import { type MultiCityFlightOffer } from '../../shared/multiCityTypes';
 import axios from 'axios';
 import { Plane, ArrowLeft } from 'lucide-react';
 

@@ -3,7 +3,7 @@
  * Determines what UI elements and features each role can access
  */
 
-import { UserRole } from 'shared';
+import { UserRole } from '../../shared/types';
 
 export enum UIPermission {
   // Dashboard Access

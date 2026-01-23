@@ -1,7 +1,10 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosError } from 'axios';
 import toast from 'react-hot-toast';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+// IMPORTANT: API Base URL - Railway backend with /api prefix
+// Last updated: 2026-01-22 - Fixed missing /api suffix
+const RAILWAY_BACKEND = 'https://web-production-b72c0.up.railway.app';
+const API_URL = import.meta.env.VITE_API_URL || `${RAILWAY_BACKEND}/api`;
 
 class ApiService {
   private client: AxiosInstance;

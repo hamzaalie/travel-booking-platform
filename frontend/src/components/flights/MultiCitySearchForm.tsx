@@ -9,7 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Plus, Trash2, AlertCircle, Calendar, MapPin } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { validateMultiCitySearch, type FlightSegment } from 'shared/multiCityTypes';
+import { validateMultiCitySearch, type FlightSegment, type FlightValidationError } from '../../../shared/multiCityTypes';
 
 // Zod validation schema
 const segmentSchema = z.object({
@@ -183,7 +183,7 @@ export const MultiCitySearchForm: React.FC<MultiCitySearchFormProps> = ({
     });
 
     if (!validation.isValid) {
-      validation.errors.forEach(error => {
+      validation.errors.forEach((error: FlightValidationError) => {
         toast.error(`Segment ${error.segmentIndex + 1}: ${error.message}`);
       });
       return;

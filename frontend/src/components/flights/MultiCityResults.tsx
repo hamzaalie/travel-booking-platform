@@ -5,8 +5,8 @@
 
 import React, { useState } from 'react';
 import { Plane, Clock, MapPin, ChevronDown, ChevronUp, Check } from 'lucide-react';
-import { type MultiCityFlightOffer } from 'shared/multiCityTypes';
-import { formatDuration, getAirlineCombinations, getTotalStops } from 'shared/multiCityTypes';
+import { type MultiCityFlightOffer } from '../../../shared/multiCityTypes';
+import { formatDuration, getAirlineCombinations, getTotalStops } from '../../../shared/multiCityTypes';
 
 interface MultiCityResultsProps {
   offers: MultiCityFlightOffer[];

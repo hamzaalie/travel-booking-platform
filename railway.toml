@@ -1,11 +1,12 @@
+# This root railway.toml is not used when deploying separate services
+# Each service (backend/frontend) has its own railway.json config
+# See RAILWAY_DEPLOYMENT.md for deployment instructions
+
 [build]
 builder = "nixpacks"
 buildCommand = "npm install && npm run build:production"
 
 [deploy]
-startCommand = "npm run prisma:migrate:deploy && npm run build:backend && node backend/dist/backend/src/server.js"
+startCommand = "cd backend && npm run start"
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 10
-
-[env]
-NODE_ENV = "production"
