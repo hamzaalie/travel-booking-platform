@@ -6,7 +6,7 @@
   },
   "deploy": {
     "preDeployCommand": ["npm run prisma:migrate:deploy"],
-    "startCommand": "node backend/dist/src/server.js",
+    "startCommand": "node backend/dist/backend/src/server.js",
     "healthcheckPath": "/health",
     "healthcheckTimeout": 300,
     "restartPolicyType": "ON_FAILURE",
