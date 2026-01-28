@@ -37,15 +37,26 @@ app.use(
   cors({
     origin: config.env === 'production' 
       ? [
-          config.frontendUrl, 
+          config.frontendUrl,
+          // Railway app URLs
+          'https://web-production-6d65d.up.railway.app',
+          'https://web-production-b72c0.up.railway.app',
           /\.railway\.app$/, 
+          /\.up\.railway\.app$/,
+          // Vercel
           /\.vercel\.app$/,
+          // Hostinger
           /\.hostingersite\.com$/,
           /\.hostinger\.com$/,
-          'https://darkslategrey-jay-641616.hostingersite.com'
+          'https://darkslategrey-jay-641616.hostingersite.com',
+          // Localhost for development
+          'http://localhost:3000',
+          'http://localhost:5173',
         ]
-      : config.frontendUrl,
+      : true, // Allow all origins in development
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   })
 );
 
