@@ -110,7 +110,7 @@ const popularDestinations: Destination[] = [
   }
 ];
 
-export default function PopularDestinations() {
+export default function PopularDestinations({ noBg = false, fullWidth = false }: { noBg?: boolean; fullWidth?: boolean }) {
   const navigate = useNavigate();
   const sliderRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -165,8 +165,8 @@ export default function PopularDestinations() {
   };
 
   return (
-    <div className="py-16 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className={`py-16 ${noBg ? '' : 'bg-gray-50'}`}>
+      <div className={`${fullWidth ? '' : 'max-w-7xl'} mx-auto px-4 sm:px-6 lg:px-8`}>
         {/* Section Header */}
         <div className="text-center mb-10">
           <div className="w-12 h-1 bg-green-500 mx-auto mb-4 rounded-full"></div>

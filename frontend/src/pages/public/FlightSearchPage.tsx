@@ -20,7 +20,7 @@ export default function FlightSearchPage() {
 
         {/* Popular Destinations */}
         <div className="mt-12">
-          <PopularDestinations />
+          <PopularDestinations noBg fullWidth />
         </div>
       </div>
     </div>
