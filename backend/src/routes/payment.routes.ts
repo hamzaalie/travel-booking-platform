@@ -76,12 +76,18 @@ router.post(
 
     const result = await paymentService.verifyKhaltiPayment(pidx);
 
-    if (result.isVerified) {
-      await bookingService.confirmBooking(bookingId, result.data);
+    if (result.isVerified && bookingId) {
+      await bookingService.confirmBooking(bookingId, {
+        pidx,
+        transactionId: result.transactionId,
+        status: result.status,
+      });
     }
 
     res.json({
       success: result.isVerified,
+      status: result.status,
+      transactionId: result.transactionId,
       data: result.data,
     });
   })
@@ -104,16 +110,21 @@ router.post(
 router.post(
   '/esewa/verify',
   asyncHandler(async (req, res) => {
-    const { oid, amt, refId, bookingId } = req.body;
+    const { transactionUuid, totalAmount, encodedResponse, bookingId } = req.body;
 
-    const isVerified = await paymentService.verifyEsewaPayment(oid, amt, refId);
+    const result = await paymentService.verifyEsewaPayment(transactionUuid, totalAmount, encodedResponse);
 
-    if (isVerified) {
-      await bookingService.confirmBooking(bookingId, { oid, refId });
+    if (result.isVerified) {
+      await bookingService.confirmBooking(bookingId, { 
+        transactionUuid, 
+        transactionCode: result.transactionCode,
+        status: result.status 
+      });
     }
 
     res.json({
-      success: isVerified,
+      success: result.isVerified,
+      data: result,
     });
   })
 );

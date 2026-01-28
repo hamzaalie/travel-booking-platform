@@ -7,6 +7,7 @@ import {
   Users, 
   CreditCard
 } from 'lucide-react';
+import { getAirlineName } from '@/utils/airlines';
 
 export default function BookingDetailsPage() {
   const { id } = useParams<{ id: string }>();
@@ -163,8 +164,9 @@ export default function BookingDetailsPage() {
                 <div className="bg-gray-50 rounded-lg p-4">
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                     <div>
-                      <p className="text-gray-600">Carrier</p>
-                      <p className="font-semibold">{segment.carrierCode} {segment.number}</p>
+                      <p className="text-gray-600">Airline</p>
+                      <p className="font-semibold">{getAirlineName(segment.carrierCode)}</p>
+                      <p className="text-xs text-gray-500">{segment.carrierCode}-{segment.number}</p>
                     </div>
                     <div>
                       <p className="text-gray-600">Aircraft</p>

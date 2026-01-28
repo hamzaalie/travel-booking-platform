@@ -14,19 +14,25 @@ export default function KhaltiCallbackPage() {
   useEffect(() => {
     const verifyPayment = async () => {
       try {
+        // Khalti callback parameters (ePayment v2)
         const pidx = searchParams.get('pidx');
-        const transaction_id = searchParams.get('transaction_id');
+        const transactionId = searchParams.get('transaction_id') || searchParams.get('tidx');
         const statusParam = searchParams.get('status');
+        const purchaseOrderId = searchParams.get('purchase_order_id');
+        const amount = searchParams.get('amount');
 
-        if (statusParam === 'Canceled' || statusParam === 'User canceled') {
+        console.log('Khalti callback params:', { pidx, transactionId, statusParam, purchaseOrderId, amount });
+
+        // Check for cancelled/failed status
+        if (statusParam === 'Canceled' || statusParam === 'User canceled' || statusParam === 'Expired') {
           setStatus('error');
-          setErrorMessage('Payment was cancelled');
-          toast.error('Payment was cancelled');
+          setErrorMessage(`Payment ${statusParam.toLowerCase()}`);
+          toast.error(`Payment ${statusParam.toLowerCase()}`);
           return;
         }
 
         if (!pidx) {
-          throw new Error('Invalid payment callback');
+          throw new Error('Invalid payment callback - no pidx received');
         }
 
         // Get pending booking data
@@ -37,11 +43,13 @@ export default function KhaltiCallbackPage() {
 
         const bookingData = JSON.parse(pendingBookingStr);
 
-        // Verify payment with Khalti
-        const verifyResponse = await paymentApi.verifyKhalti(pidx, bookingData.tempBookingId || 'TEMP') as any;
+        // Verify payment with Khalti Lookup API
+        const verifyResponse = await paymentApi.verifyKhalti(pidx, bookingData.tempBookingId || purchaseOrderId || 'TEMP') as any;
+
+        console.log('Khalti verify response:', verifyResponse.data);
 
         if (!verifyResponse.data.success) {
-          throw new Error('Payment verification failed');
+          throw new Error(`Payment verification failed: ${verifyResponse.data.status || 'Unknown error'}`);
         }
 
         // Now create the actual booking
@@ -60,7 +68,7 @@ export default function KhaltiCallbackPage() {
             payment: {
               method: 'KHALTI',
               gateway: 'KHALTI',
-              transactionId: transaction_id,
+              transactionId: transactionId || pidx,
             },
           }) as any;
         } else if (bookingData.type === 'CAR') {
@@ -69,7 +77,7 @@ export default function KhaltiCallbackPage() {
             payment: {
               method: 'KHALTI',
               gateway: 'KHALTI',
-              transactionId: transaction_id,    
+              transactionId: transactionId || pidx,    
             },
           }) as any;
         } else {

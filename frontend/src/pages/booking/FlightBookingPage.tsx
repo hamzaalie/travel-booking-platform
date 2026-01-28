@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import { Plane, User, Mail, CreditCard, Wallet } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { getAirlineName } from '@/utils/airlines';
 
 interface PassengerForm {
   title: string;
@@ -224,7 +225,9 @@ export default function FlightBookingPage() {
                   </div>
                 </div>
                 <div className="mt-4 pt-4 border-t border-gray-200 text-sm text-gray-600">
-                  <span className="font-medium">{flightData.itineraries?.[0]?.segments?.[0]?.carrierCode || 'Airline'}</span>
+                  <span className="font-medium">{getAirlineName(flightData.itineraries?.[0]?.segments?.[0]?.carrierCode || 'Airline')}</span>
+                  <span className="mx-2">•</span>
+                  <span>{flightData.itineraries?.[0]?.segments?.[0]?.carrierCode}-{flightData.itineraries?.[0]?.segments?.[0]?.number}</span>
                   <span className="mx-2">•</span>
                   <span>{searchData.travelClass || 'ECONOMY'}</span>
                   <span className="mx-2">•</span>

@@ -32,7 +32,7 @@ const airports = [
 
 export default function SearchForm({ onSearch }: SearchFormProps) {
   const navigate = useNavigate();
-  const [tripType, setTripType] = useState<'ONE_WAY' | 'ROUND_TRIP' | 'MULTI_CITY'>('ROUND_TRIP');
+  const [tripType, setTripType] = useState<'ONE_WAY' | 'ROUND_TRIP' | 'MULTI_CITY'>('ONE_WAY');
   
   const [originInput, setOriginInput] = useState('');
   const [origin, setOrigin] = useState('');
@@ -163,18 +163,6 @@ export default function SearchForm({ onSearch }: SearchFormProps) {
       <div className="flex gap-3 mb-8">
         <button
           type="button"
-          onClick={() => setTripType('ROUND_TRIP')}
-          className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
-            tripType === 'ROUND_TRIP'
-              ? 'bg-gradient-to-r from-primary-600 to-primary-700 text-white shadow-lg shadow-primary-500/30'
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-          }`}
-        >
-          <Plane className="inline h-4 w-4 mr-2" />
-          Round Trip
-        </button>
-        <button
-          type="button"
           onClick={() => setTripType('ONE_WAY')}
           className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
             tripType === 'ONE_WAY'
@@ -184,6 +172,18 @@ export default function SearchForm({ onSearch }: SearchFormProps) {
         >
           <Plane className="inline h-4 w-4 mr-2" />
           One Way
+        </button>
+        <button
+          type="button"
+          onClick={() => setTripType('ROUND_TRIP')}
+          className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
+            tripType === 'ROUND_TRIP'
+              ? 'bg-gradient-to-r from-primary-600 to-primary-700 text-white shadow-lg shadow-primary-500/30'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+          }`}
+        >
+          <Plane className="inline h-4 w-4 mr-2" />
+          Round Trip
         </button>
         <button
           type="button"

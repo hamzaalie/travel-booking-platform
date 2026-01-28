@@ -4,6 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import { flightApi } from '@/services/api';
 import { Plane, Calendar, Users, ArrowRight, Loader2, Clock, AlertCircle, ChevronDown, ChevronUp, Luggage, XCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
+import AirlineLogo from '@/components/common/AirlineLogo';
+import { getAirlineName } from '@/utils/airlines';
 
 export default function FlightResultsPage() {
   const [searchParams] = useSearchParams();
@@ -173,8 +175,7 @@ export default function FlightResultsPage() {
 
                 // Get airline info
                 const airlineCode = firstSegment?.carrierCode || 'Unknown';
-                const airlineName = firstSegment?.operating?.carrierCode || airlineCode;
-                const flightNumber = `${airlineCode}-${firstSegment?.number}`;
+                const flightNumber = firstSegment?.number || '';
 
                 // Get baggage info
                 const travelerPricing = flight.travelerPricings?.[0];
@@ -192,15 +193,12 @@ export default function FlightResultsPage() {
                       {/* Main Flight Info */}
                       <div className="flex items-center justify-between gap-6 mb-4">
                         {/* Airline Logo & Info */}
-                        <div className="flex items-center gap-4">
-                          <div className="bg-white border border-gray-200 rounded-lg p-3 flex items-center justify-center w-16 h-16">
-                            <Plane className="h-8 w-8 text-primary-600" />
-                          </div>
-                          <div>
-                            <p className="font-bold text-gray-900">{airlineName}</p>
-                            <p className="text-sm text-gray-600">{flightNumber}</p>
-                          </div>
-                        </div>
+                        <AirlineLogo 
+                          code={airlineCode} 
+                          size="large"
+                          showName={true}
+                          flightNumber={flightNumber}
+                        />
 
                         {/* Flight Route */}
                         <div className="flex-1 flex items-center justify-between">
@@ -330,10 +328,10 @@ export default function FlightResultsPage() {
                                       </div>
                                       <div className="text-right">
                                         <p className="text-sm font-semibold text-gray-700">
-                                          {segment.operating?.carrierCode || segment.carrierCode} {segment.number}
+                                          {getAirlineName(segment.operating?.carrierCode || segment.carrierCode)}
                                         </p>
                                         <p className="text-xs text-gray-500">
-                                          {segment.aircraft?.code || 'Aircraft'}
+                                          {segment.carrierCode}-{segment.number} • {segment.aircraft?.code || 'Aircraft'}
                                         </p>
                                       </div>
                                     </div>

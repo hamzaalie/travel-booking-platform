@@ -35,14 +35,14 @@ export const config = {
   // Payment Gateways
   esewa: {
     merchantId: process.env.ESEWA_MERCHANT_ID || 'EPAYTEST',
-    secretKey: process.env.ESEWA_SECRET_KEY || '8gBm/:&EnhH.1/DRT',
+    secretKey: process.env.ESEWA_SECRET_KEY || '8gBm/:&EnhH.1/q',
     url: process.env.ESEWA_URL || 'https://rc-epay.esewa.com.np',
   },
 
   khalti: {
-    secretKey: process.env.KHALTI_SECRET_KEY || 'test_secret_key_f59e8b7d18b4499ca40f68195a846e9b',
+    secretKey: process.env.KHALTI_SECRET_KEY || '05bf95cc57244045b8df5fad06748dab',
     publicKey: process.env.KHALTI_PUBLIC_KEY || 'test_public_key_dc74e0fd57cb46cd93832aee0a507256',
-    url: process.env.KHALTI_URL || 'https://a.khalti.com/api/v2',
+    url: process.env.KHALTI_URL || 'https://dev.khalti.com/api/v2',
   },
 
   stripe: {

@@ -198,15 +198,17 @@ export class PaymentService {
   }
 
   /**
-   * ESEWA: Initiate payment (New ePay API format)
+   * ESEWA: Initiate payment (New ePay API v2 format)
+   * Based on: https://developer.esewa.com.np/pages/Epay
    */
   async initiateEsewaPayment(data: PaymentIntentData) {
     try {
       const crypto = require('crypto');
       const transactionUuid = `${data.bookingId}-${Date.now()}`;
-      const totalAmount = data.amount.toString();
+      const totalAmount = Math.round(data.amount).toString();
       
-      // Generate signature for new eSewa API
+      // Generate HMAC SHA256 signature for eSewa ePay v2
+      // Format: total_amount=X,transaction_uuid=Y,product_code=Z
       const message = `total_amount=${totalAmount},transaction_uuid=${transactionUuid},product_code=${config.esewa.merchantId}`;
       const signature = crypto
         .createHmac('sha256', config.esewa.secretKey)
@@ -227,11 +229,12 @@ export class PaymentService {
         signature: signature,
       };
 
-      logger.info(`eSewa payment initiated: ${data.bookingId}`);
+      logger.info(`eSewa payment initiated: ${data.bookingId}, transaction_uuid: ${transactionUuid}`);
 
       return {
         paymentUrl: `${config.esewa.url}/api/epay/main/v2/form`,
         paymentData,
+        transactionUuid,
         bookingId: data.bookingId,
       };
     } catch (error) {
@@ -241,89 +244,171 @@ export class PaymentService {
   }
 
   /**
-   * ESEWA: Verify payment (New API format)
+   * ESEWA: Verify payment using Status Check API
+   * Based on: https://developer.esewa.com.np/pages/Epay#status-check
    */
-  async verifyEsewaPayment(oid: string, _amt: number, refId: string) {
+  async verifyEsewaPayment(transactionUuid: string, totalAmount: number, encodedResponse?: string) {
     try {
-      // New eSewa API uses base64 encoded response
-      const decodedData = JSON.parse(Buffer.from(refId, 'base64').toString());
+      // If we have the encoded response from callback, decode it first
+      if (encodedResponse) {
+        try {
+          const decodedData = JSON.parse(Buffer.from(encodedResponse, 'base64').toString());
+          logger.info(`eSewa decoded response:`, decodedData);
+          
+          if (decodedData.status === 'COMPLETE') {
+            // Verify the signature to ensure response integrity
+            const crypto = require('crypto');
+            const message = `transaction_code=${decodedData.transaction_code},status=${decodedData.status},total_amount=${decodedData.total_amount},transaction_uuid=${decodedData.transaction_uuid},product_code=${decodedData.product_code},signed_field_names=${decodedData.signed_field_names}`;
+            const expectedSignature = crypto
+              .createHmac('sha256', config.esewa.secretKey)
+              .update(message)
+              .digest('base64');
+            
+            if (expectedSignature === decodedData.signature) {
+              logger.info(`eSewa payment verified via callback: ${transactionUuid}`);
+              return {
+                isVerified: true,
+                transactionCode: decodedData.transaction_code,
+                status: decodedData.status,
+              };
+            }
+          }
+        } catch (decodeError) {
+          logger.warn('Failed to decode eSewa response, falling back to status check API');
+        }
+      }
+
+      // Use Status Check API for verification
+      const statusUrl = `${config.esewa.url.replace('rc-epay', 'rc')}/api/epay/transaction/status/?product_code=${config.esewa.merchantId}&total_amount=${totalAmount}&transaction_uuid=${transactionUuid}`;
       
-      if (decodedData.status === 'COMPLETE') {
-        logger.info(`eSewa payment verification: ${oid} - Success`);
-        return true;
+      const response = await axios.get(statusUrl);
+      
+      logger.info(`eSewa status check response:`, response.data);
+      
+      if (response.data.status === 'COMPLETE') {
+        logger.info(`eSewa payment verified: ${transactionUuid}`);
+        return {
+          isVerified: true,
+          transactionCode: response.data.ref_id,
+          status: response.data.status,
+        };
       }
       
-      logger.info(`eSewa payment verification: ${oid} - Failed`);
-      return false;
-    } catch (error) {
-      logger.error('eSewa verification error:', error);
-      return false;
+      return {
+        isVerified: false,
+        status: response.data.status,
+      };
+    } catch (error: any) {
+      logger.error('eSewa verification error:', error.response?.data || error);
+      return {
+        isVerified: false,
+        error: error.message,
+      };
     }
   }
 
   /**
-   * KHALTI: Initiate payment
+   * KHALTI: Initiate payment (ePayment v2 API)
+   * Based on: https://docs.khalti.com/khalti-epayment/
    */
   async initiateKhaltiPayment(data: PaymentIntentData) {
     try {
-      const response = await axios.post(
-        `${config.khalti.url}/payment/initiate/`,
-        {
-          return_url: `${config.frontendUrl}/payment/khalti/callback`,
-          website_url: config.frontendUrl,
-          amount: Math.round(data.amount * 100), // Convert to paisa
-          purchase_order_id: data.bookingId,
-          purchase_order_name: `Flight Booking ${data.bookingId}`,
-          customer_info: {
-            name: data.customerName,
-            email: data.customerEmail,
-          },
+      // Ensure amount is at least 1000 paisa (Rs. 10)
+      const amountInPaisa = Math.max(Math.round(data.amount * 100), 1000);
+      
+      const payload = {
+        return_url: `${config.frontendUrl}/payment/khalti/callback`,
+        website_url: config.frontendUrl || 'http://localhost:3000',
+        amount: amountInPaisa,
+        purchase_order_id: data.bookingId,
+        purchase_order_name: `Flight Booking - ${data.bookingId}`,
+        customer_info: {
+          name: data.customerName || 'Customer',
+          email: data.customerEmail || '',
+          phone: '9800000000', // Default phone for testing
         },
+      };
+
+      logger.info(`Khalti payment request:`, { url: `${config.khalti.url}/epayment/initiate/`, payload });
+
+      const response = await axios.post(
+        `${config.khalti.url}/epayment/initiate/`,
+        payload,
         {
           headers: {
-            Authorization: `Key ${config.khalti.secretKey}`,
+            'Authorization': `Key ${config.khalti.secretKey}`,
+            'Content-Type': 'application/json',
           },
         }
       );
 
-      logger.info(`Khalti payment initiated: ${data.bookingId}`);
+      logger.info(`Khalti payment initiated: ${data.bookingId}, pidx: ${response.data.pidx}`);
 
       return {
         paymentUrl: response.data.payment_url,
         pidx: response.data.pidx,
+        expiresAt: response.data.expires_at,
+        expiresIn: response.data.expires_in,
         bookingId: data.bookingId,
       };
     } catch (error: any) {
-      logger.error('Khalti payment initiation error:', error.response?.data || error);
-      throw new AppError('Failed to initiate Khalti payment', 500);
+      logger.error('Khalti payment initiation error:', {
+        status: error.response?.status,
+        data: error.response?.data,
+        message: error.message,
+      });
+      
+      const errorMessage = error.response?.data?.detail || 
+                          error.response?.data?.error_key ||
+                          JSON.stringify(error.response?.data) ||
+                          'Failed to initiate Khalti payment';
+      
+      throw new AppError(errorMessage, error.response?.status || 500);
     }
   }
 
   /**
-   * KHALTI: Verify payment
+   * KHALTI: Verify payment using Lookup API
+   * Based on: https://docs.khalti.com/khalti-epayment/#payment-verification-lookup
    */
   async verifyKhaltiPayment(pidx: string) {
     try {
       const response = await axios.post(
-        `${config.khalti.url}/payment/verify/`,
+        `${config.khalti.url}/epayment/lookup/`,
         { pidx },
         {
           headers: {
-            Authorization: `Key ${config.khalti.secretKey}`,
+            'Authorization': `Key ${config.khalti.secretKey}`,
+            'Content-Type': 'application/json',
           },
         }
       );
 
-      logger.info(`Khalti payment verified: ${pidx}`);
+      logger.info(`Khalti payment lookup response:`, response.data);
 
+      // Only 'Completed' status is considered successful
+      const isCompleted = response.data.status === 'Completed';
+      
       return {
-        isVerified: response.data.status === 'Completed',
+        isVerified: isCompleted,
+        status: response.data.status,
+        transactionId: response.data.transaction_id,
+        totalAmount: response.data.total_amount,
+        fee: response.data.fee,
+        refunded: response.data.refunded,
         data: response.data,
       };
     } catch (error: any) {
-      logger.error('Khalti verification error:', error.response?.data || error);
+      logger.error('Khalti verification error:', {
+        status: error.response?.status,
+        data: error.response?.data,
+        message: error.message,
+      });
+      
       return {
         isVerified: false,
+        status: 'Error',
+        error: error.response?.data?.detail || error.message,
         data: null,
       };
     }

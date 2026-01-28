@@ -14,35 +14,30 @@ export default function EsewaCallbackPage() {
   useEffect(() => {
     const verifyPayment = async () => {
       try {
-        // New eSewa API returns: data (base64 encoded response)
+        // New eSewa ePay v2 API returns: data (base64 encoded response)
         const encodedData = searchParams.get('data');
+
+        if (!encodedData) {
+          throw new Error('Invalid eSewa callback - no data received');
+        }
+
+        // Decode base64 response
+        let decodedData: any;
+        let transactionUuid = '';
+        let totalAmount = 0;
         
-        // Also support legacy format: oid, amt, refId
-        const legacyOid = searchParams.get('oid');
-        const legacyAmt = searchParams.get('amt');
-        const legacyRefId = searchParams.get('refId');
-
-        let transactionId = '';
-        let orderAmount = 0;
-
-        if (encodedData) {
-          // New eSewa API format - decode base64 response
-          try {
-            const decodedData = JSON.parse(atob(encodedData));
-            if (decodedData.status !== 'COMPLETE') {
-              throw new Error('Payment was not completed');
-            }
-            transactionId = decodedData.transaction_code || decodedData.transaction_uuid;
-            orderAmount = parseFloat(decodedData.total_amount);
-          } catch (e) {
-            throw new Error('Invalid eSewa response data');
+        try {
+          decodedData = JSON.parse(atob(encodedData));
+          console.log('eSewa decoded response:', decodedData);
+          
+          if (decodedData.status !== 'COMPLETE') {
+            throw new Error(`Payment status: ${decodedData.status}`);
           }
-        } else if (legacyOid && legacyAmt && legacyRefId) {
-          // Legacy format
-          transactionId = legacyRefId;
-          orderAmount = parseFloat(legacyAmt);
-        } else {
-          throw new Error('Invalid eSewa callback parameters');
+          
+          transactionUuid = decodedData.transaction_uuid;
+          totalAmount = parseFloat(decodedData.total_amount);
+        } catch (e: any) {
+          throw new Error('Invalid eSewa response data: ' + e.message);
         }
 
         // Get pending booking data
@@ -55,9 +50,10 @@ export default function EsewaCallbackPage() {
 
         // Verify payment with backend
         const verifyResponse = await paymentApi.verifyEsewa({
-          oid: bookingData.bookingId || transactionId,
-          amt: orderAmount,
-          refId: encodedData || transactionId,
+          transactionUuid: transactionUuid,
+          totalAmount: totalAmount,
+          encodedResponse: encodedData,
+          bookingId: bookingData.bookingId,
         }) as any;
 
         if (!verifyResponse.data.success) {
@@ -80,7 +76,7 @@ export default function EsewaCallbackPage() {
             payment: {
               method: 'ESEWA',
               gateway: 'ESEWA',
-              transactionId: transactionId,
+              transactionId: transactionUuid,
             },
           }) as any;
         } else if (bookingData.type === 'CAR') {
@@ -89,7 +85,7 @@ export default function EsewaCallbackPage() {
             payment: {
               method: 'ESEWA',
               gateway: 'ESEWA',
-              transactionId: transactionId,
+              transactionId: transactionUuid,
             },
           }) as any;
         } else {

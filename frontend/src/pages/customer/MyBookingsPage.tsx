@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { bookingApi } from '@/services/api';
 import { Link } from 'react-router-dom';
 import { Plane, Search, Filter, Calendar, Users, CheckCircle, Clock, XCircle, MapPin, ArrowRight, Briefcase } from 'lucide-react';
+import { getAirlineName } from '@/utils/airlines';
 
 export default function MyBookingsPage() {
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
@@ -194,12 +195,12 @@ export default function MyBookingsPage() {
                         )}
                         {firstSegment.carrierCode && (
                           <p className="text-xs text-gray-500">
-                            {firstSegment.carrierCode} {firstSegment.number}
+                            {getAirlineName(firstSegment.carrierCode)}
                           </p>
                         )}
-                        {firstSegment.aircraft?.code && (
+                        {firstSegment.carrierCode && (
                           <p className="text-xs text-gray-400">
-                            {firstSegment.aircraft.code}
+                            {firstSegment.carrierCode}-{firstSegment.number}
                           </p>
                         )}
                       </div>
