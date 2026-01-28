@@ -196,17 +196,17 @@ export function getAirlineName(code: string): string {
 export function getAirlineLogo(code: string, size: 'small' | 'medium' | 'large' = 'medium'): string {
   const upperCode = code?.toUpperCase() || '';
   
-  // Size mapping
+  // Size mapping for different providers
   const sizeMap = {
-    small: 32,
-    medium: 64,
-    large: 128
+    small: 50,
+    medium: 100,
+    large: 200
   };
   
   const pixelSize = sizeMap[size];
   
-  // Primary source: AirHex (reliable and free)
-  return `https://content.airhex.com/content/logos/airlines_${upperCode}_${pixelSize}_${pixelSize}.png`;
+  // Use pics.avs.io which is reliable and commonly used
+  return `https://pics.avs.io/${pixelSize}/${pixelSize}/${upperCode}.png`;
 }
 
 /**
