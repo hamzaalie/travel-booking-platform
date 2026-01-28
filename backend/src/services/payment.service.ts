@@ -231,8 +231,15 @@ export class PaymentService {
 
       logger.info(`eSewa payment initiated: ${data.bookingId}, transaction_uuid: ${transactionUuid}`);
 
+      // Clean the eSewa URL - ensure we use the correct base URL
+      // Production: https://epay.esewa.com.np
+      // Sandbox: https://rc-epay.esewa.com.np
+      let esewaBaseUrl = config.esewa.url || 'https://rc-epay.esewa.com.np';
+      // Remove any trailing paths if someone set the full URL
+      esewaBaseUrl = esewaBaseUrl.replace(/\/api\/epay.*$/, '').replace(/\/epay.*$/, '').replace(/\/$/, '');
+      
       return {
-        paymentUrl: `${config.esewa.url}/api/epay/main/v2/form`,
+        paymentUrl: `${esewaBaseUrl}/api/epay/main/v2/form`,
         paymentData,
         transactionUuid,
         bookingId: data.bookingId,
@@ -279,7 +286,14 @@ export class PaymentService {
       }
 
       // Use Status Check API for verification
-      const statusUrl = `${config.esewa.url.replace('rc-epay', 'rc')}/api/epay/transaction/status/?product_code=${config.esewa.merchantId}&total_amount=${totalAmount}&transaction_uuid=${transactionUuid}`;
+      // Sandbox: https://rc.esewa.com.np/api/epay/transaction/status/
+      // Production: https://esewa.com.np/api/epay/transaction/status/
+      let esewaStatusBaseUrl = config.esewa.url || 'https://rc-epay.esewa.com.np';
+      esewaStatusBaseUrl = esewaStatusBaseUrl.replace(/\/api\/epay.*$/, '').replace(/\/epay.*$/, '').replace(/\/$/, '');
+      // For status check, use rc.esewa.com.np (not rc-epay.esewa.com.np)
+      esewaStatusBaseUrl = esewaStatusBaseUrl.replace('rc-epay.esewa.com.np', 'rc.esewa.com.np').replace('epay.esewa.com.np', 'esewa.com.np');
+      
+      const statusUrl = `${esewaStatusBaseUrl}/api/epay/transaction/status/?product_code=${config.esewa.merchantId}&total_amount=${totalAmount}&transaction_uuid=${transactionUuid}`;
       
       const response = await axios.get(statusUrl);
       
