@@ -161,7 +161,7 @@ export default function PopularDestinations() {
       tripType: 'ONE_WAY'
     });
 
-    navigate(`/flights/search?${searchParams.toString()}`);
+    navigate(`/search/results?${searchParams.toString()}`);
   };
 
   return (
@@ -211,40 +211,45 @@ export default function PopularDestinations() {
           {/* Slider */}
           <div
             ref={sliderRef}
-            className="flex gap-6 overflow-x-auto scrollbar-hide scroll-smooth pb-4"
+            className="flex gap-6 overflow-x-auto scrollbar-hide scroll-smooth pb-6 px-1"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
             {popularDestinations.map((destination) => (
               <div
                 key={destination.id}
                 onClick={() => handleDestinationClick(destination)}
-                className="flex-shrink-0 w-[300px] cursor-pointer group"
+                className="flex-shrink-0 w-[280px] cursor-pointer group"
               >
-                <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                <div className="bg-white rounded-2xl overflow-hidden shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300 transform hover:-translate-y-2 border border-gray-100">
                   {/* Image */}
-                  <div className="relative h-[200px] overflow-hidden">
+                  <div className="relative h-[180px] overflow-hidden">
                     <img
                       src={destination.image}
                       alt={destination.name}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
                     
                     {/* Hover overlay with "Search Flights" */}
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <span className="bg-primary-600 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/20">
+                      <span className="bg-white text-primary-600 px-5 py-2.5 rounded-full text-sm font-semibold shadow-lg transform scale-95 group-hover:scale-100 transition-transform duration-300">
                         Search Flights →
                       </span>
+                    </div>
+
+                    {/* Airport code badge */}
+                    <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-lg text-xs font-bold text-gray-700">
+                      {destination.code}
                     </div>
                   </div>
 
                   {/* Content */}
-                  <div className="p-4">
-                    <p className="text-gray-500 text-sm mb-1">{destination.tagline}</p>
-                    <h3 className="text-xl font-bold text-gray-900 group-hover:text-primary-600 transition-colors">
+                  <div className="p-5">
+                    <p className="text-primary-500 text-xs font-medium uppercase tracking-wide mb-1">{destination.tagline}</p>
+                    <h3 className="text-lg font-bold text-gray-900 group-hover:text-primary-600 transition-colors mb-0.5">
                       {destination.name}
                     </h3>
-                    <p className="text-gray-600 text-sm">{destination.country}</p>
+                    <p className="text-gray-500 text-sm">{destination.country}</p>
                   </div>
                 </div>
               </div>
@@ -255,7 +260,7 @@ export default function PopularDestinations() {
         {/* View All Link */}
         <div className="text-center mt-8">
           <button
-            onClick={() => navigate('/flights/search')}
+            onClick={() => navigate('/search')}
             className="inline-flex items-center text-primary-600 hover:text-primary-700 font-semibold transition-colors"
           >
             View All Destinations
