@@ -1,4 +1,5 @@
 import SearchForm from '@/components/common/SearchForm';
+import PopularDestinations from '@/components/common/PopularDestinations';
 import { Plane } from 'lucide-react';
 
 export default function FlightSearchPage() {
@@ -19,14 +20,7 @@ export default function FlightSearchPage() {
 
         {/* Popular Destinations */}
         <div className="mt-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Popular Destinations</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {['New York', 'Los Angeles', 'London', 'Dubai', 'Tokyo', 'Paris', 'Singapore', 'Sydney'].map((city) => (
-              <div key={city} className="bg-white rounded-lg p-4 text-center hover:shadow-lg transition-shadow cursor-pointer">
-                <p className="font-semibold text-gray-900">{city}</p>
-              </div>
-            ))}
-          </div>
+          <PopularDestinations />
         </div>
       </div>
     </div>
