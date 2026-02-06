@@ -46,8 +46,8 @@ export default function CurrencySelector() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-gray-700 
-                   hover:text-primary-600 hover:bg-gray-100 rounded-lg transition-colors"
+        className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-white 
+                   hover:text-white/80 hover:bg-white/10 rounded-lg transition-colors"
       >
         <Globe className="h-4 w-4" />
         <span className="font-semibold">
