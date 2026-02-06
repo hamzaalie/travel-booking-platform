@@ -43,17 +43,17 @@ export default function CurrencySelector() {
   const activeCurrencies = currencies.filter(c => c.isActive);
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className="relative inline-flex items-center" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-white 
-                   hover:text-white/80 hover:bg-white/10 rounded-lg transition-colors"
+        className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white 
+                   hover:text-white hover:bg-white/10 rounded-lg transition-colors"
       >
         <Globe className="h-4 w-4" />
         <span className="font-semibold">
           {currencyInfo?.symbol || ''} {currentCurrency}
         </span>
-        <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`h-3 w-3 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {isOpen && (

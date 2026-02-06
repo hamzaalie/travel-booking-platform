@@ -48,7 +48,10 @@ export default function Header() {
             </div>
             <div className="flex items-center space-x-4">
               <CurrencySelector />
-              <span className="text-primary-200">🌍 24/7 Customer Support</span>
+              <span className="flex items-center">
+                <span className="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
+                24/7 Customer Support
+              </span>
             </div>
           </div>
         </div>
