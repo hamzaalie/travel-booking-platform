@@ -26,6 +26,9 @@ import KhaltiCallbackPage from './pages/booking/KhaltiCallbackPage';
 import EsewaCallbackPage from './pages/booking/EsewaCallbackPage';
 import EsewaFailurePage from './pages/booking/EsewaFailurePage';
 import BookingConfirmationPage from './pages/booking/BookingConfirmationPage';
+import EsimPage from './pages/public/EsimPage';
+import BlogPage, { BlogPostPage } from './pages/public/BlogPage';
+import StaticPage from './pages/public/StaticPage';
 
 // Customer Pages
 import CustomerDashboard from './pages/customer/CustomerDashboard';
@@ -49,6 +52,14 @@ import ReportingDashboardPage from './pages/admin/ReportingDashboardPage';
 import RefundManagementPage from './pages/admin/RefundManagementPage';
 import AgentMarkupManagementPage from './pages/admin/AgentMarkupManagementPage';
 import AgentDocumentsPage from './pages/admin/AgentDocumentsPage';
+import CustomerManagementPage from './pages/admin/CustomerManagementPage';
+import B2BUserManagementPage from './pages/admin/B2BUserManagementPage';
+import FlightChangeManagementPage from './pages/admin/FlightChangeManagementPage';
+import SettingsManagementPage from './pages/admin/SettingsManagementPage';
+import PageManagementPage from './pages/admin/PageManagementPage';
+import BlogManagementPage from './pages/admin/BlogManagementPage';
+import CurrencyManagementPage from './pages/admin/CurrencyManagementPage';
+import EsimManagementPage from './pages/admin/EsimManagementPage';
 
 // Protected Route Component
 const ProtectedRoute = ({ children, allowedRoles }: { children: React.ReactNode; allowedRoles: string[] }) => {
@@ -87,6 +98,10 @@ function App() {
         <Route path="/payment/esewa/success" element={<EsewaCallbackPage />} />
         <Route path="/payment/esewa/failure" element={<EsewaFailurePage />} />
         <Route path="/booking/confirmation/:id" element={<BookingConfirmationPage />} />
+        <Route path="/esim" element={<EsimPage />} />
+        <Route path="/blog" element={<BlogPage />} />
+        <Route path="/blog/:slug" element={<BlogPostPage />} />
+        <Route path="/page/:slug" element={<StaticPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/register/agent" element={<AgentRegistrationPage />} />
@@ -141,6 +156,14 @@ function App() {
         <Route path="markups" element={<MarkupManagementPage />} />
         <Route path="refunds" element={<RefundManagementPage />} />
         <Route path="reports" element={<ReportingDashboardPage />} />
+        <Route path="customers" element={<CustomerManagementPage />} />
+        <Route path="b2b-users" element={<B2BUserManagementPage />} />
+        <Route path="flight-changes" element={<FlightChangeManagementPage />} />
+        <Route path="settings" element={<SettingsManagementPage />} />
+        <Route path="pages" element={<PageManagementPage />} />
+        <Route path="blog" element={<BlogManagementPage />} />
+        <Route path="currencies" element={<CurrencyManagementPage />} />
+        <Route path="esim" element={<EsimManagementPage />} />
       </Route>
 
       {/* 404 eror solved*/}

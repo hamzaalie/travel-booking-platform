@@ -478,4 +478,170 @@ router.post(
   })
 );
 
+// ============================================================================
+// CUSTOMER MANAGEMENT ROUTES
+// ============================================================================
+
+// GET /api/admin/customers
+// Get all B2C customers
+router.get(
+  '/customers',
+  authorizeAdmin(),
+  asyncHandler(async (req: AuthRequest, res) => {
+    const { search, isActive, limit, page } = req.query;
+
+    const result = await adminService.getAllCustomers({
+      search: search as string,
+      isActive: isActive === 'true' ? true : isActive === 'false' ? false : undefined,
+      limit: limit ? parseInt(limit as string) : undefined,
+      page: page ? parseInt(page as string) : undefined,
+    });
+
+    res.json({
+      success: true,
+      data: result,
+    });
+  })
+);
+
+// GET /api/admin/customers/:id
+// Get customer details
+router.get(
+  '/customers/:id',
+  authorizeAdmin(),
+  asyncHandler(async (req: AuthRequest, res) => {
+    const customer = await adminService.getCustomerDetails(req.params.id);
+
+    res.json({
+      success: true,
+      data: customer,
+    });
+  })
+);
+
+// PUT /api/admin/customers/:id/status
+// Update customer status (activate/deactivate)
+router.put(
+  '/customers/:id/status',
+  authorizeAdmin(),
+  asyncHandler(async (req: AuthRequest, res) => {
+    const { isActive } = req.body;
+
+    if (typeof isActive !== 'boolean') {
+      return res.status(400).json({
+        success: false,
+        error: 'isActive must be a boolean',
+      });
+    }
+
+    const customer = await adminService.updateCustomerStatus(
+      req.params.id,
+      req.user!.id,
+      isActive
+    );
+
+    res.json({
+      success: true,
+      message: `Customer ${isActive ? 'activated' : 'deactivated'} successfully`,
+      data: customer,
+    });
+  })
+);
+
+// GET /api/admin/customers/:id/bookings
+// Get customer bookings
+router.get(
+  '/customers/:id/bookings',
+  authorizeAdmin(),
+  asyncHandler(async (req: AuthRequest, res) => {
+    const { status, limit } = req.query;
+
+    const bookings = await adminService.getCustomerBookings(req.params.id, {
+      status: status as string,
+      limit: limit ? parseInt(limit as string) : undefined,
+    });
+
+    res.json({
+      success: true,
+      data: bookings,
+    });
+  })
+);
+
+// ============================================================================
+// B2B USER MANAGEMENT ROUTES
+// ============================================================================
+
+// GET /api/admin/b2b-users
+// Get all B2B users with pagination
+router.get(
+  '/b2b-users',
+  authorizeAdmin(),
+  asyncHandler(async (req: AuthRequest, res) => {
+    const { status, search, limit, page } = req.query;
+
+    const result = await adminService.getB2BUsers({
+      status: status as string,
+      search: search as string,
+      limit: limit ? parseInt(limit as string) : undefined,
+      page: page ? parseInt(page as string) : undefined,
+    });
+
+    res.json({
+      success: true,
+      data: result,
+    });
+  })
+);
+
+// GET /api/admin/b2b-users/:id
+// Get B2B user full details
+router.get(
+  '/b2b-users/:id',
+  authorizeAdmin(),
+  asyncHandler(async (req: AuthRequest, res) => {
+    const agent = await adminService.getB2BUserDetails(req.params.id);
+
+    res.json({
+      success: true,
+      data: agent,
+    });
+  })
+);
+
+// PUT /api/admin/b2b-users/:id
+// Update B2B user details
+router.put(
+  '/b2b-users/:id',
+  authorizeAdmin(),
+  asyncHandler(async (req: AuthRequest, res) => {
+    const agent = await adminService.updateB2BUser(
+      req.params.id,
+      req.user!.id,
+      req.body
+    );
+
+    res.json({
+      success: true,
+      message: 'B2B user updated successfully',
+      data: agent,
+    });
+  })
+);
+
+// GET /api/admin/user-stats
+// Get user statistics for dashboard
+router.get(
+  '/user-stats',
+  authorizeAdmin(),
+  asyncHandler(async (_req: AuthRequest, res) => {
+    const stats = await adminService.getUserStats();
+
+    res.json({
+      success: true,
+      data: stats,
+    });
+  })
+);
+
 export default router;

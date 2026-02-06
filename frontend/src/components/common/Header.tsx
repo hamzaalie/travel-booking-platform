@@ -2,8 +2,9 @@ import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/store';
 import { logout } from '@/store/slices/authSlice';
-import { Plane, LogOut, User, Menu, X, Home, Search, Briefcase, Mail, Phone } from 'lucide-react';
+import { Plane, LogOut, User, Menu, X, Home, Search, Briefcase, Mail, Phone, Smartphone, BookOpen } from 'lucide-react';
 import { useState } from 'react';
+import CurrencySelector from './CurrencySelector';
 
 export default function Header() {
   const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
@@ -46,6 +47,7 @@ export default function Header() {
               </a>
             </div>
             <div className="flex items-center space-x-4">
+              <CurrencySelector />
               <span className="text-primary-200">🌍 24/7 Customer Support</span>
             </div>
           </div>
@@ -99,6 +101,22 @@ export default function Header() {
                 className="flex items-center space-x-2 px-4 py-2 rounded-lg text-gray-700 hover:text-primary-600 hover:bg-primary-50 transition-all duration-200 font-medium"
               >
                 <span>Car Rental</span>
+              </Link>
+
+              <Link 
+                to="/esim" 
+                className="flex items-center space-x-2 px-4 py-2 rounded-lg text-gray-700 hover:text-primary-600 hover:bg-primary-50 transition-all duration-200 font-medium"
+              >
+                <Smartphone className="h-4 w-4" />
+                <span>eSIM</span>
+              </Link>
+
+              <Link 
+                to="/blog" 
+                className="flex items-center space-x-2 px-4 py-2 rounded-lg text-gray-700 hover:text-primary-600 hover:bg-primary-50 transition-all duration-200 font-medium"
+              >
+                <BookOpen className="h-4 w-4" />
+                <span>Blog</span>
               </Link>
               
               {isAuthenticated ? (

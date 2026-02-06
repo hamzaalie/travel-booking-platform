@@ -298,6 +298,7 @@ model Booking {
   payments Payment[]
   refunds  Refund[]
   ssrs     SSR[]
+  changeRequests FlightChangeRequest[]
 
   @@index([userId])
   @@index([agentId])
@@ -516,4 +517,219 @@ model AuditLog {
   @@index([entityId])
   @@index([createdAt])
   @@map("audit_logs")
+}
+
+// ============================================================================
+// CURRENCY MANAGEMENT
+// ============================================================================
+
+model Currency {
+  id           String   @id @default(uuid())
+  code         String   @unique // NPR, USD, EUR, etc.
+  name         String   // Nepalese Rupee, US Dollar, etc.
+  symbol       String   // रू, $, €, etc.
+  exchangeRate Decimal  @db.Decimal(15, 6) // Rate against base currency (NPR)
+  isActive     Boolean  @default(true)
+  isBase       Boolean  @default(false) // NPR is base
+  decimalPlaces Int     @default(2)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([code])
+  @@index([isActive])
+  @@map("currencies")
+}
+
+// Country to Currency mapping for geo-location
+model CountryCurrency {
+  id          String   @id @default(uuid())
+  countryCode String   @unique // NP, US, GB, etc.
+  countryName String   // Nepal, United States, etc.
+  currencyCode String  // NPR, USD, etc.
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([countryCode])
+  @@index([currencyCode])
+  @@map("country_currencies")
+}
+
+// ============================================================================
+// SITE SETTINGS
+// ============================================================================
+
+model SiteSetting {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     Json
+  category  String   // general, branding, seo, social, etc.
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([key])
+  @@index([category])
+  @@map("site_settings")
+}
+
+// ============================================================================
+// CONTENT MANAGEMENT (PAGES)
+// ============================================================================
+
+model Page {
+  id          String     @id @default(uuid())
+  slug        String     @unique // privacy-policy, terms, about, contact, etc.
+  title       String
+  content     String     @db.Text
+  metaTitle   String?
+  metaDescription String?
+  isPublished Boolean    @default(false)
+  publishedAt DateTime?
+  createdBy   String
+  updatedBy   String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([slug])
+  @@index([isPublished])
+  @@map("pages")
+}
+
+// Blog Posts
+model BlogPost {
+  id            String     @id @default(uuid())
+  slug          String     @unique
+  title         String
+  excerpt       String?    @db.Text
+  content       String     @db.Text
+  featuredImage String?
+  category      String?
+  tags          String[]
+  metaTitle     String?
+  metaDescription String?
+  isPublished   Boolean    @default(false)
+  isFeatured    Boolean    @default(false)
+  publishedAt   DateTime?
+  viewCount     Int        @default(0)
+  createdBy     String
+  updatedBy     String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  @@index([slug])
+  @@index([isPublished])
+  @@index([category])
+  @@index([isFeatured])
+  @@map("blog_posts")
+}
+
+// ============================================================================
+// ESIM PRODUCTS
+// ============================================================================
+
+model EsimProduct {
+  id              String   @id @default(uuid())
+  externalId      String   @unique // ID from eSIM provider
+  name            String
+  description     String?  @db.Text
+  countries       String[] // List of countries covered
+  regions         String[] // List of regions covered
+  dataAmount      String   // e.g., "1GB", "5GB", "Unlimited"
+  validityDays    Int
+  price           Decimal  @db.Decimal(15, 2)
+  currency        String   @default("USD")
+  providerName    String   // airalo, esimgo, etc.
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  orders EsimOrder[]
+
+  @@index([externalId])
+  @@index([isActive])
+  @@map("esim_products")
+}
+
+model EsimOrder {
+  id              String        @id @default(uuid())
+  userId          String
+  productId       String
+  quantity        Int           @default(1)
+  totalAmount     Decimal       @db.Decimal(15, 2)
+  currency        String        @default("USD")
+  status          EsimOrderStatus @default(PENDING)
+  iccid           String?       // eSIM ICCID
+  qrCode          String?       @db.Text // QR code data
+  activationCode  String?
+  externalOrderId String?       // Order ID from provider
+  providerResponse Json?        // Full response from provider
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  // Relations
+  product EsimProduct @relation(fields: [productId], references: [id])
+
+  @@index([userId])
+  @@index([productId])
+  @@index([status])
+  @@index([externalOrderId])
+  @@map("esim_orders")
+}
+
+enum EsimOrderStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+// ============================================================================
+// FLIGHT CHANGE/REFUND REQUESTS
+// ============================================================================
+
+model FlightChangeRequest {
+  id                String              @id @default(uuid())
+  bookingId         String
+  userId            String
+  requestType       FlightRequestType
+  reason            String?             @db.Text
+  requestedChanges  Json?               // New dates, passengers, etc.
+  status            FlightRequestStatus @default(PENDING)
+  adminNotes        String?             @db.Text
+  penaltyAmount     Decimal?            @db.Decimal(15, 2)
+  additionalAmount  Decimal?            @db.Decimal(15, 2)
+  processedBy       String?
+  processedAt       DateTime?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+
+  // Relations
+  booking Booking @relation(fields: [bookingId], references: [id])
+
+  @@index([bookingId])
+  @@index([userId])
+  @@index([status])
+  @@index([requestType])
+  @@map("flight_change_requests")
+}
+
+enum FlightRequestType {
+  DATE_CHANGE
+  NAME_CORRECTION
+  ROUTE_CHANGE
+  CLASS_UPGRADE
+  CANCELLATION
+  REFUND
+  ADD_PASSENGER
+  REMOVE_PASSENGER
+}
+
+enum FlightRequestStatus {
+  PENDING
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+  COMPLETED
+  CANCELLED
 }

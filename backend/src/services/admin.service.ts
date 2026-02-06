@@ -3,6 +3,7 @@ import { AppError } from '../middleware/error.middleware';
 import { logger } from '../config/logger';
 import { auditService } from './audit.service';
 import emailService from './email.service';
+import { AgentStatus } from '@prisma/client';
 
 /**
  * Admin Service
@@ -925,6 +926,341 @@ export class AdminService {
     );
 
     return { updatedCount: result.count };
+  }
+
+  // ============================================================================
+  // CUSTOMER MANAGEMENT
+  // ============================================================================
+
+  /**
+   * Get all customers (B2C users)
+   */
+  async getAllCustomers(params?: { 
+    search?: string; 
+    isActive?: boolean;
+    limit?: number;
+    page?: number;
+  }) {
+    const limit = params?.limit || 20;
+    const page = params?.page || 1;
+    const skip = (page - 1) * limit;
+
+    const where: any = { role: 'B2C_CUSTOMER' };
+
+    if (params?.search) {
+      where.OR = [
+        { email: { contains: params.search, mode: 'insensitive' } },
+        { firstName: { contains: params.search, mode: 'insensitive' } },
+        { lastName: { contains: params.search, mode: 'insensitive' } },
+        { phone: { contains: params.search, mode: 'insensitive' } },
+      ];
+    }
+
+    if (params?.isActive !== undefined) {
+      where.isActive = params.isActive;
+    }
+
+    const [customers, total] = await Promise.all([
+      prisma.user.findMany({
+        where,
+        select: {
+          id: true,
+          email: true,
+          firstName: true,
+          lastName: true,
+          phone: true,
+          isActive: true,
+          emailVerified: true,
+          createdAt: true,
+          updatedAt: true,
+          _count: {
+            select: {
+              bookings: true,
+              payments: true,
+            },
+          },
+        },
+        orderBy: { createdAt: 'desc' },
+        take: limit,
+        skip,
+      }),
+      prisma.user.count({ where }),
+    ]);
+
+    return {
+      customers,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
+
+  /**
+   * Get customer details
+   */
+  async getCustomerDetails(customerId: string) {
+    const customer = await prisma.user.findUnique({
+      where: { id: customerId, role: 'B2C_CUSTOMER' },
+      include: {
+        bookings: {
+          orderBy: { createdAt: 'desc' },
+          take: 10,
+        },
+        payments: {
+          orderBy: { createdAt: 'desc' },
+          take: 10,
+        },
+        _count: {
+          select: {
+            bookings: true,
+            payments: true,
+          },
+        },
+      },
+    });
+
+    if (!customer) {
+      throw new AppError('Customer not found', 404);
+    }
+
+    return customer;
+  }
+
+  /**
+   * Update customer status
+   */
+  async updateCustomerStatus(customerId: string, adminId: string, isActive: boolean) {
+    const customer = await prisma.user.findUnique({
+      where: { id: customerId, role: 'B2C_CUSTOMER' },
+    });
+
+    if (!customer) {
+      throw new AppError('Customer not found', 404);
+    }
+
+    const updated = await prisma.user.update({
+      where: { id: customerId },
+      data: { isActive },
+    });
+
+    await auditService.log({
+      userId: adminId,
+      action: isActive ? 'CUSTOMER_ACTIVATED' : 'CUSTOMER_DEACTIVATED',
+      entity: 'User',
+      entityId: customerId,
+      changes: { email: customer.email, isActive },
+    });
+
+    logger.info(`Customer ${customerId} status updated to ${isActive ? 'active' : 'inactive'} by admin ${adminId}`);
+
+    return updated;
+  }
+
+  /**
+   * Get customer bookings
+   */
+  async getCustomerBookings(customerId: string, params?: { status?: string; limit?: number }) {
+    const where: any = { userId: customerId };
+    if (params?.status) {
+      where.status = params.status;
+    }
+
+    return await prisma.booking.findMany({
+      where,
+      include: {
+        payments: true,
+        refunds: true,
+      },
+      orderBy: { createdAt: 'desc' },
+      take: params?.limit || 50,
+    });
+  }
+
+  // ============================================================================
+  // B2B USER MANAGEMENT
+  // ============================================================================
+
+  /**
+   * Get B2B agents with detailed info for management
+   */
+  async getB2BUsers(params?: {
+    status?: string;
+    search?: string;
+    limit?: number;
+    page?: number;
+  }) {
+    const limit = params?.limit || 20;
+    const page = params?.page || 1;
+    const skip = (page - 1) * limit;
+
+    const where: any = {};
+
+    if (params?.status) {
+      where.status = params.status;
+    }
+
+    if (params?.search) {
+      where.OR = [
+        { agencyName: { contains: params.search, mode: 'insensitive' } },
+        { user: { email: { contains: params.search, mode: 'insensitive' } } },
+        { user: { firstName: { contains: params.search, mode: 'insensitive' } } },
+        { user: { lastName: { contains: params.search, mode: 'insensitive' } } },
+      ];
+    }
+
+    const [agents, total] = await Promise.all([
+      prisma.agent.findMany({
+        where,
+        include: {
+          user: {
+            select: {
+              id: true,
+              email: true,
+              firstName: true,
+              lastName: true,
+              phone: true,
+              isActive: true,
+              createdAt: true,
+            },
+          },
+          wallet: {
+            select: {
+              balance: true,
+              status: true,
+            },
+          },
+          _count: {
+            select: {
+              bookings: true,
+              fundRequests: true,
+              documents: true,
+            },
+          },
+        },
+        orderBy: { createdAt: 'desc' },
+        take: limit,
+        skip,
+      }),
+      prisma.agent.count({ where }),
+    ]);
+
+    return {
+      agents,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
+
+  /**
+   * Get B2B user full details
+   */
+  async getB2BUserDetails(agentId: string) {
+    const agent = await prisma.agent.findUnique({
+      where: { id: agentId },
+      include: {
+        user: true,
+        wallet: {
+          include: {
+            transactions: {
+              orderBy: { createdAt: 'desc' },
+              take: 20,
+            },
+          },
+        },
+        bookings: {
+          orderBy: { createdAt: 'desc' },
+          take: 10,
+        },
+        fundRequests: {
+          orderBy: { requestedAt: 'desc' },
+          take: 10,
+        },
+        documents: {
+          orderBy: { createdAt: 'desc' },
+        },
+        markups: true,
+      },
+    });
+
+    if (!agent) {
+      throw new AppError('B2B user not found', 404);
+    }
+
+    return agent;
+  }
+
+  /**
+   * Update B2B user details
+   */
+  async updateB2BUser(agentId: string, adminId: string, data: {
+    agencyName?: string;
+    address?: string;
+    city?: string;
+    country?: string;
+    businessType?: string;
+    creditLimit?: number;
+    status?: AgentStatus;
+  }) {
+    const agent = await prisma.agent.findUnique({
+      where: { id: agentId },
+    });
+
+    if (!agent) {
+      throw new AppError('B2B user not found', 404);
+    }
+
+    const updated = await prisma.agent.update({
+      where: { id: agentId },
+      data,
+    });
+
+    await auditService.log({
+      userId: adminId,
+      action: 'B2B_USER_UPDATED',
+      entity: 'Agent',
+      entityId: agentId,
+      changes: data,
+    });
+
+    logger.info(`B2B user ${agentId} updated by admin ${adminId}`);
+
+    return updated;
+  }
+
+  /**
+   * Get user statistics for admin dashboard
+   */
+  async getUserStats() {
+    const [
+      totalCustomers,
+      activeCustomers,
+      totalAgents,
+      approvedAgents,
+      pendingAgents,
+      suspendedAgents,
+    ] = await Promise.all([
+      prisma.user.count({ where: { role: 'B2C_CUSTOMER' } }),
+      prisma.user.count({ where: { role: 'B2C_CUSTOMER', isActive: true } }),
+      prisma.agent.count(),
+      prisma.agent.count({ where: { status: 'APPROVED' } }),
+      prisma.agent.count({ where: { status: 'PENDING' } }),
+      prisma.agent.count({ where: { status: 'SUSPENDED' } }),
+    ]);
+
+    return {
+      customers: {
+        total: totalCustomers,
+        active: activeCustomers,
+        inactive: totalCustomers - activeCustomers,
+      },
+      b2bAgents: {
+        total: totalAgents,
+        approved: approvedAgents,
+        pending: pendingAgents,
+        suspended: suspendedAgents,
+      },
+    };
   }
 }
 

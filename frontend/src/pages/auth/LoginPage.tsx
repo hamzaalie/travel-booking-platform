@@ -61,7 +61,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="input"
-                placeholder="admin@travelbooking.com"
+                placeholder="admin@travel.com"
               />
             </div>
 
@@ -118,7 +118,7 @@ export default function LoginPage() {
           <div className="mt-8 pt-6 border-t border-gray-200">
             <p className="text-xs text-gray-500 text-center">
               Demo Credentials:<br />
-              Admin: admin@travelbooking.com / Admin123!
+              Admin: admin@travel.com / Admin@123
             </p>
           </div>
         </div>

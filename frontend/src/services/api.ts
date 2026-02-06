@@ -283,4 +283,297 @@ export const carRentalApi = {
     api.post('/car-rentals/book', data),
 };
 
+// Currency API
+export const currencyApi = {
+  getCurrencies: () =>
+    api.get('/currency'),
+  
+  detect: () =>
+    api.get('/currency/detect'),
+  
+  getCurrency: (code: string) =>
+    api.get(`/currency/${code}`),
+  
+  convert: (amount: number, from: string, to: string) =>
+    api.post('/currency/convert', { amount, from, to }),
+  
+  getExchangeRate: (code: string) =>
+    api.get(`/currency/exchange-rate/${code}`),
+  
+  getCountries: () =>
+    api.get('/currency/countries/list'),
+  
+  // Admin
+  updateCurrency: (id: string, data: any) =>
+    api.put(`/currency/${id}`, data),
+  
+  createCurrency: (data: any) =>
+    api.post('/currency', data),
+  
+  deleteCurrency: (id: string) =>
+    api.delete(`/currency/${id}`),
+  
+  setDefaultCurrency: (id: string) =>
+    api.put(`/currency/${id}/default`),
+  
+  refreshRates: () =>
+    api.post('/currency/refresh-rates'),
+};
+
+// Site Settings API
+export const settingsApi = {
+  getPublic: () =>
+    api.get('/settings/public'),
+  
+  getHeader: () =>
+    api.get('/settings/header'),
+  
+  getFooter: () =>
+    api.get('/settings/footer'),
+  
+  getBranding: () =>
+    api.get('/settings/branding'),
+  
+  getSeo: () =>
+    api.get('/settings/seo'),
+  
+  getGeneral: () =>
+    api.get('/settings/general'),
+  
+  // Admin
+  getAll: () =>
+    api.get('/settings/all'),
+  
+  updateHeader: (data: any) =>
+    api.put('/settings/header', data),
+  
+  updateFooter: (data: any) =>
+    api.put('/settings/footer', data),
+  
+  updateBranding: (data: any) =>
+    api.put('/settings/branding', data),
+  
+  updateSeo: (data: any) =>
+    api.put('/settings/seo', data),
+  
+  updateGeneral: (data: any) =>
+    api.put('/settings/general', data),
+};
+
+// Content API (Pages & Blog)
+export const contentApi = {
+  // Public pages
+  getPage: (slug: string) =>
+    api.get(`/content/pages/${slug}`),
+  
+  // Public blog
+  getBlogPosts: (params?: { category?: string; limit?: number; page?: number }) =>
+    api.get('/content/blog', { params }),
+  
+  getBlogPost: (slug: string) =>
+    api.get(`/content/blog/${slug}`),
+  
+  getFeaturedPosts: (limit?: number) =>
+    api.get('/content/blog/featured', { params: { limit } }),
+  
+  getBlogCategories: () =>
+    api.get('/content/blog/categories'),
+  
+  // Admin pages
+  getAdminPages: (params?: { isPublished?: boolean }) =>
+    api.get('/content/admin/pages', { params }),
+  
+  getAllPages: (params?: { isPublished?: boolean }) =>
+    api.get('/content/admin/pages', { params }),
+  
+  getPageById: (id: string) =>
+    api.get(`/content/admin/pages/${id}`),
+  
+  createPage: (data: any) =>
+    api.post('/content/admin/pages', data),
+  
+  updatePage: (id: string, data: any) =>
+    api.put(`/content/admin/pages/${id}`, data),
+  
+  deletePage: (id: string) =>
+    api.delete(`/content/admin/pages/${id}`),
+  
+  // Admin blog
+  getAdminBlogPosts: (params?: any) =>
+    api.get('/content/admin/blog', { params }),
+  
+  getAllBlogPosts: (params?: any) =>
+    api.get('/content/admin/blog', { params }),
+  
+  getBlogPostById: (id: string) =>
+    api.get(`/content/admin/blog/${id}`),
+  
+  createBlogPost: (data: any) =>
+    api.post('/content/admin/blog', data),
+  
+  updateBlogPost: (id: string, data: any) =>
+    api.put(`/content/admin/blog/${id}`, data),
+  
+  deleteBlogPost: (id: string) =>
+    api.delete(`/content/admin/blog/${id}`),
+};
+
+// eSIM API
+export const esimApi = {
+  getProducts: (params?: { country?: string; limit?: number; page?: number }) =>
+    api.get('/esim/products', { params }),
+  
+  getProduct: (id: string) =>
+    api.get(`/esim/products/${id}`),
+  
+  getDestinations: () =>
+    api.get('/esim/destinations'),
+  
+  purchase: (productId: string, quantity?: number) =>
+    api.post('/esim/purchase', { productId, quantity }),
+  
+  getOrders: (params?: { status?: string; search?: string; limit?: number; page?: number }) =>
+    api.get('/esim/orders', { params }),
+  
+  getOrder: (id: string) =>
+    api.get(`/esim/orders/${id}`),
+  
+  checkUsage: (orderId: string) =>
+    api.get(`/esim/orders/${orderId}/usage`),
+  
+  // Admin
+  updateOrderStatus: (orderId: string, status: string) =>
+    api.put(`/esim/admin/orders/${orderId}/status`, { status }),
+};
+
+// Flight Change API
+export const flightChangeApi = {
+  createRequest: (data: any) =>
+    api.post('/flight-change', data),
+  
+  getRequests: (params?: { status?: string; requestType?: string }) =>
+    api.get('/flight-change', { params }),
+  
+  getRequest: (id: string) =>
+    api.get(`/flight-change/${id}`),
+  
+  cancelRequest: (id: string) =>
+    api.post(`/flight-change/${id}/cancel`),
+  
+  // Admin
+  getAdminRequests: (params?: { status?: string; requestType?: string; limit?: number; page?: number }) =>
+    api.get('/flight-change/admin/all', { params }),
+  
+  getAllRequests: (params?: { status?: string; requestType?: string; limit?: number }) =>
+    api.get('/flight-change/admin/all', { params }),
+  
+  processRequest: (id: string, data: { status: string; adminNotes?: string; approvedRefundAmount?: number }) =>
+    api.put(`/flight-change/admin/${id}/process`, data),
+  
+  getStats: () =>
+    api.get('/flight-change/admin/stats'),
+  
+  markUnderReview: (id: string) =>
+    api.put(`/flight-change/admin/${id}/review`),
+  
+  approveRequest: (id: string, data?: { adminNotes?: string; penaltyAmount?: number }) =>
+    api.post(`/flight-change/admin/${id}/approve`, data),
+  
+  rejectRequest: (id: string, adminNotes?: string) =>
+    api.post(`/flight-change/admin/${id}/reject`, { adminNotes }),
+};
+
+// Extended Admin API
+export const adminExtendedApi = {
+  // Customer management
+  getCustomers: (params?: { search?: string; isActive?: boolean; limit?: number; page?: number }) =>
+    api.get('/admin/customers', { params }),
+  
+  getCustomerDetails: (id: string) =>
+    api.get(`/admin/customers/${id}`),
+  
+  updateCustomerStatus: (id: string, isActive: boolean) =>
+    api.put(`/admin/customers/${id}/status`, { isActive }),
+  
+  getCustomerBookings: (id: string, params?: { status?: string; limit?: number }) =>
+    api.get(`/admin/customers/${id}/bookings`, { params }),
+  
+  // B2B user management
+  getB2BUsers: (params?: { status?: string; search?: string; limit?: number; page?: number }) =>
+    api.get('/admin/b2b-users', { params }),
+  
+  getB2BUserDetails: (id: string) =>
+    api.get(`/admin/b2b-users/${id}`),
+  
+  updateB2BUser: (id: string, data: any) =>
+    api.put(`/admin/b2b-users/${id}`, data),
+  
+  getUserStats: () =>
+    api.get('/admin/user-stats'),
+};
+
+// Sabre GDS API
+export const sabreApi = {
+  searchFlights: (params: {
+    origin: string;
+    destination: string;
+    departureDate: string;
+    returnDate?: string;
+    adults: number;
+    children?: number;
+    infants?: number;
+    cabinClass?: string;
+  }) => api.post('/sabre/search', params),
+  
+  getFlightDetails: (offerId: string) =>
+    api.get(`/sabre/flights/${offerId}`),
+  
+  getSeatMap: (offerId: string) =>
+    api.post('/sabre/seatmap', { offerId }),
+  
+  verifyPrice: (offerId: string) =>
+    api.post('/sabre/verify-price', { offerId }),
+  
+  createBooking: (data: {
+    offerId: string;
+    passengers: Array<{
+      firstName: string;
+      lastName: string;
+      dateOfBirth: string;
+      gender: string;
+      passportNumber?: string;
+      passportExpiry?: string;
+      nationality?: string;
+    }>;
+    contactInfo: {
+      email: string;
+      phone: string;
+    };
+  }) => api.post('/sabre/book', data),
+  
+  getPNR: (recordLocator: string) =>
+    api.get(`/sabre/pnr/${recordLocator}`),
+  
+  cancelBooking: (recordLocator: string) =>
+    api.post(`/sabre/cancel/${recordLocator}`),
+  
+  getAirlines: () =>
+    api.get('/sabre/airlines'),
+  
+  getAirports: (query?: string) =>
+    api.get('/sabre/airports', { params: { query } }),
+  
+  getFlightStatus: (params: {
+    flightNumber: string;
+    departureDate: string;
+    airline: string;
+  }) => api.get('/sabre/flight-status', { params }),
+  
+  issueTicket: (recordLocator: string) =>
+    api.post('/sabre/issue-ticket', { recordLocator }),
+  
+  getFareRules: (offerId: string) =>
+    api.post('/sabre/fare-rules', { offerId }),
+};
+
 export default api;

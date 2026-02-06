@@ -11,6 +11,12 @@ import {
   BarChart3,
   RefreshCw,
   Percent,
+  Building2,
+  FileText,
+  BookOpen,
+  Coins,
+  Smartphone,
+  Globe,
 } from 'lucide-react';
 
 export default function Sidebar() {
@@ -21,12 +27,20 @@ export default function Sidebar() {
     if (user?.role === 'SUPER_ADMIN') {
       return [
         { path: '/admin', icon: LayoutDashboard, label: 'Dashboard' },
+        { path: '/admin/customers', icon: Users, label: 'Customers' },
+        { path: '/admin/b2b-users', icon: Building2, label: 'B2B Users' },
         { path: '/admin/agents', icon: Users, label: 'Agent Approvals' },
         { path: '/admin/agents/markup', icon: Percent, label: 'Agent Markup' },
         { path: '/admin/bookings', icon: Plane, label: 'All Bookings' },
+        { path: '/admin/flight-changes', icon: RefreshCw, label: 'Flight Changes' },
         { path: '/admin/fund-requests', icon: DollarSign, label: 'Fund Requests' },
-        { path: '/admin/markups', icon: Settings, label: 'Global Markups' },
         { path: '/admin/refunds', icon: RefreshCw, label: 'Refunds' },
+        { path: '/admin/esim', icon: Smartphone, label: 'eSIM Orders' },
+        { path: '/admin/currencies', icon: Coins, label: 'Currencies' },
+        { path: '/admin/markups', icon: Settings, label: 'Global Markups' },
+        { path: '/admin/pages', icon: FileText, label: 'Pages' },
+        { path: '/admin/blog', icon: BookOpen, label: 'Blog' },
+        { path: '/admin/settings', icon: Globe, label: 'Site Settings' },
         { path: '/admin/reports', icon: BarChart3, label: 'Reports' },
       ];
     }
