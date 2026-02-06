@@ -42,6 +42,18 @@ export default function CurrencySelector() {
 
   const activeCurrencies = currencies.filter(c => c.isActive);
 
+  // Default currencies when API is unavailable
+  const defaultCurrencies = [
+    { id: '1', code: 'NPR', name: 'Nepalese Rupee', symbol: 'रू', exchangeRate: 1, isActive: true, isBase: true, decimalPlaces: 2 },
+    { id: '2', code: 'USD', name: 'US Dollar', symbol: '$', exchangeRate: 0.0075, isActive: true, isBase: false, decimalPlaces: 2 },
+    { id: '3', code: 'EUR', name: 'Euro', symbol: '€', exchangeRate: 0.0069, isActive: true, isBase: false, decimalPlaces: 2 },
+    { id: '4', code: 'GBP', name: 'British Pound', symbol: '£', exchangeRate: 0.0059, isActive: true, isBase: false, decimalPlaces: 2 },
+    { id: '5', code: 'INR', name: 'Indian Rupee', symbol: '₹', exchangeRate: 0.63, isActive: true, isBase: false, decimalPlaces: 2 },
+  ];
+
+  const displayCurrencies = activeCurrencies.length > 0 ? activeCurrencies : defaultCurrencies;
+  const displayCurrency = currencyInfo || displayCurrencies.find(c => c.code === currentCurrency) || displayCurrencies[0];
+
   return (
     <div className="relative inline-flex items-center" ref={dropdownRef}>
       <button
@@ -51,7 +63,7 @@ export default function CurrencySelector() {
       >
         <Globe className="h-4 w-4" />
         <span className="font-semibold">
-          {currencyInfo?.symbol || ''} {currentCurrency}
+          {displayCurrency?.symbol || 'रू'} {currentCurrency || 'NPR'}
         </span>
         <ChevronDown className={`h-3 w-3 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
@@ -62,7 +74,7 @@ export default function CurrencySelector() {
           <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider border-b">
             Select Currency
           </div>
-          {activeCurrencies.map((currency) => (
+          {displayCurrencies.map((currency) => (
             <button
               key={currency.code}
               onClick={() => handleCurrencyChange(currency.code)}
