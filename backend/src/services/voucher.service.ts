@@ -97,7 +97,8 @@ class VoucherService {
           doc.moveDown();
         }
 
-        // Pricing
+        // Pricing done with the pricintg now working on other things
+        
         this.addSection(doc, 'Pricing');
         doc.fontSize(10).font('Helvetica')
           .text(`Room Rate: ${voucher.pricing.currency} ${voucher.pricing.roomRate.toFixed(2)}`)

@@ -29,6 +29,10 @@ import BookingConfirmationPage from './pages/booking/BookingConfirmationPage';
 import EsimPage from './pages/public/EsimPage';
 import BlogPage, { BlogPostPage } from './pages/public/BlogPage';
 import StaticPage from './pages/public/StaticPage';
+import PrivacyPolicyPage from './pages/legal/PrivacyPolicyPage';
+import TermsOfServicePage from './pages/legal/TermsOfServicePage';
+import CookiePolicyPage from './pages/legal/CookiePolicyPage';
+import RefundPolicyPage from './pages/legal/RefundPolicyPage';
 
 // Customer Pages
 import CustomerDashboard from './pages/customer/CustomerDashboard';
@@ -102,6 +106,10 @@ function App() {
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/blog/:slug" element={<BlogPostPage />} />
         <Route path="/page/:slug" element={<StaticPage />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+        <Route path="/terms-of-service" element={<TermsOfServicePage />} />
+        <Route path="/cookie-policy" element={<CookiePolicyPage />} />
+        <Route path="/refund-policy" element={<RefundPolicyPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/register/agent" element={<AgentRegistrationPage />} />
