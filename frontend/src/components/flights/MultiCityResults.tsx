@@ -4,9 +4,12 @@
  */
 
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Plane, Clock, MapPin, ChevronDown, ChevronUp, Check } from 'lucide-react';
 import { type MultiCityFlightOffer } from '../../../shared/multiCityTypes';
 import { formatDuration, getAirlineCombinations, getTotalStops } from '../../../shared/multiCityTypes';
+import { RootState } from '@/store';
+import { convertPrice } from '@/store/slices/currencySlice';
 
 interface MultiCityResultsProps {
   offers: MultiCityFlightOffer[];
@@ -24,6 +27,19 @@ export const MultiCityResults: React.FC<MultiCityResultsProps> = ({
   currency = 'USD',
 }) => {
   const [expandedOfferId, setExpandedOfferId] = useState<string | null>(null);
+
+  // Currency conversion from Redux
+  const { currentCurrency, currencies, exchangeRates } = useSelector(
+    (state: RootState) => state.currency
+  );
+
+  const formatCurrencyPrice = (amount: number) => {
+    const targetCurrency = currentCurrency || currency;
+    if (targetCurrency === 'NPR' || !exchangeRates[targetCurrency]) {
+      return `NPR ${amount.toLocaleString()}`;
+    }
+    return convertPrice(amount, targetCurrency, exchangeRates, currencies);
+  };
 
   if (isLoading) {
     return (
@@ -123,11 +139,11 @@ export const MultiCityResults: React.FC<MultiCityResultsProps> = ({
                 <div className="flex items-center space-x-4">
                   <div className="text-right">
                     <div className="text-2xl font-bold text-gray-900">
-                      {currency} {offer.price.total.toLocaleString()}
+                      {formatCurrencyPrice(offer.price.total)}
                     </div>
                     <div className="text-xs text-gray-500">
                       {offer.price.perPassenger.adult
-                        ? `${currency} ${offer.price.perPassenger.adult.toLocaleString()} per adult`
+                        ? `${formatCurrencyPrice(offer.price.perPassenger.adult)} per adult`
                         : 'Total price'}
                     </div>
                   </div>
@@ -297,15 +313,15 @@ export const MultiCityResults: React.FC<MultiCityResultsProps> = ({
                   <div className="mt-4 pt-4 border-t border-gray-200 space-y-2">
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Base Fare</span>
-                      <span className="font-medium">{currency} {offer.price.base.toLocaleString()}</span>
+                      <span className="font-medium">{formatCurrencyPrice(offer.price.base)}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Taxes & Fees</span>
-                      <span className="font-medium">{currency} {(offer.price.taxes + offer.price.fees).toLocaleString()}</span>
+                      <span className="font-medium">{formatCurrencyPrice(offer.price.taxes + offer.price.fees)}</span>
                     </div>
                     <div className="flex justify-between text-lg font-bold border-t border-gray-200 pt-2">
                       <span>Total</span>
-                      <span>{currency} {offer.price.total.toLocaleString()}</span>
+                      <span>{formatCurrencyPrice(offer.price.total)}</span>
                     </div>
                   </div>
                 </div>

@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { useSelector } from 'react-redux';
 import { flightApi } from '@/services/api';
+import { RootState } from '@/store';
+import { convertPrice } from '@/store/slices/currencySlice';
 import { Plane, Calendar, Users, ArrowRight, Loader2, Clock, AlertCircle, ChevronDown, ChevronUp, Luggage, XCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 import AirlineLogo from '@/components/common/AirlineLogo';
@@ -11,6 +14,18 @@ export default function FlightResultsPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [expandedFlight, setExpandedFlight] = useState<number | null>(null);
+
+  // Currency conversion
+  const { currentCurrency, currencies, exchangeRates } = useSelector(
+    (state: RootState) => state.currency
+  );
+
+  const formatPrice = (amount: number) => {
+    if (currentCurrency === 'NPR' || !exchangeRates[currentCurrency]) {
+      return `NPR ${amount.toLocaleString()}`;
+    }
+    return convertPrice(amount, currentCurrency, exchangeRates, currencies);
+  };
 
   const searchData = {
     tripType: searchParams.get('tripType') || 'ONE_WAY',
@@ -241,7 +256,7 @@ export default function FlightResultsPage() {
                         <div className="text-right border-l pl-6">
                           <p className="text-sm text-gray-600 mb-1">Total</p>
                           <p className="text-3xl font-bold text-primary-600 mb-1">
-                            NPR {parseFloat(flight.price?.total || flight.price?.grandTotal || '0').toLocaleString()}
+                            {formatPrice(parseFloat(flight.price?.total || flight.price?.grandTotal || '0'))}
                           </p>
                           <p className="text-xs text-gray-600 mb-3">/ person</p>
                           <button
