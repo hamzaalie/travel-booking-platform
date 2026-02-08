@@ -20,11 +20,15 @@ export default function FlightResultsPage() {
     (state: RootState) => state.currency
   );
 
-  const formatPrice = (amount: number) => {
-    if (currentCurrency === 'NPR' || !exchangeRates[currentCurrency]) {
-      return `NPR ${amount.toLocaleString()}`;
+  const formatPrice = (amount: number, sourceCurrency?: string) => {
+    const source = sourceCurrency || 'NPR';
+    if (currentCurrency === source) {
+      // Same currency, no conversion needed
+      const info = currencies.find(c => c.code === source);
+      const symbol = info?.symbol || source;
+      return `${symbol} ${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     }
-    return convertPrice(amount, currentCurrency, exchangeRates, currencies);
+    return convertPrice(amount, currentCurrency, exchangeRates, currencies, source);
   };
 
   const searchData = {
@@ -256,7 +260,7 @@ export default function FlightResultsPage() {
                         <div className="text-right border-l pl-6">
                           <p className="text-sm text-gray-600 mb-1">Total</p>
                           <p className="text-3xl font-bold text-primary-600 mb-1">
-                            {formatPrice(parseFloat(flight.price?.total || flight.price?.grandTotal || '0'))}
+                            {formatPrice(parseFloat(flight.price?.total || flight.price?.grandTotal || '0'), flight.price?.currency)}
                           </p>
                           <p className="text-xs text-gray-600 mb-3">/ person</p>
                           <button

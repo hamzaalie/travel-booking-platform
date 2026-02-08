@@ -33,12 +33,15 @@ export const MultiCityResults: React.FC<MultiCityResultsProps> = ({
     (state: RootState) => state.currency
   );
 
-  const formatCurrencyPrice = (amount: number) => {
-    const targetCurrency = currentCurrency || currency;
-    if (targetCurrency === 'NPR' || !exchangeRates[targetCurrency]) {
-      return `NPR ${amount.toLocaleString()}`;
+  const formatCurrencyPrice = (amount: number, sourceCurrency?: string) => {
+    const source = sourceCurrency || currency || 'USD';
+    const target = currentCurrency || currency;
+    if (target === source) {
+      const info = currencies.find(c => c.code === source);
+      const symbol = info?.symbol || source;
+      return `${symbol} ${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     }
-    return convertPrice(amount, targetCurrency, exchangeRates, currencies);
+    return convertPrice(amount, target, exchangeRates, currencies, source);
   };
 
   if (isLoading) {

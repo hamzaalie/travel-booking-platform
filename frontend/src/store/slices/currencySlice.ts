@@ -141,18 +141,34 @@ export const selectCurrencyInfo = (state: { currency: CurrencyState }) => state.
 export const selectExchangeRates = (state: { currency: CurrencyState }) => state.currency.exchangeRates;
 
 // Helper function to convert and format price
+// Converts from any source currency to the target currency using cross-rates
 export const convertPrice = (
-  priceInNPR: number,
+  amount: number,
   targetCurrency: string,
   exchangeRates: Record<string, number>,
-  currencies: Currency[]
+  currencies: Currency[],
+  sourceCurrency: string = 'NPR'
 ): string => {
-  const rate = exchangeRates[targetCurrency] || 1;
-  const convertedAmount = priceInNPR * rate;
-  
+  // Fallback exchange rates (relative to NPR as base = 1)
+  const fallbackRates: Record<string, number> = {
+    NPR: 1,
+    USD: 0.0075,
+    EUR: 0.0069,
+    GBP: 0.0059,
+    INR: 0.63,
+  };
+
+  const rates = Object.keys(exchangeRates).length > 0 ? exchangeRates : fallbackRates;
+
+  const sourceRate = rates[sourceCurrency] || 1;
+  const targetRate = rates[targetCurrency] || 1;
+
+  // Cross-rate conversion: source → base (NPR) → target
+  const convertedAmount = amount * (targetRate / sourceRate);
+
   const currencyInfo = currencies.find(c => c.code === targetCurrency);
   const symbol = currencyInfo?.symbol || targetCurrency;
   const decimals = currencyInfo?.decimalPlaces ?? 2;
-  
-  return `${symbol}${convertedAmount.toFixed(decimals)}`;
+
+  return `${symbol} ${convertedAmount.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}`;
 };
