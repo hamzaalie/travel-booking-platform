@@ -70,7 +70,7 @@ export default function CurrencySelector() {
 
       {isOpen && (
         <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-lg shadow-lg 
-                        border border-gray-200 py-2 z-50 max-h-80 overflow-y-auto">
+                        border border-gray-200 py-2 z-[9999] max-h-80 overflow-y-auto">
           <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider border-b">
             Select Currency
           </div>
