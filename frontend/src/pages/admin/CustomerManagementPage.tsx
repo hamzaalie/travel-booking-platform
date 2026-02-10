@@ -73,8 +73,8 @@ export default function CustomerManagementPage() {
           <p className="text-gray-600 mt-1">Manage B2C customer accounts</p>
         </div>
         <div className="flex items-center gap-2 bg-primary-50 px-4 py-2 rounded-lg">
-          <Users className="h-5 w-5 text-primary-600" />
-          <span className="text-primary-700 font-semibold">
+          <Users className="h-5 w-5 text-primary-950" />
+          <span className="text-primary-900 font-semibold">
             {data?.total || 0} Total Customers
           </span>
         </div>
@@ -186,7 +186,7 @@ export default function CustomerManagementPage() {
                           <div className="flex items-center justify-end gap-2">
                             <button
                               onClick={() => setSelectedCustomer(customer)}
-                              className="p-1 text-gray-400 hover:text-primary-600"
+                              className="p-1 text-gray-400 hover:text-primary-950"
                               title="View Details"
                             >
                               <Eye className="h-5 w-5" />
@@ -225,7 +225,7 @@ export default function CustomerManagementPage() {
                     onClick={() => setCurrentPage(i + 1)}
                     className={`px-3 py-1 rounded ${
                       currentPage === i + 1
-                        ? 'bg-primary-600 text-white'
+                        ? 'bg-primary-950 text-white'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
@@ -253,7 +253,7 @@ export default function CustomerManagementPage() {
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
                   <div className="h-12 w-12 bg-primary-100 rounded-full flex items-center justify-center">
-                    <span className="text-primary-600 font-bold text-lg">
+                    <span className="text-primary-950 font-bold text-lg">
                       {customerDetails.firstName?.[0]}{customerDetails.lastName?.[0]}
                     </span>
                   </div>

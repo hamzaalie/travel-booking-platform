@@ -208,7 +208,7 @@ export const MultiCitySearchForm: React.FC<MultiCitySearchFormProps> = ({
           >
             {/* Segment Header */}
             <div className="flex items-center justify-between mb-3">
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent-100 text-primary-950">
                 Flight {index + 1}
               </span>
               {fields.length > 2 && (
@@ -242,7 +242,7 @@ export const MultiCitySearchForm: React.FC<MultiCitySearchFormProps> = ({
                       maxLength={3}
                       className={`
                         w-full px-3 py-2 border rounded-lg text-sm uppercase
-                        focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                        focus:ring-2 focus:ring-primary-900 focus:border-transparent
                         ${errors.segments?.[index]?.origin ? 'border-red-300' : 'border-gray-300'}
                       `}
                       onChange={(e) => {
@@ -276,7 +276,7 @@ export const MultiCitySearchForm: React.FC<MultiCitySearchFormProps> = ({
                       maxLength={3}
                       className={`
                         w-full px-3 py-2 border rounded-lg text-sm uppercase
-                        focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                        focus:ring-2 focus:ring-primary-900 focus:border-transparent
                         ${errors.segments?.[index]?.destination ? 'border-red-300' : 'border-gray-300'}
                       `}
                       onChange={(e) => {
@@ -309,7 +309,7 @@ export const MultiCitySearchForm: React.FC<MultiCitySearchFormProps> = ({
                       min={index === 0 ? today : segments[index - 1]?.departureDate || today}
                       className={`
                         w-full px-3 py-2 border rounded-lg text-sm
-                        focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                        focus:ring-2 focus:ring-primary-900 focus:border-transparent
                         ${errors.segments?.[index]?.departureDate ? 'border-red-300' : 'border-gray-300'}
                       `}
                     />
@@ -327,7 +327,7 @@ export const MultiCitySearchForm: React.FC<MultiCitySearchFormProps> = ({
             {/* Connection indicator */}
             {index < fields.length - 1 && (
               <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 z-10">
-                <div className="bg-blue-500 text-white px-2 py-0.5 rounded-full text-xs font-medium shadow-md">
+                <div className="bg-primary-900 text-white px-2 py-0.5 rounded-full text-xs font-medium shadow-md">
                   ↓
                 </div>
               </div>
@@ -342,7 +342,7 @@ export const MultiCitySearchForm: React.FC<MultiCitySearchFormProps> = ({
             onClick={handleAddSegment}
             className="
               w-full py-3 border-2 border-dashed border-gray-300 rounded-lg
-              text-sm font-medium text-gray-600 hover:text-blue-600 hover:border-blue-300
+              text-sm font-medium text-gray-600 hover:text-primary-950 hover:border-accent-300
               transition-colors flex items-center justify-center space-x-2
             "
           >
@@ -371,7 +371,7 @@ export const MultiCitySearchForm: React.FC<MultiCitySearchFormProps> = ({
                     min="1"
                     max="9"
                     onChange={(e) => field.onChange(parseInt(e.target.value))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-900"
                   />
                 </div>
               )}
@@ -389,7 +389,7 @@ export const MultiCitySearchForm: React.FC<MultiCitySearchFormProps> = ({
                     min="0"
                     max="8"
                     onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-900"
                   />
                 </div>
               )}
@@ -408,7 +408,7 @@ export const MultiCitySearchForm: React.FC<MultiCitySearchFormProps> = ({
                     max={adults}
                     onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
                     className={`
-                      w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500
+                      w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-primary-900
                       ${errors.infants ? 'border-red-300' : 'border-gray-300'}
                     `}
                   />
@@ -430,7 +430,7 @@ export const MultiCitySearchForm: React.FC<MultiCitySearchFormProps> = ({
             render={({ field }) => (
               <select
                 {...field}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-900"
               >
                 <option value="ECONOMY">Economy</option>
                 <option value="PREMIUM_ECONOMY">Premium Economy</option>
@@ -453,7 +453,7 @@ export const MultiCitySearchForm: React.FC<MultiCitySearchFormProps> = ({
                 type="checkbox"
                 checked={field.value}
                 onChange={field.onChange}
-                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                className="w-4 h-4 text-primary-950 border-gray-300 rounded focus:ring-primary-900"
               />
               <span className="text-sm text-gray-700">Flexible dates (±3 days)</span>
             </label>
@@ -469,7 +469,7 @@ export const MultiCitySearchForm: React.FC<MultiCitySearchFormProps> = ({
                 type="checkbox"
                 checked={field.value}
                 onChange={field.onChange}
-                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                className="w-4 h-4 text-primary-950 border-gray-300 rounded focus:ring-primary-900"
               />
               <span className="text-sm text-gray-700">Direct flights only</span>
             </label>
@@ -486,7 +486,7 @@ export const MultiCitySearchForm: React.FC<MultiCitySearchFormProps> = ({
           transition-all transform hover:scale-105
           ${isLoading 
             ? 'bg-gray-400 cursor-not-allowed' 
-            : 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800'}
+            : 'bg-gradient-to-r from-primary-950 to-primary-900 hover:from-primary-900 hover:to-primary-950'}
         `}
       >
         {isLoading ? (

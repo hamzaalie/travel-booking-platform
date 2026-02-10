@@ -144,7 +144,7 @@ export default function CarBookingPage() {
             {/* Car Summary */}
             <div className="card">
               <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-                <Car className="h-5 w-5 mr-2 text-blue-600" />
+                <Car className="h-5 w-5 mr-2 text-primary-950" />
                 Vehicle Details
               </h2>
               <div className="bg-gray-50 rounded-lg p-4 space-y-3">
@@ -156,8 +156,8 @@ export default function CarBookingPage() {
                       className="w-32 h-24 object-cover rounded-lg"
                     />
                   ) : (
-                    <div className="w-32 h-24 bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center rounded-lg">
-                      <Car className="h-10 w-10 text-blue-400" />
+                    <div className="w-32 h-24 bg-gradient-to-br from-accent-100 to-accent-200 flex items-center justify-center rounded-lg">
+                      <Car className="h-10 w-10 text-primary-800" />
                     </div>
                   )}
                   <div className="flex-1">
@@ -173,21 +173,21 @@ export default function CarBookingPage() {
 
                 <div className="grid grid-cols-2 gap-4 pt-3 border-t">
                   <div className="flex items-center text-gray-700">
-                    <MapPin className="h-4 w-4 mr-2 text-blue-600" />
+                    <MapPin className="h-4 w-4 mr-2 text-primary-950" />
                     <div>
                       <p className="text-xs text-gray-500">Pick-up Location</p>
                       <p className="font-medium">{searchParams.pickupLocation}</p>
                     </div>
                   </div>
                   <div className="flex items-center text-gray-700">
-                    <MapPin className="h-4 w-4 mr-2 text-blue-600" />
+                    <MapPin className="h-4 w-4 mr-2 text-primary-950" />
                     <div>
                       <p className="text-xs text-gray-500">Drop-off Location</p>
                       <p className="font-medium">{searchParams.dropoffLocation || searchParams.pickupLocation}</p>
                     </div>
                   </div>
                   <div className="flex items-center text-gray-700">
-                    <Calendar className="h-4 w-4 mr-2 text-blue-600" />
+                    <Calendar className="h-4 w-4 mr-2 text-primary-950" />
                     <div>
                       <p className="text-xs text-gray-500">Pick-up</p>
                       <p className="font-medium">{pickupDate.toLocaleString('en-US', { 
@@ -199,7 +199,7 @@ export default function CarBookingPage() {
                     </div>
                   </div>
                   <div className="flex items-center text-gray-700">
-                    <Calendar className="h-4 w-4 mr-2 text-blue-600" />
+                    <Calendar className="h-4 w-4 mr-2 text-primary-950" />
                     <div>
                       <p className="text-xs text-gray-500">Drop-off</p>
                       <p className="font-medium">{dropoffDate.toLocaleString('en-US', { 
@@ -223,7 +223,7 @@ export default function CarBookingPage() {
             {/* Driver Information */}
             <div className="card">
               <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-                <User className="h-5 w-5 mr-2 text-blue-600" />
+                <User className="h-5 w-5 mr-2 text-primary-950" />
                 Driver Information
               </h2>
               <div className="space-y-4">
@@ -384,11 +384,11 @@ export default function CarBookingPage() {
             {/* Payment Method */}
             <div className="card">
               <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-                <CreditCard className="h-5 w-5 mr-2 text-blue-600" />
+                <CreditCard className="h-5 w-5 mr-2 text-primary-950" />
                 Payment Method
               </h2>
               <div className="space-y-3">
-                <label className="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-blue-500 transition-colors">
+                <label className="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary-900 transition-colors">
                   <input
                     type="radio"
                     name="payment"
@@ -404,7 +404,7 @@ export default function CarBookingPage() {
                   </div>
                 </label>
 
-                <label className="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-blue-500 transition-colors">
+                <label className="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary-900 transition-colors">
                   <input
                     type="radio"
                     name="payment"
@@ -422,7 +422,7 @@ export default function CarBookingPage() {
                   </div>
                 </label>
 
-                <label className="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-blue-500 transition-colors">
+                <label className="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary-900 transition-colors">
                   <input
                     type="radio"
                     name="payment"
@@ -432,7 +432,7 @@ export default function CarBookingPage() {
                     className="mr-3"
                   />
                   <div className="h-5 w-5 mr-3 flex items-center justify-center">
-                    <span className="text-purple-600 font-bold text-xs">K</span>
+                    <span className="text-accent-500 font-bold text-xs">K</span>
                   </div>
                   <div>
                     <p className="font-medium text-gray-900">Khalti</p>
@@ -441,7 +441,7 @@ export default function CarBookingPage() {
                 </label>
 
                 {user?.role === 'B2B_AGENT' && (
-                  <label className="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-blue-500 transition-colors">
+                  <label className="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary-900 transition-colors">
                     <input
                       type="radio"
                       name="payment"
@@ -489,7 +489,7 @@ export default function CarBookingPage() {
                 <div className="flex justify-between items-baseline mb-2">
                   <span className="text-gray-900 font-semibold">Total Amount</span>
                   <div className="text-right">
-                    <span className="text-3xl font-bold text-blue-600">
+                    <span className="text-3xl font-bold text-primary-950">
                       {carData.currency === 'USD' ? '$' : carData.currency} {totalPrice.toFixed(2)}
                     </span>
                   </div>
@@ -497,7 +497,7 @@ export default function CarBookingPage() {
                 <p className="text-xs text-gray-500">Includes all mandatory fees</p>
               </div>
 
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-6 text-sm text-blue-800">
+              <div className="bg-accent-50 border border-accent-200 rounded-lg p-3 mb-6 text-sm text-primary-950">
                 <Clock className="h-4 w-4 inline mr-1" />
                 <span className="font-medium">Free Cancellation</span>
                 <p className="text-xs mt-1">Cancel up to 48 hours before pickup</p>

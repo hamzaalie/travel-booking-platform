@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/store';
 import { logout } from '@/store/slices/authSlice';
-import { Plane, LogOut, User, Menu, X, Home, Search, Briefcase, Mail, Phone, Smartphone, BookOpen } from 'lucide-react';
+import { LogOut, User, Menu, X, Home, Search, Briefcase, Mail, Phone, Smartphone, BookOpen } from 'lucide-react';
 import { useState } from 'react';
 import CurrencySelector from './CurrencySelector';
 
@@ -33,23 +33,23 @@ export default function Header() {
   return (
     <>
       {/* Top Bar */}
-      <div className="bg-gradient-to-r from-primary-900 to-primary-800 text-white py-2 hidden md:block">
+      <div className="bg-gradient-to-r from-primary-950 to-primary-900 text-white py-2 hidden md:block">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center text-sm">
             <div className="flex items-center space-x-6">
-              <a href="tel:+1234567890" className="flex items-center hover:text-primary-200 transition-colors">
+              <a href="tel:+1234567890" className="flex items-center hover:text-accent-400 transition-colors">
                 <Phone className="h-4 w-4 mr-2" />
                 +1 (234) 567-890
               </a>
-              <a href="mailto:support@travelbooking.com" className="flex items-center hover:text-primary-200 transition-colors">
+              <a href="mailto:support@peakpasstravel.com" className="flex items-center hover:text-accent-400 transition-colors">
                 <Mail className="h-4 w-4 mr-2" />
-                support@travelbooking.com
+                support@peakpasstravel.com
               </a>
             </div>
             <div className="flex items-center space-x-4">
               <CurrencySelector />
               <span className="flex items-center">
-                <span className="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
+                <span className="w-2 h-2 bg-accent-500 rounded-full mr-2 animate-pulse"></span>
                 24/7 Customer Support
               </span>
             </div>
@@ -62,23 +62,19 @@ export default function Header() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             {/* Logo */}
-            <Link to="/" className="flex items-center space-x-3 group">
-              <div className="bg-gradient-to-br from-primary-600 to-primary-700 p-2 rounded-xl shadow-md group-hover:shadow-lg transition-all duration-300 group-hover:scale-105">
-                <Plane className="h-8 w-8 text-white" />
-              </div>
-              <div>
-                <span className="text-2xl font-display font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent">
-                  TravelBooking
-                </span>
-                <div className="text-xs text-gray-500 font-medium">Your Journey Partner</div>
-              </div>
+            <Link to="/" className="flex items-center group">
+              <img 
+                src="/images/Peakpass Travel Brand Kit/Peakpass Logo Full Color.png" 
+                alt="Peakpass Travel" 
+                className="h-14 w-auto group-hover:scale-105 transition-transform duration-300" 
+              />
             </Link>
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center space-x-1">
               <Link 
                 to="/" 
-                className="flex items-center space-x-2 px-4 py-2 rounded-lg text-gray-700 hover:text-primary-600 hover:bg-primary-50 transition-all duration-200 font-medium"
+                className="flex items-center space-x-2 px-4 py-2 rounded-lg text-gray-700 hover:text-primary-950 hover:bg-accent-50 transition-all duration-200 font-medium"
               >
                 <Home className="h-4 w-4" />
                 <span>Home</span>
@@ -86,7 +82,7 @@ export default function Header() {
               
               <Link 
                 to="/search" 
-                className="flex items-center space-x-2 px-4 py-2 rounded-lg text-gray-700 hover:text-primary-600 hover:bg-primary-50 transition-all duration-200 font-medium"
+                className="flex items-center space-x-2 px-4 py-2 rounded-lg text-gray-700 hover:text-primary-950 hover:bg-accent-50 transition-all duration-200 font-medium"
               >
                 <Search className="h-4 w-4" />
                 <span>Search Flights</span>
@@ -94,21 +90,21 @@ export default function Header() {
 
               <Link 
                 to="/hotels" 
-                className="flex items-center space-x-2 px-4 py-2 rounded-lg text-gray-700 hover:text-primary-600 hover:bg-primary-50 transition-all duration-200 font-medium"
+                className="flex items-center space-x-2 px-4 py-2 rounded-lg text-gray-700 hover:text-primary-950 hover:bg-accent-50 transition-all duration-200 font-medium"
               >
                 <span>Hotels</span>
               </Link>
 
               <Link 
                 to="/cars" 
-                className="flex items-center space-x-2 px-4 py-2 rounded-lg text-gray-700 hover:text-primary-600 hover:bg-primary-50 transition-all duration-200 font-medium"
+                className="flex items-center space-x-2 px-4 py-2 rounded-lg text-gray-700 hover:text-primary-950 hover:bg-accent-50 transition-all duration-200 font-medium"
               >
                 <span>Car Rental</span>
               </Link>
 
               <Link 
                 to="/esim" 
-                className="flex items-center space-x-2 px-4 py-2 rounded-lg text-gray-700 hover:text-primary-600 hover:bg-primary-50 transition-all duration-200 font-medium"
+                className="flex items-center space-x-2 px-4 py-2 rounded-lg text-gray-700 hover:text-primary-950 hover:bg-accent-50 transition-all duration-200 font-medium"
               >
                 <Smartphone className="h-4 w-4" />
                 <span>eSIM</span>
@@ -116,7 +112,7 @@ export default function Header() {
 
               <Link 
                 to="/blog" 
-                className="flex items-center space-x-2 px-4 py-2 rounded-lg text-gray-700 hover:text-primary-600 hover:bg-primary-50 transition-all duration-200 font-medium"
+                className="flex items-center space-x-2 px-4 py-2 rounded-lg text-gray-700 hover:text-primary-950 hover:bg-accent-50 transition-all duration-200 font-medium"
               >
                 <BookOpen className="h-4 w-4" />
                 <span>Blog</span>
@@ -126,7 +122,7 @@ export default function Header() {
                 <>
                   <Link
                     to={getDashboardLink()}
-                    className="flex items-center space-x-2 px-4 py-2 rounded-lg text-gray-700 hover:text-primary-600 hover:bg-primary-50 transition-all duration-200 font-medium"
+                    className="flex items-center space-x-2 px-4 py-2 rounded-lg text-gray-700 hover:text-primary-950 hover:bg-accent-50 transition-all duration-200 font-medium"
                   >
                     <User className="h-4 w-4" />
                     <span>Dashboard</span>
@@ -143,13 +139,13 @@ export default function Header() {
                 <>
                   <Link 
                     to="/login" 
-                    className="px-4 py-2 rounded-lg text-gray-700 hover:text-primary-600 hover:bg-primary-50 transition-all duration-200 font-medium ml-2"
+                    className="px-4 py-2 rounded-lg text-gray-700 hover:text-primary-950 hover:bg-accent-50 transition-all duration-200 font-medium ml-2"
                   >
                     Login
                   </Link>
                   <Link
                     to="/register"
-                    className="bg-gradient-to-r from-primary-600 to-primary-700 text-white px-6 py-2.5 rounded-xl hover:from-primary-700 hover:to-primary-800 transition-all duration-300 shadow-md hover:shadow-lg font-semibold transform hover:-translate-y-0.5"
+                    className="bg-gradient-to-r from-accent-500 to-accent-600 text-white px-6 py-2.5 rounded-xl hover:from-accent-600 hover:to-accent-700 transition-all duration-300 shadow-md hover:shadow-lg font-semibold transform hover:-translate-y-0.5"
                   >
                     Get Started
                   </Link>
@@ -178,7 +174,7 @@ export default function Header() {
               <Link
                 to="/"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-primary-50 hover:text-primary-600 transition-all duration-200 font-medium"
+                className="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-accent-50 hover:text-primary-950 transition-all duration-200 font-medium"
               >
                 <Home className="h-5 w-5" />
                 <span>Home</span>
@@ -187,7 +183,7 @@ export default function Header() {
               <Link
                 to="/search"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-primary-50 hover:text-primary-600 transition-all duration-200 font-medium"
+                className="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-accent-50 hover:text-primary-950 transition-all duration-200 font-medium"
               >
                 <Search className="h-5 w-5" />
                 <span>Search Flights</span>
@@ -196,7 +192,7 @@ export default function Header() {
               <Link
                 to="/hotels"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-primary-50 hover:text-primary-600 transition-all duration-200 font-medium"
+                className="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-accent-50 hover:text-primary-950 transition-all duration-200 font-medium"
               >
                 <Briefcase className="h-5 w-5" />
                 <span>Hotels</span>
@@ -205,7 +201,7 @@ export default function Header() {
               <Link
                 to="/cars"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-primary-50 hover:text-primary-600 transition-all duration-200 font-medium"
+                className="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-accent-50 hover:text-primary-950 transition-all duration-200 font-medium"
               >
                 <Briefcase className="h-5 w-5" />
                 <span>Car Rental</span>
@@ -216,7 +212,7 @@ export default function Header() {
                   <Link
                     to={getDashboardLink()}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-primary-50 hover:text-primary-600 transition-all duration-200 font-medium"
+                    className="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-accent-50 hover:text-primary-950 transition-all duration-200 font-medium"
                   >
                     <User className="h-5 w-5" />
                     <span>Dashboard</span>
@@ -234,14 +230,14 @@ export default function Header() {
                   <Link
                     to="/login"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="block w-full text-center px-4 py-3 rounded-xl border-2 border-primary-600 text-primary-600 hover:bg-primary-50 transition-all duration-200 font-semibold"
+                    className="block w-full text-center px-4 py-3 rounded-xl border-2 border-primary-950 text-primary-950 hover:bg-accent-50 transition-all duration-200 font-semibold"
                   >
                     Login
                   </Link>
                   <Link
                     to="/register"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="block w-full text-center bg-gradient-to-r from-primary-600 to-primary-700 text-white px-4 py-3 rounded-xl hover:from-primary-700 hover:to-primary-800 transition-all duration-300 shadow-md font-semibold"
+                    className="block w-full text-center bg-gradient-to-r from-accent-500 to-accent-600 text-white px-4 py-3 rounded-xl hover:from-accent-600 hover:to-accent-700 transition-all duration-300 shadow-md font-semibold"
                   >
                     Get Started
                   </Link>

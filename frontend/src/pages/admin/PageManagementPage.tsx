@@ -205,14 +205,14 @@ export default function PageManagementPage() {
                             href={`/page/${page.slug}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="p-1 text-gray-400 hover:text-primary-600"
+                            className="p-1 text-gray-400 hover:text-primary-950"
                             title="View Page"
                           >
                             <Eye className="h-5 w-5" />
                           </a>
                           <button
                             onClick={() => handleEdit(page)}
-                            className="p-1 text-gray-400 hover:text-blue-600"
+                            className="p-1 text-gray-400 hover:text-primary-950"
                             title="Edit"
                           >
                             <Edit className="h-5 w-5" />

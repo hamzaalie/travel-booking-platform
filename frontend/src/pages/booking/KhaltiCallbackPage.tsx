@@ -138,7 +138,7 @@ export default function KhaltiCallbackPage() {
         <div className="bg-white rounded-lg shadow-lg p-8 text-center">
           {status === 'processing' && (
             <>
-              <Loader2 className="h-16 w-16 text-purple-600 animate-spin mx-auto mb-4" />
+              <Loader2 className="h-16 w-16 text-accent-500 animate-spin mx-auto mb-4" />
               <h1 className="text-2xl font-bold text-gray-900 mb-2">Verifying Payment</h1>
               <p className="text-gray-600">
                 Please wait while we verify your Khalti payment...

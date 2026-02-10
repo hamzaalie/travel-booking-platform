@@ -113,7 +113,7 @@ export default function PaymentSuccessPage() {
         <div className="bg-white rounded-lg shadow-lg p-8 text-center">
           {status === 'processing' && (
             <>
-              <Loader2 className="h-16 w-16 text-primary-600 animate-spin mx-auto mb-4" />
+              <Loader2 className="h-16 w-16 text-primary-950 animate-spin mx-auto mb-4" />
               <h1 className="text-2xl font-bold text-gray-900 mb-2">Processing Payment</h1>
               <p className="text-gray-600">
                 Please wait while we confirm your payment and complete your booking...

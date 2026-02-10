@@ -131,9 +131,9 @@ export const SpecialAssistanceForm: React.FC<SpecialAssistanceFormProps> = ({
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-lg">
+      <div className="bg-gradient-to-r from-accent-50 to-accent-50 p-6 rounded-lg">
         <h3 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-          <Accessibility className="w-6 h-6 text-blue-600" />
+          <Accessibility className="w-6 h-6 text-primary-950" />
           Special Assistance
         </h3>
         <p className="text-sm text-gray-600 mt-1">
@@ -156,9 +156,9 @@ export const SpecialAssistanceForm: React.FC<SpecialAssistanceFormProps> = ({
                 disabled={readonly}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                   isActive
-                    ? 'bg-blue-600 text-white shadow-md'
+                    ? 'bg-primary-950 text-white shadow-md'
                     : hasAssistance
-                    ? 'bg-blue-100 text-blue-800 border border-blue-300'
+                    ? 'bg-accent-100 text-primary-950 border border-accent-300'
                     : 'bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200'
                 } ${readonly ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}
               >
@@ -179,7 +179,7 @@ export const SpecialAssistanceForm: React.FC<SpecialAssistanceFormProps> = ({
               onClick={() => setSelectedCategory(category)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-all capitalize ${
                 selectedCategory === category
-                  ? 'bg-blue-600 text-white shadow-md'
+                  ? 'bg-primary-950 text-white shadow-md'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
@@ -202,7 +202,7 @@ export const SpecialAssistanceForm: React.FC<SpecialAssistanceFormProps> = ({
               key={option.code}
               className={`rounded-lg border-2 transition-all ${
                 isSelected
-                  ? 'border-blue-500 bg-blue-50'
+                  ? 'border-primary-900 bg-accent-50'
                   : 'border-gray-200 bg-white'
               }`}
             >
@@ -212,7 +212,7 @@ export const SpecialAssistanceForm: React.FC<SpecialAssistanceFormProps> = ({
                     <h5 className="font-semibold text-gray-900">{option.name}</h5>
                     <p className="text-xs text-gray-500 mt-0.5">Code: {option.code}</p>
                   </div>
-                  <p className="font-bold text-blue-600">
+                  <p className="font-bold text-primary-950">
                     {option.price > 0 ? `₹${option.price.toLocaleString()}` : 'Free'}
                   </p>
                 </div>
@@ -233,12 +233,12 @@ export const SpecialAssistanceForm: React.FC<SpecialAssistanceFormProps> = ({
 
                 {/* Documents */}
                 {option.documents.length > 0 && (
-                  <div className="mb-3 bg-blue-50 p-2 rounded text-xs">
-                    <p className="font-medium text-blue-800 mb-1 flex items-center gap-1">
+                  <div className="mb-3 bg-accent-50 p-2 rounded text-xs">
+                    <p className="font-medium text-primary-950 mb-1 flex items-center gap-1">
                       <FileText className="w-3 h-3" />
                       Required Documents:
                     </p>
-                    <ul className="list-disc list-inside text-blue-700 space-y-1">
+                    <ul className="list-disc list-inside text-primary-900 space-y-1">
                       {option.documents.map((doc: string, idx: number) => (
                         <li key={idx}>{doc}</li>
                       ))}
@@ -257,7 +257,7 @@ export const SpecialAssistanceForm: React.FC<SpecialAssistanceFormProps> = ({
                   disabled={readonly}
                   className={`w-full py-2 rounded-lg font-medium transition-all ${
                     isSelected
-                      ? 'bg-blue-600 text-white hover:bg-blue-700'
+                      ? 'bg-primary-950 text-white hover:bg-primary-900'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   } ${readonly ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
@@ -292,7 +292,7 @@ export const SpecialAssistanceForm: React.FC<SpecialAssistanceFormProps> = ({
               placeholder="Please provide any additional information that may help us assist you better..."
               rows={4}
               disabled={readonly}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-60"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-900 focus:border-transparent disabled:opacity-60"
             />
           </div>
 
@@ -309,7 +309,7 @@ export const SpecialAssistanceForm: React.FC<SpecialAssistanceFormProps> = ({
                 value={currentAssistance.emergencyContact?.name || ''}
                 onChange={(e) => handleEmergencyContactUpdate('name', e.target.value)}
                 disabled={readonly}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-60"
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-900 focus:border-transparent disabled:opacity-60"
               />
               <input
                 type="text"
@@ -317,7 +317,7 @@ export const SpecialAssistanceForm: React.FC<SpecialAssistanceFormProps> = ({
                 value={currentAssistance.emergencyContact?.relationship || ''}
                 onChange={(e) => handleEmergencyContactUpdate('relationship', e.target.value)}
                 disabled={readonly}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-60"
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-900 focus:border-transparent disabled:opacity-60"
               />
               <input
                 type="tel"
@@ -325,7 +325,7 @@ export const SpecialAssistanceForm: React.FC<SpecialAssistanceFormProps> = ({
                 value={currentAssistance.emergencyContact?.phone || ''}
                 onChange={(e) => handleEmergencyContactUpdate('phone', e.target.value)}
                 disabled={readonly}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-60"
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-900 focus:border-transparent disabled:opacity-60"
               />
             </div>
           </div>
@@ -333,7 +333,7 @@ export const SpecialAssistanceForm: React.FC<SpecialAssistanceFormProps> = ({
       )}
 
       {/* Summary */}
-      <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-lg">
+      <div className="bg-gradient-to-r from-accent-50 to-accent-50 p-6 rounded-lg">
         <h4 className="text-lg font-semibold text-gray-900 mb-4">Assistance Summary</h4>
 
         {selectedAssistance.size === 0 ? (
@@ -363,7 +363,7 @@ export const SpecialAssistanceForm: React.FC<SpecialAssistanceFormProps> = ({
 
             <div className="flex items-center justify-between pt-3 border-t-2 border-gray-200">
               <p className="text-lg font-bold text-gray-900">Total Assistance Charges</p>
-              <p className="text-xl font-bold text-blue-600">
+              <p className="text-xl font-bold text-primary-950">
                 ₹{Array.from(selectedAssistance.values())
                   .reduce((sum, req) => sum + req.totalPrice, 0)
                   .toLocaleString()}

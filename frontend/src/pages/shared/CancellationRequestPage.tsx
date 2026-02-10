@@ -133,7 +133,7 @@ export default function CancellationRequestPage() {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
-          <Plane className="h-12 w-12 text-primary-600 mx-auto mb-4 animate-pulse" />
+          <Plane className="h-12 w-12 text-primary-950 mx-auto mb-4 animate-pulse" />
           <p className="text-gray-600">Loading booking details...</p>
         </div>
       </div>
@@ -237,7 +237,7 @@ export default function CancellationRequestPage() {
       </div>
 
       {/* Refund Calculation */}
-      <div className="card bg-gradient-to-r from-blue-50 to-indigo-50">
+      <div className="card bg-gradient-to-r from-accent-50 to-primary-50">
         <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
           <DollarSign className="h-6 w-6 mr-2" />
           Refund Calculation
@@ -286,7 +286,7 @@ export default function CancellationRequestPage() {
               type="checkbox"
               checked={acceptTerms}
               onChange={(e) => setAcceptTerms(e.target.checked)}
-              className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded mt-1"
+              className="h-4 w-4 text-primary-950 focus:ring-primary-500 border-gray-300 rounded mt-1"
               id="acceptTerms"
             />
             <label htmlFor="acceptTerms" className="ml-2 text-sm text-gray-700">

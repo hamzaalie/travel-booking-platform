@@ -231,12 +231,12 @@ export default function AgentMarkupManagementPage() {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-4 gap-4 mb-6">
-        <div className="card bg-blue-50 border border-blue-200">
+        <div className="card bg-accent-50 border border-accent-200">
           <div className="flex items-center">
-            <Users className="h-10 w-10 text-blue-600 mr-3" />
+            <Users className="h-10 w-10 text-primary-950 mr-3" />
             <div>
-              <p className="text-sm text-blue-600">Total Agents</p>
-              <p className="text-2xl font-bold text-blue-900">{agents?.length || 0}</p>
+              <p className="text-sm text-primary-950">Total Agents</p>
+              <p className="text-2xl font-bold text-primary-950">{agents?.length || 0}</p>
             </div>
           </div>
         </div>
@@ -251,12 +251,12 @@ export default function AgentMarkupManagementPage() {
             </div>
           </div>
         </div>
-        <div className="card bg-purple-50 border border-purple-200">
+        <div className="card bg-accent-50 border border-accent-200">
           <div className="flex items-center">
-            <Percent className="h-10 w-10 text-purple-600 mr-3" />
+            <Percent className="h-10 w-10 text-accent-500 mr-3" />
             <div>
-              <p className="text-sm text-purple-600">With Discount</p>
-              <p className="text-2xl font-bold text-purple-900">
+              <p className="text-sm text-accent-500">With Discount</p>
+              <p className="text-2xl font-bold text-primary-950">
                 {agents?.filter(a => a.discountType).length || 0}
               </p>
             </div>
@@ -409,7 +409,7 @@ export default function AgentMarkupManagementPage() {
       <div className="card overflow-hidden">
         {isLoading ? (
           <div className="flex justify-center items-center py-12">
-            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary-600"></div>
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary-950"></div>
           </div>
         ) : agents?.length === 0 ? (
           <div className="text-center py-12">
@@ -575,7 +575,7 @@ export default function AgentMarkupManagementPage() {
                         </td>
                         <td className="px-4 py-4">
                           {agent.commissionType ? (
-                            <span className="inline-flex items-center text-sm text-purple-600">
+                            <span className="inline-flex items-center text-sm text-accent-500">
                               {agent.commissionType === 'FIXED' ? (
                                 <DollarSign className="h-3 w-3 mr-1" />
                               ) : (
@@ -626,14 +626,14 @@ export default function AgentMarkupManagementPage() {
                           <>
                             <button
                               onClick={() => startEditing(agent)}
-                              className="p-1 text-blue-600 hover:bg-blue-50 rounded"
+                              className="p-1 text-primary-950 hover:bg-accent-50 rounded"
                               title="Edit Markup"
                             >
                               <Edit className="h-4 w-4" />
                             </button>
                             <Link
                               to={`/admin/agents/${agent.id}/documents`}
-                              className="p-1 text-purple-600 hover:bg-purple-50 rounded"
+                              className="p-1 text-accent-500 hover:bg-accent-50 rounded"
                               title="View Documents"
                             >
                               <FileText className="h-4 w-4" />

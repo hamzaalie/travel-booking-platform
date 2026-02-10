@@ -19,12 +19,12 @@ export default function AgentMarkupsPage() {
       <h1 className="text-3xl font-bold mb-8">My Markups</h1>
 
       {/* Info Card */}
-      <div className="card bg-blue-50 border-blue-200 mb-6">
+      <div className="card bg-accent-50 border-accent-200 mb-6">
         <div className="flex items-start space-x-3">
-          <Info className="h-6 w-6 text-blue-600 mt-1 flex-shrink-0" />
+          <Info className="h-6 w-6 text-primary-950 mt-1 flex-shrink-0" />
           <div>
-            <h3 className="font-semibold text-blue-900 mb-1">How Markups Work</h3>
-            <p className="text-sm text-blue-800">
+            <h3 className="font-semibold text-primary-950 mb-1">How Markups Work</h3>
+            <p className="text-sm text-primary-950">
               Your agent-specific markup will be applied to all bookings. If no agent-specific markup is set,
               the global markup will apply. Contact your admin to configure custom markups for your agency.
             </p>
@@ -34,7 +34,7 @@ export default function AgentMarkupsPage() {
 
       {isLoading ? (
         <div className="text-center py-12">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-950"></div>
           <p className="text-gray-600 mt-4">Loading markups...</p>
         </div>
       ) : (
@@ -48,19 +48,19 @@ export default function AgentMarkupsPage() {
                   <div key={markup.id} className="card border-2 border-primary-300 bg-primary-50">
                     <div className="flex items-center justify-between mb-3">
                       <div>
-                        <div className="text-4xl font-bold text-primary-700">
+                        <div className="text-4xl font-bold text-primary-900">
                           {markup.type === 'PERCENTAGE' ? `${markup.value}%` : `$${markup.value}`}
                         </div>
                         <div className="text-sm text-gray-600 mt-1">
                           {markup.type === 'PERCENTAGE' ? 'Percentage Markup' : 'Fixed Amount'}
                         </div>
                       </div>
-                      <TrendingUp className="h-10 w-10 text-primary-600" />
+                      <TrendingUp className="h-10 w-10 text-primary-950" />
                     </div>
                     {markup.description && (
                       <p className="text-sm text-gray-700 bg-white p-3 rounded-lg">{markup.description}</p>
                     )}
-                    <div className="mt-3 text-xs text-primary-700 font-medium">
+                    <div className="mt-3 text-xs text-primary-900 font-medium">
                       ✓ Applied to all your bookings
                     </div>
                   </div>
@@ -125,7 +125,7 @@ export default function AgentMarkupsPage() {
                 </div>
                 {(agentSpecificMarkups[0] || globalMarkups[0]) && (
                   <>
-                    <div className="flex justify-between text-primary-700">
+                    <div className="flex justify-between text-primary-900">
                       <span>Your Markup ({(agentSpecificMarkups[0] || globalMarkups[0]).type === 'PERCENTAGE' ? 'Percentage' : 'Fixed'}):</span>
                       <span className="font-medium">
                         {(agentSpecificMarkups[0] || globalMarkups[0]).type === 'PERCENTAGE'

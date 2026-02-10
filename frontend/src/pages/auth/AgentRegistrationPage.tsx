@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Plane, Upload, Building, User, CreditCard, FileText, Globe, X, Check } from 'lucide-react';
+import { Upload, Building, User, CreditCard, FileText, Globe, X, Check } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 // API URL - Use environment variable or default to Railway production backend
@@ -275,14 +275,16 @@ export default function AgentRegistrationPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-blue-100 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-accent-100 py-8 px-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
-            <div className="bg-primary-600 p-3 rounded-full">
-              <Plane className="h-8 w-8 text-white" />
-            </div>
+            <img 
+              src="/images/Peakpass Travel Brand Kit/Peakpass Logo Full Color.png" 
+              alt="Peakpass Travel" 
+              className="h-16 w-auto" 
+            />
           </div>
           <h1 className="text-3xl font-bold text-gray-900">Agent Registration</h1>
           <p className="text-gray-600 mt-2">Complete your registration to become a travel agent partner</p>
@@ -297,7 +299,7 @@ export default function AgentRegistrationPage() {
                   <div
                     className={`w-10 h-10 rounded-full flex items-center justify-center ${
                       currentStep >= step.number
-                        ? 'bg-primary-600 text-white'
+                        ? 'bg-primary-950 text-white'
                         : 'bg-gray-200 text-gray-500'
                     }`}
                   >
@@ -307,12 +309,12 @@ export default function AgentRegistrationPage() {
                       <step.icon className="h-5 w-5" />
                     )}
                   </div>
-                  <span className={`text-xs mt-1 ${currentStep >= step.number ? 'text-primary-600 font-medium' : 'text-gray-500'}`}>
+                  <span className={`text-xs mt-1 ${currentStep >= step.number ? 'text-primary-950 font-medium' : 'text-gray-500'}`}>
                     {step.title}
                   </span>
                 </div>
                 {index < steps.length - 1 && (
-                  <div className={`w-16 h-1 mx-2 ${currentStep > step.number ? 'bg-primary-600' : 'bg-gray-200'}`} />
+                  <div className={`w-16 h-1 mx-2 ${currentStep > step.number ? 'bg-primary-950' : 'bg-gray-200'}`} />
                 )}
               </div>
             ))}
@@ -888,7 +890,7 @@ export default function AgentRegistrationPage() {
         <div className="text-center mt-6">
           <p className="text-sm text-gray-600">
             Already have an account?{' '}
-            <Link to="/login" className="text-primary-600 hover:text-primary-700 font-medium">
+            <Link to="/login" className="text-primary-950 hover:text-primary-900 font-medium">
               Sign in here
             </Link>
           </p>

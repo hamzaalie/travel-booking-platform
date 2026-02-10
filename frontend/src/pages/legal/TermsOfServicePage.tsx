@@ -4,7 +4,7 @@ export default function TermsOfServicePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero */}
-      <div className="bg-gradient-to-r from-primary-600 to-primary-800 py-16 px-4">
+      <div className="bg-gradient-to-r from-primary-950 to-primary-950 py-16 px-4">
         <div className="max-w-4xl mx-auto text-center text-white">
           <FileText className="h-16 w-16 mx-auto mb-4 opacity-80" />
           <h1 className="text-4xl font-bold mb-4">Terms of Service</h1>
@@ -21,12 +21,12 @@ export default function TermsOfServicePage() {
           
           <section>
             <div className="flex items-center gap-3 mb-4">
-              <Check className="h-6 w-6 text-primary-600" />
+              <Check className="h-6 w-6 text-primary-950" />
               <h2 className="text-2xl font-bold text-gray-900">Acceptance of Terms</h2>
             </div>
             <div className="prose prose-gray max-w-none">
               <p className="text-gray-600 mb-4">
-                By accessing or using TravelBooking's services, you agree to be bound by these Terms of Service 
+                By accessing or using Peakpass Travel's services, you agree to be bound by these Terms of Service 
                 and all applicable laws and regulations. If you do not agree with any of these terms, 
                 you are prohibited from using or accessing our services.
               </p>
@@ -35,7 +35,7 @@ export default function TermsOfServicePage() {
 
           <section>
             <div className="flex items-center gap-3 mb-4">
-              <Users className="h-6 w-6 text-primary-600" />
+              <Users className="h-6 w-6 text-primary-950" />
               <h2 className="text-2xl font-bold text-gray-900">User Accounts</h2>
             </div>
             <div className="prose prose-gray max-w-none">
@@ -51,7 +51,7 @@ export default function TermsOfServicePage() {
 
           <section>
             <div className="flex items-center gap-3 mb-4">
-              <FileText className="h-6 w-6 text-primary-600" />
+              <FileText className="h-6 w-6 text-primary-950" />
               <h2 className="text-2xl font-bold text-gray-900">Booking Terms</h2>
             </div>
             <div className="prose prose-gray max-w-none">
@@ -68,7 +68,7 @@ export default function TermsOfServicePage() {
 
           <section>
             <div className="flex items-center gap-3 mb-4">
-              <Scale className="h-6 w-6 text-primary-600" />
+              <Scale className="h-6 w-6 text-primary-950" />
               <h2 className="text-2xl font-bold text-gray-900">Payment Terms</h2>
             </div>
             <div className="prose prose-gray max-w-none">
@@ -84,7 +84,7 @@ export default function TermsOfServicePage() {
 
           <section>
             <div className="flex items-center gap-3 mb-4">
-              <Ban className="h-6 w-6 text-primary-600" />
+              <Ban className="h-6 w-6 text-primary-950" />
               <h2 className="text-2xl font-bold text-gray-900">Prohibited Activities</h2>
             </div>
             <div className="prose prose-gray max-w-none">
@@ -102,12 +102,12 @@ export default function TermsOfServicePage() {
 
           <section>
             <div className="flex items-center gap-3 mb-4">
-              <AlertTriangle className="h-6 w-6 text-primary-600" />
+              <AlertTriangle className="h-6 w-6 text-primary-950" />
               <h2 className="text-2xl font-bold text-gray-900">Limitation of Liability</h2>
             </div>
             <div className="prose prose-gray max-w-none">
               <p className="text-gray-600">
-                TravelBooking acts as an intermediary between you and travel service providers. 
+                Peakpass Travel acts as an intermediary between you and travel service providers. 
                 We are not liable for:
               </p>
               <ul className="list-disc pl-6 text-gray-600 space-y-2 mt-4">

@@ -31,8 +31,8 @@ interface FlightRequest {
 }
 
 const REQUEST_TYPES: Record<string, { label: string; color: string }> = {
-  DATE_CHANGE: { label: 'Date Change', color: 'bg-blue-100 text-blue-700' },
-  NAME_CORRECTION: { label: 'Name Correction', color: 'bg-purple-100 text-purple-700' },
+  DATE_CHANGE: { label: 'Date Change', color: 'bg-accent-100 text-primary-900' },
+  NAME_CORRECTION: { label: 'Name Correction', color: 'bg-accent-100 text-accent-600' },
   CANCELLATION: { label: 'Cancellation', color: 'bg-red-100 text-red-700' },
   REFUND: { label: 'Refund', color: 'bg-orange-100 text-orange-700' },
   ROUTE_CHANGE: { label: 'Route Change', color: 'bg-teal-100 text-teal-700' },
@@ -43,7 +43,7 @@ const REQUEST_TYPES: Record<string, { label: string; color: string }> = {
 
 const STATUS_COLORS: Record<string, string> = {
   PENDING: 'bg-yellow-100 text-yellow-700',
-  UNDER_REVIEW: 'bg-blue-100 text-blue-700',
+  UNDER_REVIEW: 'bg-accent-100 text-primary-900',
   APPROVED: 'bg-green-100 text-green-700',
   REJECTED: 'bg-red-100 text-red-700',
   COMPLETED: 'bg-gray-100 text-gray-700',
@@ -273,7 +273,7 @@ export default function FlightChangeManagementPage() {
                 onClick={() => setCurrentPage(i + 1)}
                 className={`px-3 py-1 rounded ${
                   currentPage === i + 1
-                    ? 'bg-primary-600 text-white'
+                    ? 'bg-primary-950 text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >

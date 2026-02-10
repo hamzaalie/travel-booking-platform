@@ -56,7 +56,7 @@ export default function BookingDetailsPage() {
   if (isLoading) {
     return (
       <div className="text-center py-12">
-        <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-950"></div>
         <p className="text-gray-600 mt-4">Loading booking details...</p>
       </div>
     );
@@ -113,7 +113,7 @@ export default function BookingDetailsPage() {
           {/* Flight Information */}
           <div className="card">
             <h2 className="text-xl font-bold mb-4 flex items-center">
-              <Plane className="h-6 w-6 mr-2 text-primary-600" />
+              <Plane className="h-6 w-6 mr-2 text-primary-950" />
               Flight Information
             </h2>
             <div className="space-y-4">
@@ -126,7 +126,7 @@ export default function BookingDetailsPage() {
                   <p className="text-sm text-gray-600">{booking.flightDetails?.originCity || 'Departure'}</p>
                 </div>
                 <div className="flex flex-col items-center">
-                  <Plane className="h-6 w-6 text-primary-600 transform rotate-90 mb-2" />
+                  <Plane className="h-6 w-6 text-primary-950 transform rotate-90 mb-2" />
                   <span className="text-xs text-gray-500">
                     {booking.flightDetails?.duration || 'Direct'}
                   </span>
@@ -179,10 +179,10 @@ export default function BookingDetailsPage() {
                 <div className="bg-primary-50 border border-primary-200 rounded-lg p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-primary-700 font-medium">PNR (Passenger Name Record)</p>
+                      <p className="text-sm text-primary-900 font-medium">PNR (Passenger Name Record)</p>
                       <p className="text-xl font-bold text-primary-900">{booking.pnr}</p>
                     </div>
-                    <FileText className="h-8 w-8 text-primary-600" />
+                    <FileText className="h-8 w-8 text-primary-950" />
                   </div>
                 </div>
               )}
@@ -192,7 +192,7 @@ export default function BookingDetailsPage() {
           {/* Passenger Information */}
           <div className="card">
             <h2 className="text-xl font-bold mb-4 flex items-center">
-              <Users className="h-6 w-6 mr-2 text-primary-600" />
+              <Users className="h-6 w-6 mr-2 text-primary-950" />
               Passenger Information ({booking.passengers?.length || 0})
             </h2>
             <div className="space-y-3">
@@ -228,7 +228,7 @@ export default function BookingDetailsPage() {
           {/* Price Breakdown */}
           <div className="card">
             <h2 className="text-xl font-bold mb-4 flex items-center">
-              <CreditCard className="h-6 w-6 mr-2 text-primary-600" />
+              <CreditCard className="h-6 w-6 mr-2 text-primary-950" />
               Price Breakdown
             </h2>
             <div className="space-y-3">
@@ -250,7 +250,7 @@ export default function BookingDetailsPage() {
               </div>
               <div className="border-t pt-3 flex justify-between">
                 <span className="text-lg font-bold text-gray-900">Total Amount</span>
-                <span className="text-2xl font-bold text-primary-700">
+                <span className="text-2xl font-bold text-primary-900">
                   ${booking.totalPrice?.toFixed(2) || '0.00'}
                 </span>
               </div>

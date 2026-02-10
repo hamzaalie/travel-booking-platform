@@ -50,7 +50,7 @@ export default function BookingConfirmationPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <Plane className="h-16 w-16 text-primary-600 mx-auto mb-4 animate-pulse" />
+          <Plane className="h-16 w-16 text-primary-950 mx-auto mb-4 animate-pulse" />
           <p className="text-gray-600">Loading booking details...</p>
         </div>
       </div>
@@ -86,12 +86,12 @@ export default function BookingConfirmationPage() {
           </p>
           <div className="inline-flex items-center space-x-2 bg-primary-100 px-6 py-3 rounded-lg">
             <span className="text-sm font-medium text-primary-900">Booking Reference:</span>
-            <span className="text-xl font-bold text-primary-600">{booking.bookingReference}</span>
+            <span className="text-xl font-bold text-primary-950">{booking.bookingReference}</span>
           </div>
           {booking.pnr && (
-            <div className="inline-flex items-center space-x-2 bg-blue-100 px-6 py-3 rounded-lg ml-4">
-              <span className="text-sm font-medium text-blue-900">PNR:</span>
-              <span className="text-xl font-bold text-blue-600">{booking.pnr}</span>
+            <div className="inline-flex items-center space-x-2 bg-accent-100 px-6 py-3 rounded-lg ml-4">
+              <span className="text-sm font-medium text-primary-950">PNR:</span>
+              <span className="text-xl font-bold text-primary-950">{booking.pnr}</span>
             </div>
           )}
         </div>
@@ -126,7 +126,7 @@ export default function BookingConfirmationPage() {
         {/* Flight Details */}
         <div className="card mb-8">
           <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-            <Plane className="h-5 w-5 mr-2 text-primary-600" />
+            <Plane className="h-5 w-5 mr-2 text-primary-950" />
             Flight Information
           </h2>
           <div className="bg-gray-50 rounded-lg p-6">
@@ -140,7 +140,7 @@ export default function BookingConfirmationPage() {
               <div className="flex-1 mx-8">
                 <div className="flex items-center justify-center">
                   <div className="h-px bg-gray-300 flex-1"></div>
-                  <Plane className="h-6 w-6 text-primary-600 mx-4" />
+                  <Plane className="h-6 w-6 text-primary-950 mx-4" />
                   <div className="h-px bg-gray-300 flex-1"></div>
                 </div>
                 <p className="text-center text-sm text-gray-600 mt-2">
@@ -174,7 +174,7 @@ export default function BookingConfirmationPage() {
               </div>
               <div>
                 <p className="text-xs text-gray-500 mb-1">Total Paid</p>
-                <p className="font-semibold text-primary-600 text-lg">
+                <p className="font-semibold text-primary-950 text-lg">
                   ${booking.totalAmount.toFixed(2)}
                 </p>
               </div>
@@ -191,7 +191,7 @@ export default function BookingConfirmationPage() {
         {/* Passenger Details */}
         <div className="card mb-8">
           <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-            <Users className="h-5 w-5 mr-2 text-primary-600" />
+            <Users className="h-5 w-5 mr-2 text-primary-950" />
             Passenger Information
           </h2>
           <div className="space-y-4">

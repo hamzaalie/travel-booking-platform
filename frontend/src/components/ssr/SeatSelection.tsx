@@ -125,7 +125,7 @@ export const SeatSelection: React.FC<SeatSelectionProps> = ({
       const isActive = passId === activePassenger;
       return `${baseClasses} ${
         isActive 
-          ? 'bg-blue-600 text-white ring-2 ring-blue-400' 
+          ? 'bg-primary-950 text-white ring-2 ring-primary-800' 
           : 'bg-green-600 text-white'
       }`;
     }
@@ -139,7 +139,7 @@ export const SeatSelection: React.FC<SeatSelectionProps> = ({
       case SeatAvailability.EXIT_ROW:
         return `${baseClasses} bg-yellow-100 text-yellow-800 border-2 border-yellow-400 hover:bg-yellow-200`;
       case SeatAvailability.EXTRA_LEGROOM:
-        return `${baseClasses} bg-purple-100 text-purple-800 border-2 border-purple-400 hover:bg-purple-200`;
+        return `${baseClasses} bg-accent-100 text-accent-600 border-2 border-accent-400 hover:bg-accent-200`;
       case SeatAvailability.AVAILABLE:
       default:
         return `${baseClasses} bg-white border-2 border-gray-300 text-gray-700 hover:bg-gray-50`;
@@ -172,11 +172,11 @@ export const SeatSelection: React.FC<SeatSelectionProps> = ({
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-lg">
+      <div className="bg-gradient-to-r from-accent-50 to-accent-50 p-6 rounded-lg">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-              <Armchair className="w-6 h-6 text-blue-600" />
+              <Armchair className="w-6 h-6 text-primary-950" />
               Select Your Seats
             </h3>
             <p className="text-sm text-gray-600 mt-1">
@@ -185,7 +185,7 @@ export const SeatSelection: React.FC<SeatSelectionProps> = ({
           </div>
           <button
             onClick={() => setShowLegend(!showLegend)}
-            className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1"
+            className="text-sm text-primary-950 hover:text-primary-900 flex items-center gap-1"
           >
             <Info className="w-4 h-4" />
             {showLegend ? 'Hide' : 'Show'} Legend
@@ -203,7 +203,7 @@ export const SeatSelection: React.FC<SeatSelectionProps> = ({
               <span>Available</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 bg-blue-600 rounded" />
+              <div className="w-6 h-6 bg-primary-950 rounded" />
               <span>Your Selection</span>
             </div>
             <div className="flex items-center gap-2">
@@ -219,7 +219,7 @@ export const SeatSelection: React.FC<SeatSelectionProps> = ({
               <span>Exit Row (+₹{seatMap.seats.find((s: any) => s.availability === SeatAvailability.EXIT_ROW)?.price || 0})</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 bg-purple-100 border-2 border-purple-400 rounded" />
+              <div className="w-6 h-6 bg-accent-100 border-2 border-accent-400 rounded" />
               <span>Extra Legroom</span>
             </div>
           </div>
@@ -241,7 +241,7 @@ export const SeatSelection: React.FC<SeatSelectionProps> = ({
                 disabled={readonly}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                   isActive
-                    ? 'bg-blue-600 text-white shadow-md'
+                    ? 'bg-primary-950 text-white shadow-md'
                     : hasSelection
                     ? 'bg-green-100 text-green-800 border border-green-300'
                     : 'bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200'
@@ -340,7 +340,7 @@ export const SeatSelection: React.FC<SeatSelectionProps> = ({
       </div>
 
       {/* Selection Summary */}
-      <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-lg">
+      <div className="bg-gradient-to-r from-accent-50 to-accent-50 p-6 rounded-lg">
         <h4 className="text-lg font-semibold text-gray-900 mb-4">Selection Summary</h4>
         
         {selectedSeats.size === 0 ? (
@@ -357,8 +357,8 @@ export const SeatSelection: React.FC<SeatSelectionProps> = ({
                   className="flex items-center justify-between bg-white p-3 rounded-lg"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                      <Armchair className="w-5 h-5 text-blue-600" />
+                    <div className="w-10 h-10 bg-accent-100 rounded-full flex items-center justify-center">
+                      <Armchair className="w-5 h-5 text-primary-950" />
                     </div>
                     <div>
                       <p className="font-medium text-gray-900">{passenger.name}</p>
@@ -386,7 +386,7 @@ export const SeatSelection: React.FC<SeatSelectionProps> = ({
 
             <div className="flex items-center justify-between pt-3 border-t-2 border-gray-200">
               <p className="text-lg font-bold text-gray-900">Total Seat Charges</p>
-              <p className="text-xl font-bold text-blue-600">₹{getTotalPrice.toLocaleString()}</p>
+              <p className="text-xl font-bold text-primary-950">₹{getTotalPrice.toLocaleString()}</p>
             </div>
           </div>
         )}

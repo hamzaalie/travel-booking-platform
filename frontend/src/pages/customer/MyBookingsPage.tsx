@@ -88,7 +88,7 @@ export default function MyBookingsPage() {
       {/* Bookings List */}
       {isLoading ? (
         <div className="text-center py-12">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-950"></div>
           <p className="text-gray-600 mt-4">Loading bookings...</p>
         </div>
       ) : filteredBookings && filteredBookings.length > 0 ? (
@@ -121,7 +121,7 @@ export default function MyBookingsPage() {
                   <div className="flex items-center justify-between pb-3 border-b">
                     <div className="flex items-center space-x-3">
                       <div className="bg-primary-100 p-2 rounded-lg">
-                        <Plane className="h-6 w-6 text-primary-600" />
+                        <Plane className="h-6 w-6 text-primary-950" />
                       </div>
                       <div>
                         <div className="flex items-center space-x-2">
@@ -138,7 +138,7 @@ export default function MyBookingsPage() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-2xl font-bold text-primary-600">
+                      <p className="text-2xl font-bold text-primary-950">
                         ${parseFloat(booking.totalAmount || 0).toFixed(2)}
                       </p>
                       <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(booking.status)} mt-1`}>
@@ -181,7 +181,7 @@ export default function MyBookingsPage() {
                     <div className="flex flex-col justify-center items-center">
                       <div className="flex items-center justify-center w-full mb-2">
                         <div className="h-px bg-gray-300 flex-1"></div>
-                        <Plane className="h-5 w-5 text-primary-600 mx-3 transform rotate-90" />
+                        <Plane className="h-5 w-5 text-primary-950 mx-3 transform rotate-90" />
                         <div className="h-px bg-gray-300 flex-1"></div>
                       </div>
                       <div className="text-center space-y-1">

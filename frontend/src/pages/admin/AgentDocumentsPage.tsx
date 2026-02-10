@@ -194,7 +194,7 @@ export default function AgentDocumentsPage() {
   if (isLoading) {
     return (
       <div className="p-6 flex justify-center items-center min-h-96">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary-600"></div>
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary-950"></div>
       </div>
     );
   }
@@ -248,7 +248,7 @@ export default function AgentDocumentsPage() {
           {/* Basic Info Card */}
           <div className="card">
             <h3 className="text-lg font-semibold mb-4 flex items-center">
-              <User className="h-5 w-5 mr-2 text-primary-600" />
+              <User className="h-5 w-5 mr-2 text-primary-950" />
               Contact Information
             </h3>
             <div className="space-y-3 text-sm">
@@ -286,7 +286,7 @@ export default function AgentDocumentsPage() {
           {/* Business Info Card */}
           <div className="card">
             <h3 className="text-lg font-semibold mb-4 flex items-center">
-              <Building className="h-5 w-5 mr-2 text-primary-600" />
+              <Building className="h-5 w-5 mr-2 text-primary-950" />
               Business Information
             </h3>
             <div className="space-y-3 text-sm">
@@ -314,7 +314,7 @@ export default function AgentDocumentsPage() {
               {agent.websiteUrl && (
                 <div className="flex items-center text-gray-600">
                   <Globe className="h-4 w-4 mr-2" />
-                  <a href={agent.websiteUrl} target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:underline truncate">
+                  <a href={agent.websiteUrl} target="_blank" rel="noopener noreferrer" className="text-primary-950 hover:underline truncate">
                     {agent.websiteUrl}
                   </a>
                 </div>
@@ -331,7 +331,7 @@ export default function AgentDocumentsPage() {
           {agent.bankName && (
             <div className="card">
               <h3 className="text-lg font-semibold mb-4 flex items-center">
-                <CreditCard className="h-5 w-5 mr-2 text-primary-600" />
+                <CreditCard className="h-5 w-5 mr-2 text-primary-950" />
                 Bank Details
               </h3>
               <div className="space-y-2 text-sm text-gray-600">

@@ -124,13 +124,13 @@ export default function ReportingDashboardPage() {
     // TODO: Implement Excel export
   };
 
-  const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444'];
+  const COLORS = ['#05014A', '#10B981', '#F48C1B', '#EF4444'];
 
   if (isLoading || !reportData) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
-          <BarChart3 className="h-12 w-12 text-primary-600 mx-auto mb-4 animate-pulse" />
+          <BarChart3 className="h-12 w-12 text-primary-950 mx-auto mb-4 animate-pulse" />
           <p className="text-gray-600">Loading reports...</p>
         </div>
       </div>
@@ -195,17 +195,17 @@ export default function ReportingDashboardPage() {
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="card bg-gradient-to-br from-blue-500 to-blue-600 text-white">
+        <div className="card bg-gradient-to-br from-primary-900 to-primary-950 text-white">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-blue-100 text-sm mb-1">Total Revenue</p>
+              <p className="text-accent-100 text-sm mb-1">Total Revenue</p>
               <p className="text-3xl font-bold">${reportData.totalRevenue.toLocaleString()}</p>
-              <p className="text-blue-100 text-xs mt-1 flex items-center">
+              <p className="text-accent-100 text-xs mt-1 flex items-center">
                 <TrendingUp className="h-3 w-3 mr-1" />
                 +12.5% from last period
               </p>
             </div>
-            <DollarSign className="h-12 w-12 text-blue-200" />
+            <DollarSign className="h-12 w-12 text-accent-200" />
           </div>
         </div>
 
@@ -223,17 +223,17 @@ export default function ReportingDashboardPage() {
           </div>
         </div>
 
-        <div className="card bg-gradient-to-br from-purple-500 to-purple-600 text-white">
+        <div className="card bg-gradient-to-br from-accent-500 to-accent-500 text-white">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-purple-100 text-sm mb-1">Active Agents</p>
+              <p className="text-accent-100 text-sm mb-1">Active Agents</p>
               <p className="text-3xl font-bold">{reportData.activeAgents}</p>
-              <p className="text-purple-100 text-xs mt-1 flex items-center">
+              <p className="text-accent-100 text-xs mt-1 flex items-center">
                 <TrendingUp className="h-3 w-3 mr-1" />
                 +5 this month
               </p>
             </div>
-            <Users className="h-12 w-12 text-purple-200" />
+            <Users className="h-12 w-12 text-accent-200" />
           </div>
         </div>
 
@@ -264,7 +264,7 @@ export default function ReportingDashboardPage() {
               <Line
                 type="monotone"
                 dataKey="revenue"
-                stroke="#3B82F6"
+                stroke="#05014A"
                 strokeWidth={2}
                 name="Revenue ($)"
               />
@@ -300,7 +300,7 @@ export default function ReportingDashboardPage() {
               <YAxis dataKey="name" type="category" width={100} tick={{ fontSize: 12 }} />
               <Tooltip />
               <Legend />
-              <Bar dataKey="revenue" fill="#8B5CF6" name="Revenue ($)" />
+              <Bar dataKey="revenue" fill="#05014A" name="Revenue ($)" />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -317,7 +317,7 @@ export default function ReportingDashboardPage() {
                 labelLine={false}
                 label={(props: any) => `${props.service}: $${props.revenue.toLocaleString()}`}
                 outerRadius={100}
-                fill="#8884d8"
+                fill="#F48C1B"
                 dataKey="revenue"
               >
                 {reportData.salesByService.map((_, index) => (
@@ -360,7 +360,7 @@ export default function ReportingDashboardPage() {
             <tbody className="bg-white divide-y divide-gray-200">
               {reportData.recentBookings.map((booking) => (
                 <tr key={booking.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-primary-600">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-primary-950">
                     {booking.bookingReference}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">

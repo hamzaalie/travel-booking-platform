@@ -83,22 +83,22 @@ export default function AgentDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-600 text-sm mb-1">Total Bookings</p>
-              <p className="text-3xl font-bold text-primary-700">{bookings?.length || 0}</p>
+              <p className="text-3xl font-bold text-primary-900">{bookings?.length || 0}</p>
             </div>
-            <Plane className="h-12 w-12 text-primary-600" />
+            <Plane className="h-12 w-12 text-primary-950" />
           </div>
           <p className="mt-2 text-sm text-gray-600">
             {todayBookings} today
           </p>
         </div>
 
-        <div className="card bg-purple-50 border-purple-200">
+        <div className="card bg-accent-50 border-accent-200">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-600 text-sm mb-1">This Month</p>
-              <p className="text-3xl font-bold text-purple-700">${monthRevenue.toFixed(2)}</p>
+              <p className="text-3xl font-bold text-accent-600">${monthRevenue.toFixed(2)}</p>
             </div>
-            <TrendingUp className="h-12 w-12 text-purple-600" />
+            <TrendingUp className="h-12 w-12 text-accent-500" />
           </div>
           <p className="mt-2 text-sm text-gray-600">Revenue</p>
         </div>
@@ -125,7 +125,7 @@ export default function AgentDashboard() {
         <div className="card">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-bold text-gray-900">Recent Transactions</h2>
-            <Link to="/agent/wallet" className="text-primary-600 hover:text-primary-700 font-medium text-sm">
+            <Link to="/agent/wallet" className="text-primary-950 hover:text-primary-900 font-medium text-sm">
               View All →
             </Link>
           </div>
@@ -166,7 +166,7 @@ export default function AgentDashboard() {
             <Link to="/search" className="block p-4 border-2 border-gray-200 rounded-lg hover:border-primary-300 hover:bg-primary-50 transition-all">
               <div className="flex items-center">
                 <div className="bg-primary-100 p-3 rounded-lg mr-4">
-                  <Plane className="h-6 w-6 text-primary-600" />
+                  <Plane className="h-6 w-6 text-primary-950" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900">Book Flight</h3>
@@ -187,10 +187,10 @@ export default function AgentDashboard() {
               </div>
             </Link>
 
-            <Link to="/agent/bookings" className="block p-4 border-2 border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-all">
+            <Link to="/agent/bookings" className="block p-4 border-2 border-gray-200 rounded-lg hover:border-accent-300 hover:bg-accent-50 transition-all">
               <div className="flex items-center">
-                <div className="bg-blue-100 p-3 rounded-lg mr-4">
-                  <TrendingUp className="h-6 w-6 text-blue-600" />
+                <div className="bg-accent-100 p-3 rounded-lg mr-4">
+                  <TrendingUp className="h-6 w-6 text-primary-950" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900">View Reports</h3>

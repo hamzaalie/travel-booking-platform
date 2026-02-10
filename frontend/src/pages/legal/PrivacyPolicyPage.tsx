@@ -4,7 +4,7 @@ export default function PrivacyPolicyPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero */}
-      <div className="bg-gradient-to-r from-primary-600 to-primary-800 py-16 px-4">
+      <div className="bg-gradient-to-r from-primary-950 to-primary-950 py-16 px-4">
         <div className="max-w-4xl mx-auto text-center text-white">
           <Shield className="h-16 w-16 mx-auto mb-4 opacity-80" />
           <h1 className="text-4xl font-bold mb-4">Privacy Policy</h1>
@@ -21,7 +21,7 @@ export default function PrivacyPolicyPage() {
           
           <section>
             <div className="flex items-center gap-3 mb-4">
-              <Database className="h-6 w-6 text-primary-600" />
+              <Database className="h-6 w-6 text-primary-950" />
               <h2 className="text-2xl font-bold text-gray-900">Information We Collect</h2>
             </div>
             <div className="prose prose-gray max-w-none">
@@ -41,7 +41,7 @@ export default function PrivacyPolicyPage() {
 
           <section>
             <div className="flex items-center gap-3 mb-4">
-              <Eye className="h-6 w-6 text-primary-600" />
+              <Eye className="h-6 w-6 text-primary-950" />
               <h2 className="text-2xl font-bold text-gray-900">How We Use Your Information</h2>
             </div>
             <div className="prose prose-gray max-w-none">
@@ -59,7 +59,7 @@ export default function PrivacyPolicyPage() {
 
           <section>
             <div className="flex items-center gap-3 mb-4">
-              <Lock className="h-6 w-6 text-primary-600" />
+              <Lock className="h-6 w-6 text-primary-950" />
               <h2 className="text-2xl font-bold text-gray-900">Data Security</h2>
             </div>
             <div className="prose prose-gray max-w-none">
@@ -78,7 +78,7 @@ export default function PrivacyPolicyPage() {
 
           <section>
             <div className="flex items-center gap-3 mb-4">
-              <UserCheck className="h-6 w-6 text-primary-600" />
+              <UserCheck className="h-6 w-6 text-primary-950" />
               <h2 className="text-2xl font-bold text-gray-900">Your Rights</h2>
             </div>
             <div className="prose prose-gray max-w-none">
@@ -95,7 +95,7 @@ export default function PrivacyPolicyPage() {
 
           <section>
             <div className="flex items-center gap-3 mb-4">
-              <Mail className="h-6 w-6 text-primary-600" />
+              <Mail className="h-6 w-6 text-primary-950" />
               <h2 className="text-2xl font-bold text-gray-900">Contact Us</h2>
             </div>
             <div className="prose prose-gray max-w-none">
@@ -104,8 +104,8 @@ export default function PrivacyPolicyPage() {
                 please contact our Data Protection Officer at:
               </p>
               <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-                <p className="text-gray-700 font-medium">TravelBooking Privacy Team</p>
-                <p className="text-gray-600">Email: privacy@travelbooking.com</p>
+                <p className="text-gray-700 font-medium">Peakpass Travel Privacy Team</p>
+                <p className="text-gray-600">Email: privacy@Peakpass Travel.com</p>
                 <p className="text-gray-600">Address: 123 Travel Street, Suite 100, New York, NY 10001</p>
               </div>
             </div>

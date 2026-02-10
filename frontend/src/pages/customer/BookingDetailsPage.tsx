@@ -62,7 +62,7 @@ export default function BookingDetailsPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-950"></div>
           <p className="text-gray-600 mt-4">Loading booking details...</p>
         </div>
       </div>
@@ -89,7 +89,7 @@ export default function BookingDetailsPage() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <button
           onClick={() => navigate(-1)}
-          className="mb-6 flex items-center text-gray-600 hover:text-primary-600"
+          className="mb-6 flex items-center text-gray-600 hover:text-primary-950"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Bookings
@@ -101,7 +101,7 @@ export default function BookingDetailsPage() {
             <div>
               <div className="flex items-center gap-3 mb-2">
                 <div className="bg-primary-100 p-3 rounded-lg">
-                  <Plane className="h-8 w-8 text-primary-600" />
+                  <Plane className="h-8 w-8 text-primary-950" />
                 </div>
                 <div>
                   <h1 className="text-3xl font-bold text-gray-900">
@@ -146,7 +146,7 @@ export default function BookingDetailsPage() {
                       <div className="flex-1 relative">
                         <div className="absolute left-0 right-0 top-1/2 h-px bg-gray-300"></div>
                         <div className="relative bg-white px-2 mx-auto w-fit">
-                          <Plane className="h-5 w-5 text-primary-600 rotate-90" />
+                          <Plane className="h-5 w-5 text-primary-950 rotate-90" />
                         </div>
                         <p className="text-xs text-gray-500 text-center mt-2">
                           {formatDuration(segment.duration)}
@@ -250,7 +250,7 @@ export default function BookingDetailsPage() {
             )}
             <div className="border-t pt-3 flex justify-between text-xl font-bold">
               <span>Total Amount</span>
-              <span className="text-primary-600">${parseFloat(booking.totalAmount || 0).toFixed(2)}</span>
+              <span className="text-primary-950">${parseFloat(booking.totalAmount || 0).toFixed(2)}</span>
             </div>
           </div>
         </div>

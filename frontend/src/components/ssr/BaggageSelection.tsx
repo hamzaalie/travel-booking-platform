@@ -73,9 +73,9 @@ export const BaggageSelection: React.FC<BaggageSelectionProps> = ({
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-gradient-to-r from-purple-50 to-blue-50 p-6 rounded-lg">
+      <div className="bg-gradient-to-r from-accent-50 to-accent-50 p-6 rounded-lg">
         <h3 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-          <Luggage className="w-6 h-6 text-purple-600" />
+          <Luggage className="w-6 h-6 text-accent-500" />
           Baggage Selection
         </h3>
         <p className="text-sm text-gray-600 mt-1">
@@ -130,9 +130,9 @@ export const BaggageSelection: React.FC<BaggageSelectionProps> = ({
                 disabled={readonly}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                   isActive
-                    ? 'bg-purple-600 text-white shadow-md'
+                    ? 'bg-accent-500 text-white shadow-md'
                     : hasExtra
-                    ? 'bg-purple-100 text-purple-800 border border-purple-300'
+                    ? 'bg-accent-100 text-accent-600 border border-accent-300'
                     : 'bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200'
                 } ${readonly ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}
               >
@@ -162,7 +162,7 @@ export const BaggageSelection: React.FC<BaggageSelectionProps> = ({
                 key={option.id}
                 className={`rounded-lg border-2 transition-all ${
                   isSelected
-                    ? 'border-purple-500 bg-purple-50'
+                    ? 'border-accent-500 bg-accent-50'
                     : 'border-gray-200 bg-white'
                 }`}
               >
@@ -179,7 +179,7 @@ export const BaggageSelection: React.FC<BaggageSelectionProps> = ({
                         </p>
                       )}
                     </div>
-                    <p className="font-bold text-purple-600">
+                    <p className="font-bold text-accent-500">
                       ₹{option.price.toLocaleString()}
                     </p>
                   </div>
@@ -196,7 +196,7 @@ export const BaggageSelection: React.FC<BaggageSelectionProps> = ({
                     disabled={readonly}
                     className={`w-full py-2 rounded-lg font-medium transition-all ${
                       isSelected
-                        ? 'bg-purple-600 text-white hover:bg-purple-700'
+                        ? 'bg-accent-500 text-white hover:bg-accent-600'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     } ${readonly ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
@@ -220,7 +220,7 @@ export const BaggageSelection: React.FC<BaggageSelectionProps> = ({
       </div>
 
       {/* Summary */}
-      <div className="bg-gradient-to-r from-purple-50 to-blue-50 p-6 rounded-lg">
+      <div className="bg-gradient-to-r from-accent-50 to-accent-50 p-6 rounded-lg">
         <h4 className="text-lg font-semibold text-gray-900 mb-4">Baggage Summary</h4>
 
         <div className="space-y-3">
@@ -249,7 +249,7 @@ export const BaggageSelection: React.FC<BaggageSelectionProps> = ({
                 <p className="text-lg font-bold text-gray-900">Total Extra Baggage</p>
                 <p className="text-sm text-gray-600">Total Weight: {getTotalWeight}kg</p>
               </div>
-              <p className="text-xl font-bold text-purple-600">₹{getTotalPrice.toLocaleString()}</p>
+              <p className="text-xl font-bold text-accent-500">₹{getTotalPrice.toLocaleString()}</p>
             </div>
           )}
 

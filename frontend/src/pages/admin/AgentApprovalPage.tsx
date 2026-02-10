@@ -62,7 +62,7 @@ export default function AgentApprovalPage() {
       <div className="flex justify-between items-start mb-4">
         <div className="flex items-start space-x-3">
           <div className="bg-primary-100 p-3 rounded-lg">
-            <Building className="h-6 w-6 text-primary-600" />
+            <Building className="h-6 w-6 text-primary-950" />
           </div>
           <div>
             <h3 className="text-lg font-bold text-gray-900">{agent.agencyName}</h3>
@@ -150,7 +150,7 @@ export default function AgentApprovalPage() {
 
       {isLoading ? (
         <div className="text-center py-12">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-950"></div>
           <p className="text-gray-600 mt-4">Loading agents...</p>
         </div>
       ) : (

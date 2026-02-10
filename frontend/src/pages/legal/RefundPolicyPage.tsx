@@ -4,7 +4,7 @@ export default function RefundPolicyPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero */}
-      <div className="bg-gradient-to-r from-primary-600 to-primary-800 py-16 px-4">
+      <div className="bg-gradient-to-r from-primary-950 to-primary-950 py-16 px-4">
         <div className="max-w-4xl mx-auto text-center text-white">
           <RefreshCcw className="h-16 w-16 mx-auto mb-4 opacity-80" />
           <h1 className="text-4xl font-bold mb-4">Refund Policy</h1>
@@ -33,7 +33,7 @@ export default function RefundPolicyPage() {
 
           <section>
             <div className="flex items-center gap-3 mb-4">
-              <Plane className="h-6 w-6 text-primary-600" />
+              <Plane className="h-6 w-6 text-primary-950" />
               <h2 className="text-2xl font-bold text-gray-900">Flight Bookings</h2>
             </div>
             <div className="prose prose-gray max-w-none">
@@ -73,7 +73,7 @@ export default function RefundPolicyPage() {
 
           <section>
             <div className="flex items-center gap-3 mb-4">
-              <Building className="h-6 w-6 text-primary-600" />
+              <Building className="h-6 w-6 text-primary-950" />
               <h2 className="text-2xl font-bold text-gray-900">Hotel Bookings</h2>
             </div>
             <div className="prose prose-gray max-w-none">
@@ -92,8 +92,8 @@ export default function RefundPolicyPage() {
                     offered at discounted rates.
                   </p>
                 </div>
-                <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                  <h3 className="font-semibold text-blue-800">Pay at Property</h3>
+                <div className="p-4 bg-accent-50 rounded-lg border border-accent-200">
+                  <h3 className="font-semibold text-primary-950">Pay at Property</h3>
                   <p className="text-gray-600 text-sm mt-1">
                     Cancellation policies are set by the hotel. Check the specific terms 
                     shown during booking.
@@ -105,7 +105,7 @@ export default function RefundPolicyPage() {
 
           <section>
             <div className="flex items-center gap-3 mb-4">
-              <Car className="h-6 w-6 text-primary-600" />
+              <Car className="h-6 w-6 text-primary-950" />
               <h2 className="text-2xl font-bold text-gray-900">Car Rentals</h2>
             </div>
             <div className="prose prose-gray max-w-none">
@@ -120,7 +120,7 @@ export default function RefundPolicyPage() {
 
           <section>
             <div className="flex items-center gap-3 mb-4">
-              <Clock className="h-6 w-6 text-primary-600" />
+              <Clock className="h-6 w-6 text-primary-950" />
               <h2 className="text-2xl font-bold text-gray-900">Refund Processing Time</h2>
             </div>
             <div className="prose prose-gray max-w-none">
@@ -139,7 +139,7 @@ export default function RefundPolicyPage() {
 
           <section>
             <div className="flex items-center gap-3 mb-4">
-              <HelpCircle className="h-6 w-6 text-primary-600" />
+              <HelpCircle className="h-6 w-6 text-primary-950" />
               <h2 className="text-2xl font-bold text-gray-900">How to Request a Refund</h2>
             </div>
             <div className="prose prose-gray max-w-none">
@@ -153,8 +153,8 @@ export default function RefundPolicyPage() {
               <div className="mt-6 p-4 bg-gray-50 rounded-lg">
                 <p className="text-gray-700">
                   <strong>Need help?</strong> Contact our support team at 
-                  <a href="mailto:support@travelbooking.com" className="text-primary-600 ml-1">
-                    support@travelbooking.com
+                  <a href="mailto:support@Peakpass Travel.com" className="text-primary-950 ml-1">
+                    support@Peakpass Travel.com
                   </a>
                   {' '}or call +1 (234) 567-890
                 </p>

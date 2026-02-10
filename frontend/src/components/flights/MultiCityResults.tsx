@@ -72,7 +72,7 @@ export const MultiCityResults: React.FC<MultiCityResultsProps> = ({
         <h3 className="text-xl font-bold text-gray-900">
           {offers.length} Multi-City Option{offers.length > 1 ? 's' : ''} Found
         </h3>
-        <select className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500">
+        <select className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-900">
           <option>Lowest Price</option>
           <option>Shortest Duration</option>
           <option>Fewest Stops</option>
@@ -91,8 +91,8 @@ export const MultiCityResults: React.FC<MultiCityResultsProps> = ({
             key={offer.id}
             className={`
               border-2 rounded-lg overflow-hidden transition-all
-              ${isSelected ? 'border-blue-500 shadow-lg' : 'border-gray-200 hover:border-blue-300'}
-              ${isSelected ? 'bg-blue-50' : 'bg-white'}
+              ${isSelected ? 'border-primary-900 shadow-lg' : 'border-gray-200 hover:border-accent-300'}
+              ${isSelected ? 'bg-accent-50' : 'bg-white'}
             `}
           >
             {/* Header - Compact Overview */}
@@ -157,8 +157,8 @@ export const MultiCityResults: React.FC<MultiCityResultsProps> = ({
                       className={`
                         px-6 py-2 rounded-lg font-semibold transition-colors
                         ${isSelected
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-white border-2 border-blue-600 text-blue-600 hover:bg-blue-50'}
+                          ? 'bg-primary-950 text-white'
+                          : 'bg-white border-2 border-primary-950 text-primary-950 hover:bg-accent-50'}
                       `}
                     >
                       {isSelected ? (
@@ -173,7 +173,7 @@ export const MultiCityResults: React.FC<MultiCityResultsProps> = ({
 
                     <button
                       onClick={() => setExpandedOfferId(isExpanded ? null : offer.id)}
-                      className="text-sm text-blue-600 hover:text-blue-800 flex items-center justify-center space-x-1"
+                      className="text-sm text-primary-950 hover:text-primary-950 flex items-center justify-center space-x-1"
                     >
                       <span>{isExpanded ? 'Hide' : 'Show'} details</span>
                       {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -233,7 +233,7 @@ export const MultiCityResults: React.FC<MultiCityResultsProps> = ({
                                   <div className="w-full border-t-2 border-gray-300"></div>
                                 </div>
                                 <div className="relative flex justify-center">
-                                  <Plane className="w-5 h-5 text-blue-600 bg-white px-1" />
+                                  <Plane className="w-5 h-5 text-primary-950 bg-white px-1" />
                                 </div>
                               </div>
                               <div className="text-xs text-gray-900 font-medium mt-1">

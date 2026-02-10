@@ -228,14 +228,14 @@ export default function BlogManagementPage() {
                       href={`/blog/${post.slug}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-2 text-gray-400 hover:text-primary-600 rounded-lg hover:bg-gray-100"
+                      className="p-2 text-gray-400 hover:text-primary-950 rounded-lg hover:bg-gray-100"
                       title="View"
                     >
                       <Eye className="h-5 w-5" />
                     </a>
                     <button
                       onClick={() => handleEdit(post)}
-                      className="p-2 text-gray-400 hover:text-blue-600 rounded-lg hover:bg-gray-100"
+                      className="p-2 text-gray-400 hover:text-primary-950 rounded-lg hover:bg-gray-100"
                       title="Edit"
                     >
                       <Edit className="h-5 w-5" />

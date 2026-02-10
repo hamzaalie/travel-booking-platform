@@ -166,7 +166,7 @@ export default function SearchForm({ onSearch }: SearchFormProps) {
           onClick={() => setTripType('ONE_WAY')}
           className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
             tripType === 'ONE_WAY'
-              ? 'bg-gradient-to-r from-primary-600 to-primary-700 text-white shadow-lg shadow-primary-500/30'
+              ? 'bg-gradient-to-r from-primary-950 to-primary-900 text-white shadow-lg shadow-primary-950/30'
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
           }`}
         >
@@ -178,7 +178,7 @@ export default function SearchForm({ onSearch }: SearchFormProps) {
           onClick={() => setTripType('ROUND_TRIP')}
           className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
             tripType === 'ROUND_TRIP'
-              ? 'bg-gradient-to-r from-primary-600 to-primary-700 text-white shadow-lg shadow-primary-500/30'
+              ? 'bg-gradient-to-r from-primary-950 to-primary-900 text-white shadow-lg shadow-primary-950/30'
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
           }`}
         >
@@ -190,7 +190,7 @@ export default function SearchForm({ onSearch }: SearchFormProps) {
           onClick={() => setTripType('MULTI_CITY')}
           className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
             tripType === 'MULTI_CITY'
-              ? 'bg-gradient-to-r from-primary-600 to-primary-700 text-white shadow-lg shadow-primary-500/30'
+              ? 'bg-gradient-to-r from-primary-950 to-primary-900 text-white shadow-lg shadow-primary-950/30'
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
           }`}
         >
@@ -204,8 +204,8 @@ export default function SearchForm({ onSearch }: SearchFormProps) {
         {/* Origin */}
         <div className="relative" ref={originRef}>
           <label className="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
-            <div className="bg-primary-100 p-1.5 rounded-lg mr-2">
-              <MapPin className="h-4 w-4 text-primary-600" />
+            <div className="bg-accent-100 p-1.5 rounded-lg mr-2">
+              <MapPin className="h-4 w-4 text-accent-600" />
             </div>
             From
           </label>
@@ -234,11 +234,11 @@ export default function SearchForm({ onSearch }: SearchFormProps) {
                   key={airport.code}
                   type="button"
                   onClick={() => handleOriginSelect(airport)}
-                  className="w-full px-4 py-3 text-left hover:bg-primary-50 transition-colors border-b border-gray-100 last:border-0"
+                  className="w-full px-4 py-3 text-left hover:bg-accent-50 transition-colors border-b border-gray-100 last:border-0"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="bg-primary-100 p-2 rounded">
-                      <Plane className="h-4 w-4 text-primary-600" />
+                    <div className="bg-accent-100 p-2 rounded">
+                      <Plane className="h-4 w-4 text-accent-600" />
                     </div>
                     <div>
                       <p className="font-semibold text-gray-900">{airport.code} - {airport.city}</p>
@@ -255,17 +255,17 @@ export default function SearchForm({ onSearch }: SearchFormProps) {
         <button
           type="button"
           onClick={swapLocations}
-          className="absolute left-1/2 top-14 transform -translate-x-1/2 bg-white border-2 border-primary-200 p-3 rounded-full hover:bg-primary-50 hover:border-primary-400 transition-all duration-300 shadow-lg hover:shadow-xl z-10 hidden md:block"
+          className="absolute left-1/2 top-14 transform -translate-x-1/2 bg-white border-2 border-accent-200 p-3 rounded-full hover:bg-accent-50 hover:border-accent-400 transition-all duration-300 shadow-lg hover:shadow-xl z-10 hidden md:block"
           title="Swap locations"
         >
-          <ArrowLeftRight className="h-5 w-5 text-primary-600" />
+          <ArrowLeftRight className="h-5 w-5 text-accent-500" />
         </button>
 
         {/* Destination */}
         <div className="relative" ref={destinationRef}>
           <label className="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
-            <div className="bg-primary-100 p-1.5 rounded-lg mr-2">
-              <MapPin className="h-4 w-4 text-primary-600" />
+            <div className="bg-accent-100 p-1.5 rounded-lg mr-2">
+              <MapPin className="h-4 w-4 text-accent-600" />
             </div>
             To
           </label>
@@ -294,11 +294,11 @@ export default function SearchForm({ onSearch }: SearchFormProps) {
                   key={airport.code}
                   type="button"
                   onClick={() => handleDestinationSelect(airport)}
-                  className="w-full px-4 py-3 text-left hover:bg-primary-50 transition-colors border-b border-gray-100 last:border-0"
+                  className="w-full px-4 py-3 text-left hover:bg-accent-50 transition-colors border-b border-gray-100 last:border-0"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="bg-primary-100 p-2 rounded">
-                      <Plane className="h-4 w-4 text-primary-600" />
+                    <div className="bg-accent-100 p-2 rounded">
+                      <Plane className="h-4 w-4 text-accent-600" />
                     </div>
                     <div>
                       <p className="font-semibold text-gray-900">{airport.code} - {airport.city}</p>
@@ -361,8 +361,8 @@ export default function SearchForm({ onSearch }: SearchFormProps) {
         {/* Passenger Selector */}
         <div className="relative">
           <label className="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
-            <div className="bg-purple-100 p-1.5 rounded-lg mr-2">
-              <Users className="h-4 w-4 text-purple-600" />
+            <div className="bg-accent-100 p-1.5 rounded-lg mr-2">
+              <Users className="h-4 w-4 text-accent-500" />
             </div>
             Passengers
           </label>
@@ -391,15 +391,7 @@ export default function SearchForm({ onSearch }: SearchFormProps) {
                     <button
                       type="button"
                       onClick={() => setAdults(Math.max(1, adults - 1))}
-                      className="w-10 h-10 rounded-full bg-gray-100 hover:bg-primary-100 text-gray-700 hover:text-primary-600 font-bold transition-all"
-                    >
-                      -
-                    </button>
-                    <span className="w-8 text-center font-bold text-lg">{adults}</span>
-                    <button
-                      type="button"
-                      onClick={() => setAdults(Math.min(9, adults + 1))}
-                      className="w-10 h-10 rounded-full bg-gray-100 hover:bg-primary-100 text-gray-700 hover:text-primary-600 font-bold transition-all"
+                      className="w-10 h-10 rounded-full bg-gray-100 hover:bg-accent-100 text-gray-700 hover:text-primary-950 font-bold transition-all"
                     >
                       +
                     </button>
@@ -416,7 +408,7 @@ export default function SearchForm({ onSearch }: SearchFormProps) {
                     <button
                       type="button"
                       onClick={() => setChildren(Math.max(0, children - 1))}
-                      className="w-10 h-10 rounded-full bg-gray-100 hover:bg-primary-100 text-gray-700 hover:text-primary-600 font-bold transition-all"
+                      className="w-10 h-10 rounded-full bg-gray-100 hover:bg-accent-100 text-gray-700 hover:text-primary-950 font-bold transition-all"
                     >
                       -
                     </button>
@@ -424,7 +416,7 @@ export default function SearchForm({ onSearch }: SearchFormProps) {
                     <button
                       type="button"
                       onClick={() => setChildren(Math.min(9, children + 1))}
-                      className="w-10 h-10 rounded-full bg-gray-100 hover:bg-primary-100 text-gray-700 hover:text-primary-600 font-bold transition-all"
+                      className="w-10 h-10 rounded-full bg-gray-100 hover:bg-accent-100 text-gray-700 hover:text-primary-950 font-bold transition-all"
                     >
                       +
                     </button>
@@ -441,7 +433,7 @@ export default function SearchForm({ onSearch }: SearchFormProps) {
                     <button
                       type="button"
                       onClick={() => setInfants(Math.max(0, infants - 1))}
-                      className="w-10 h-10 rounded-full bg-gray-100 hover:bg-primary-100 text-gray-700 hover:text-primary-600 font-bold transition-all"
+                      className="w-10 h-10 rounded-full bg-gray-100 hover:bg-accent-100 text-gray-700 hover:text-primary-950 font-bold transition-all"
                     >
                       -
                     </button>
@@ -449,7 +441,7 @@ export default function SearchForm({ onSearch }: SearchFormProps) {
                     <button
                       type="button"
                       onClick={() => setInfants(Math.min(9, infants + 1))}
-                      className="w-10 h-10 rounded-full bg-gray-100 hover:bg-primary-100 text-gray-700 hover:text-primary-600 font-bold transition-all"
+                      className="w-10 h-10 rounded-full bg-gray-100 hover:bg-accent-100 text-gray-700 hover:text-primary-950 font-bold transition-all"
                     >
                       +
                     </button>
@@ -459,7 +451,7 @@ export default function SearchForm({ onSearch }: SearchFormProps) {
               <button
                 type="button"
                 onClick={() => setShowPassengerDropdown(false)}
-                className="mt-6 w-full bg-primary-600 text-white py-3 rounded-xl hover:bg-primary-700 transition-colors font-semibold"
+                className="mt-6 w-full bg-primary-950 text-white py-3 rounded-xl hover:bg-primary-900 transition-colors font-semibold"
               >
                 Done
               </button>
@@ -470,8 +462,8 @@ export default function SearchForm({ onSearch }: SearchFormProps) {
         {/* Cabin Class */}
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
-            <div className="bg-blue-100 p-1.5 rounded-lg mr-2">
-              <Plane className="h-4 w-4 text-blue-600" />
+            <div className="bg-accent-100 p-1.5 rounded-lg mr-2">
+              <Plane className="h-4 w-4 text-accent-600" />
             </div>
             Cabin Class
           </label>

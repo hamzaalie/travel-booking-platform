@@ -169,7 +169,7 @@ export default function PopularDestinations({ noBg = false, fullWidth = false }:
       <div className={`${fullWidth ? '' : 'max-w-7xl'} mx-auto px-4 sm:px-6 lg:px-8`}>
         {/* Section Header */}
         <div className="text-center mb-10">
-          <div className="w-12 h-1 bg-green-500 mx-auto mb-4 rounded-full"></div>
+          <div className="w-12 h-1 bg-accent-500 mx-auto mb-4 rounded-full"></div>
           <h2 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-3">
             Popular Destinations
           </h2>
@@ -232,7 +232,7 @@ export default function PopularDestinations({ noBg = false, fullWidth = false }:
                     
                     {/* Hover overlay with "Search Flights" */}
                     <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/20">
-                      <span className="bg-white text-primary-600 px-5 py-2.5 rounded-full text-sm font-semibold shadow-lg transform scale-95 group-hover:scale-100 transition-transform duration-300">
+                      <span className="bg-white text-primary-950 px-5 py-2.5 rounded-full text-sm font-semibold shadow-lg transform scale-95 group-hover:scale-100 transition-transform duration-300">
                         Search Flights →
                       </span>
                     </div>
@@ -245,8 +245,8 @@ export default function PopularDestinations({ noBg = false, fullWidth = false }:
 
                   {/* Content */}
                   <div className="p-5">
-                    <p className="text-primary-500 text-xs font-medium uppercase tracking-wide mb-1">{destination.tagline}</p>
-                    <h3 className="text-lg font-bold text-gray-900 group-hover:text-primary-600 transition-colors mb-0.5">
+                    <p className="text-accent-500 text-xs font-medium uppercase tracking-wide mb-1">{destination.tagline}</p>
+                    <h3 className="text-lg font-bold text-gray-900 group-hover:text-primary-950 transition-colors mb-0.5">
                       {destination.name}
                     </h3>
                     <p className="text-gray-500 text-sm">{destination.country}</p>
@@ -261,7 +261,7 @@ export default function PopularDestinations({ noBg = false, fullWidth = false }:
         <div className="text-center mt-8">
           <button
             onClick={() => navigate('/search')}
-            className="inline-flex items-center text-primary-600 hover:text-primary-700 font-semibold transition-colors"
+            className="inline-flex items-center text-primary-950 hover:text-accent-500 font-semibold transition-colors"
           >
             View All Destinations
             <ChevronRight className="h-5 w-5 ml-1" />

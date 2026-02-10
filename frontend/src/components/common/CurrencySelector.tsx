@@ -79,9 +79,9 @@ export default function CurrencySelector() {
               key={currency.code}
               onClick={() => handleCurrencyChange(currency.code)}
               className={`w-full flex items-center justify-between px-4 py-2.5 text-left
-                         hover:bg-primary-50 transition-colors
+                         hover:bg-accent-50 transition-colors
                          ${currentCurrency === currency.code 
-                           ? 'bg-primary-50 text-primary-700' 
+                           ? 'bg-accent-50 text-primary-950' 
                            : 'text-gray-700'}`}
             >
               <div className="flex items-center gap-2">
@@ -92,7 +92,7 @@ export default function CurrencySelector() {
                 </div>
               </div>
               {currentCurrency === currency.code && (
-                <span className="text-primary-600">✓</span>
+                <span className="text-accent-500">✓</span>
               )}
             </button>
           ))}

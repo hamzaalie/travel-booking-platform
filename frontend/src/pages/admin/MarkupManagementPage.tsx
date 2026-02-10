@@ -113,12 +113,12 @@ export default function MarkupManagementPage() {
       </div>
 
       {/* Info Card */}
-      <div className="card bg-blue-50 border-blue-200 mb-6">
+      <div className="card bg-accent-50 border-accent-200 mb-6">
         <div className="flex items-start space-x-3">
-          <TrendingUp className="h-6 w-6 text-blue-600 mt-1" />
+          <TrendingUp className="h-6 w-6 text-primary-950 mt-1" />
           <div>
-            <h3 className="font-semibold text-blue-900 mb-1">About Markups</h3>
-            <p className="text-sm text-blue-800">
+            <h3 className="font-semibold text-primary-950 mb-1">About Markups</h3>
+            <p className="text-sm text-primary-950">
               Global markups apply to all bookings. Agent-specific markups override global markups.
               Use PERCENTAGE for % markup or FIXED for flat dollar amount.
             </p>
@@ -203,7 +203,7 @@ export default function MarkupManagementPage() {
         <h2 className="text-2xl font-bold mb-4">Global Markups ({globalMarkups.length})</h2>
         {isLoading ? (
           <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-950"></div>
           </div>
         ) : globalMarkups.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -211,7 +211,7 @@ export default function MarkupManagementPage() {
               <div key={markup.id} className="card border-2 border-gray-200 hover:border-primary-300 transition-colors">
                 <div className="flex justify-between items-start mb-3">
                   <div>
-                    <div className="text-3xl font-bold text-primary-700">
+                    <div className="text-3xl font-bold text-primary-900">
                       {markup.type === 'PERCENTAGE' ? `${markup.value}%` : `$${markup.value}`}
                     </div>
                     <div className="text-sm text-gray-600 mt-1">

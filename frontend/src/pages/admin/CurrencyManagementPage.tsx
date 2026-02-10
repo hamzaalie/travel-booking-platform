@@ -162,12 +162,12 @@ export default function CurrencyManagementPage() {
       </div>
 
       {/* Info Card */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+      <div className="bg-accent-50 border border-accent-200 rounded-lg p-4">
         <div className="flex items-start gap-3">
-          <Globe className="h-5 w-5 text-blue-600 mt-0.5" />
+          <Globe className="h-5 w-5 text-primary-950 mt-0.5" />
           <div>
-            <h3 className="font-medium text-blue-900">Currency Detection</h3>
-            <p className="text-sm text-blue-700 mt-1">
+            <h3 className="font-medium text-primary-950">Currency Detection</h3>
+            <p className="text-sm text-primary-900 mt-1">
               The system automatically detects user location and suggests appropriate currency.
               NPR (Nepalese Rupee) is the base currency for price calculations.
               All prices are stored in NPR and converted on display.
@@ -218,7 +218,7 @@ export default function CurrencyManagementPage() {
                           <Coins className="h-5 w-5 text-gray-400" />
                           <span className="font-medium text-gray-900">{currency.name}</span>
                           {currency.isDefault && (
-                            <span className="bg-primary-100 text-primary-700 text-xs px-2 py-0.5 rounded-full">
+                            <span className="bg-primary-100 text-primary-900 text-xs px-2 py-0.5 rounded-full">
                               Default
                             </span>
                           )}
@@ -257,7 +257,7 @@ export default function CurrencyManagementPage() {
                           )}
                           <button
                             onClick={() => handleEdit(currency)}
-                            className="p-1 text-gray-400 hover:text-blue-600"
+                            className="p-1 text-gray-400 hover:text-primary-950"
                             title="Edit"
                           >
                             <Edit className="h-5 w-5" />
@@ -318,7 +318,7 @@ export default function CurrencyManagementPage() {
                       })}
                       className={`px-3 py-1 text-sm rounded-full border transition-colors ${
                         formData.code === c.code
-                          ? 'bg-primary-100 border-primary-500 text-primary-700'
+                          ? 'bg-primary-100 border-primary-500 text-primary-900'
                           : 'bg-white border-gray-300 hover:border-gray-400'
                       }`}
                     >

@@ -84,7 +84,7 @@ export default function FlightResultsPage() {
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center space-x-6 flex-wrap gap-3">
               <div className="flex items-center space-x-2 bg-primary-50 px-4 py-2 rounded-lg">
-                <Plane className="h-5 w-5 text-primary-600" />
+                <Plane className="h-5 w-5 text-primary-950" />
                 <span className="font-bold text-gray-900 text-lg">
                   {searchData.origin} → {searchData.destination}
                 </span>
@@ -120,7 +120,7 @@ export default function FlightResultsPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-20">
-            <Loader2 className="h-16 w-16 text-primary-600 animate-spin mb-6" />
+            <Loader2 className="h-16 w-16 text-primary-950 animate-spin mb-6" />
             <p className="text-xl font-semibold text-gray-900 mb-2">Searching for the best flights...</p>
             <p className="text-gray-600">Please wait while we find available options</p>
           </div>
@@ -235,7 +235,7 @@ export default function FlightResultsPage() {
                             <div className="relative flex items-center justify-center mb-2">
                               <div className="absolute w-full h-0.5 bg-gray-300"></div>
                               <div className="relative bg-white px-2">
-                                <Plane className="h-5 w-5 text-primary-600 transform rotate-90" />
+                                <Plane className="h-5 w-5 text-primary-950 transform rotate-90" />
                               </div>
                             </div>
                             <p className="text-sm font-semibold text-gray-700">
@@ -259,7 +259,7 @@ export default function FlightResultsPage() {
                         {/* Price & Book Button */}
                         <div className="text-right border-l pl-6">
                           <p className="text-sm text-gray-600 mb-1">Total</p>
-                          <p className="text-3xl font-bold text-primary-600 mb-1">
+                          <p className="text-3xl font-bold text-primary-950 mb-1">
                             {formatPrice(parseFloat(flight.price?.total || flight.price?.grandTotal || '0'), flight.price?.currency)}
                           </p>
                           <p className="text-xs text-gray-600 mb-3">/ person</p>
@@ -282,7 +282,7 @@ export default function FlightResultsPage() {
                           {/* Flight Details Button */}
                           <button
                             onClick={() => setExpandedFlight(isExpanded ? null : index)}
-                            className="flex items-center gap-1 text-primary-600 hover:text-primary-700 font-medium"
+                            className="flex items-center gap-1 text-primary-950 hover:text-primary-900 font-medium"
                           >
                             <Plane className="h-4 w-4" />
                             Flight Details
@@ -325,7 +325,7 @@ export default function FlightResultsPage() {
                                 <div className="flex gap-4">
                                   {/* Timeline */}
                                   <div className="flex flex-col items-center">
-                                    <div className="w-3 h-3 rounded-full bg-primary-600"></div>
+                                    <div className="w-3 h-3 rounded-full bg-primary-950"></div>
                                     {segIndex < segments.length - 1 && (
                                       <div className="w-0.5 h-20 bg-gray-300 my-2"></div>
                                     )}

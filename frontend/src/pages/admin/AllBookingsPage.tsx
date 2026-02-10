@@ -76,7 +76,7 @@ export default function AllBookingsPage() {
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
         <div className="card bg-primary-50">
           <p className="text-sm text-gray-600">Total Bookings</p>
-          <p className="text-2xl font-bold text-primary-700">{stats.total}</p>
+          <p className="text-2xl font-bold text-primary-900">{stats.total}</p>
         </div>
         <div className="card bg-green-50">
           <p className="text-sm text-gray-600">Confirmed</p>
@@ -90,9 +90,9 @@ export default function AllBookingsPage() {
           <p className="text-sm text-gray-600">Cancelled</p>
           <p className="text-2xl font-bold text-red-700">{stats.cancelled}</p>
         </div>
-        <div className="card bg-purple-50">
+        <div className="card bg-accent-50">
           <p className="text-sm text-gray-600">Total Revenue</p>
-          <p className="text-2xl font-bold text-purple-700">${stats.totalRevenue.toFixed(0)}</p>
+          <p className="text-2xl font-bold text-accent-600">${stats.totalRevenue.toFixed(0)}</p>
         </div>
       </div>
 
@@ -137,7 +137,7 @@ export default function AllBookingsPage() {
       {/* Bookings Table */}
       {isLoading ? (
         <div className="text-center py-12">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-950"></div>
           <p className="text-gray-600 mt-4">Loading bookings...</p>
         </div>
       ) : filteredBookings && filteredBookings.length > 0 ? (
@@ -193,7 +193,7 @@ export default function AllBookingsPage() {
                     <td className="px-4 py-3">
                       <Link
                         to={`/bookings/${booking.id}`}
-                        className="text-primary-600 hover:text-primary-700 text-sm font-medium"
+                        className="text-primary-950 hover:text-primary-900 text-sm font-medium"
                       >
                         View Details
                       </Link>

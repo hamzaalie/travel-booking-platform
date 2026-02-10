@@ -65,7 +65,7 @@ export const RoleBasedNavigation: React.FC<RoleBasedNavigationProps> = ({
       {/* User Info Section */}
       <div className="p-4 border-b border-gray-200 bg-gray-50">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-950 to-accent-500 flex items-center justify-center text-white font-semibold">
             {user.firstName?.[0]}{user.lastName?.[0]}
           </div>
           <div className="flex-1 min-w-0">
@@ -95,12 +95,12 @@ export const RoleBasedNavigation: React.FC<RoleBasedNavigationProps> = ({
                     transition-colors duration-150 ease-in-out
                     ${
                       active
-                        ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-700'
+                        ? 'bg-accent-50 text-primary-950 border-l-4 border-primary-950'
                         : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
                     }
                   `}
                 >
-                  <span className={active ? 'text-blue-700' : 'text-gray-500'}>
+                  <span className={active ? 'text-primary-950' : 'text-gray-500'}>
                     {iconMap[item.label] || <LayoutDashboard className="w-5 h-5" />}
                   </span>
                   <span>{item.label}</span>

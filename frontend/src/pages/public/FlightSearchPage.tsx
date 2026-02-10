@@ -4,11 +4,11 @@ import { Plane } from 'lucide-react';
 
 export default function FlightSearchPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-blue-100">
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-accent-100">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
-            <div className="bg-primary-600 p-4 rounded-full">
+            <div className="bg-primary-950 p-4 rounded-full">
               <Plane className="h-10 w-10 text-white" />
             </div>
           </div>

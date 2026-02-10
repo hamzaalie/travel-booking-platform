@@ -58,7 +58,7 @@ export default function BlogPage() {
             onClick={() => setSelectedTag('')}
             className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
               !selectedTag
-                ? 'bg-primary-600 text-white'
+                ? 'bg-primary-950 text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
@@ -70,7 +70,7 @@ export default function BlogPage() {
               onClick={() => setSelectedTag(tag)}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                 selectedTag === tag
-                  ? 'bg-primary-600 text-white'
+                  ? 'bg-primary-950 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
@@ -105,7 +105,7 @@ export default function BlogPage() {
                   className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                 />
               ) : (
-                <div className="w-full h-48 bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center">
+                <div className="w-full h-48 bg-gradient-to-br from-primary-400 to-primary-950 flex items-center justify-center">
                   <span className="text-4xl opacity-50">✈️</span>
                 </div>
               )}
@@ -122,7 +122,7 @@ export default function BlogPage() {
                   </span>
                 </div>
 
-                <h2 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors line-clamp-2">
+                <h2 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-primary-950 transition-colors line-clamp-2">
                   {post.title}
                 </h2>
 
@@ -193,7 +193,7 @@ export function BlogPostPage() {
     <div className="container mx-auto px-4 py-8">
       <Link 
         to="/blog" 
-        className="inline-flex items-center text-gray-600 hover:text-primary-600 mb-6"
+        className="inline-flex items-center text-gray-600 hover:text-primary-950 mb-6"
       >
         <ArrowLeft className="h-4 w-4 mr-2" />
         Back to Blog
@@ -232,7 +232,7 @@ export function BlogPostPage() {
                 <Link
                   key={tag}
                   to={`/blog?tag=${tag}`}
-                  className="flex items-center gap-1 text-sm bg-primary-50 text-primary-700 px-3 py-1 rounded-full hover:bg-primary-100"
+                  className="flex items-center gap-1 text-sm bg-primary-50 text-primary-900 px-3 py-1 rounded-full hover:bg-primary-100"
                 >
                   <Tag className="h-3 w-3" />
                   {tag}

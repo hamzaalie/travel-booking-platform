@@ -3,7 +3,6 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { register } from '@/store/slices/authSlice';
 import { AppDispatch } from '@/store';
-import { Plane } from 'lucide-react';
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -54,14 +53,16 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-blue-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-accent-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-2xl w-full">
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <div className="text-center mb-8">
             <div className="flex justify-center mb-4">
-              <div className="bg-primary-600 p-3 rounded-full">
-                <Plane className="h-8 w-8 text-white" />
-              </div>
+              <img 
+                src="/images/Peakpass Travel Brand Kit/Peakpass Logo Full Color.png" 
+                alt="Peakpass Travel" 
+                className="h-16 w-auto" 
+              />
             </div>
             <h2 className="text-3xl font-bold text-gray-900">Create Account</h2>
             <p className="text-gray-600 mt-2">Join our travel booking platform</p>
@@ -183,14 +184,14 @@ export default function RegisterPage() {
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
               Already have an account?{' '}
-              <Link to="/login" className="text-primary-600 hover:text-primary-700 font-medium">
+              <Link to="/login" className="text-primary-950 hover:text-primary-900 font-medium">
                 Sign in here
               </Link>
             </p>
             {formData.role === 'B2B_AGENT' && (
               <p className="text-sm text-gray-600 mt-2">
                 Need to submit documents?{' '}
-                <Link to="/register/agent" className="text-primary-600 hover:text-primary-700 font-medium">
+                <Link to="/register/agent" className="text-primary-950 hover:text-primary-900 font-medium">
                   Complete Agent Registration
                 </Link>
               </p>

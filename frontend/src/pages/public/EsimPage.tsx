@@ -84,7 +84,7 @@ export default function EsimPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-purple-600 to-blue-600 py-12 px-4">
+      <div className="bg-gradient-to-r from-accent-500 to-primary-950 py-12 px-4">
         <div className="max-w-7xl mx-auto text-white">
           <h1 className="text-4xl font-bold mb-4">Stay Connected Anywhere</h1>
           <p className="text-xl text-white/90 mb-6">
@@ -145,7 +145,7 @@ export default function EsimPage() {
                   onClick={() => setSearchTerm(country.code)}
                   className={`px-3 py-1 rounded-full text-sm border transition-colors ${
                     searchTerm === country.code
-                      ? 'bg-primary-100 border-primary-500 text-primary-700'
+                      ? 'bg-primary-100 border-primary-500 text-primary-900'
                       : 'bg-white border-gray-200 hover:border-gray-300'
                   }`}
               >
@@ -174,7 +174,7 @@ export default function EsimPage() {
               <div key={product.id} className="bg-white rounded-xl shadow-sm p-6 hover:shadow-lg transition-shadow">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
-                    <Globe className="h-5 w-5 text-primary-600" />
+                    <Globe className="h-5 w-5 text-primary-950" />
                     <span className="font-semibold text-gray-900">{product.country}</span>
                   </div>
                   <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
@@ -209,7 +209,7 @@ export default function EsimPage() {
 
                 <div className="flex items-center justify-between pt-4 border-t">
                   <div>
-                    <span className="text-2xl font-bold text-primary-600">
+                    <span className="text-2xl font-bold text-primary-950">
                       {product.currency} {product.price}
                     </span>
                   </div>
@@ -237,7 +237,7 @@ export default function EsimPage() {
               { step: 4, title: 'Activate', desc: 'Scan QR code to activate eSIM' },
             ].map((item) => (
               <div key={item.step} className="text-center">
-                <div className="w-12 h-12 bg-primary-100 text-primary-700 rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-3">
+                <div className="w-12 h-12 bg-primary-100 text-primary-900 rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-3">
                   {item.step}
                 </div>
                 <h3 className="font-semibold mb-1">{item.title}</h3>
@@ -274,7 +274,7 @@ export default function EsimPage() {
               </div>
               <div className="flex justify-between pt-4 border-t">
                 <span className="text-gray-900 font-semibold">Total</span>
-                <span className="text-xl font-bold text-primary-600">
+                <span className="text-xl font-bold text-primary-950">
                   {selectedProduct.currency} {selectedProduct.price}
                 </span>
               </div>

@@ -138,7 +138,7 @@ export default function RefundManagementPage() {
   const getStatusBadge = (status: string) => {
     const badges = {
       PENDING: { color: 'bg-yellow-100 text-yellow-800', icon: Clock },
-      APPROVED: { color: 'bg-blue-100 text-blue-800', icon: CheckCircle },
+      APPROVED: { color: 'bg-accent-100 text-primary-950', icon: CheckCircle },
       REJECTED: { color: 'bg-red-100 text-red-800', icon: XCircle },
       PROCESSED: { color: 'bg-green-100 text-green-800', icon: CheckCircle },
     };
@@ -156,7 +156,7 @@ export default function RefundManagementPage() {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
-          <DollarSign className="h-12 w-12 text-primary-600 mx-auto mb-4 animate-pulse" />
+          <DollarSign className="h-12 w-12 text-primary-950 mx-auto mb-4 animate-pulse" />
           <p className="text-gray-600">Loading refund requests...</p>
         </div>
       </div>
@@ -205,15 +205,15 @@ export default function RefundManagementPage() {
             <Clock className="h-12 w-12 text-yellow-600" />
           </div>
         </div>
-        <div className="card bg-blue-50">
+        <div className="card bg-accent-50">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-blue-700 mb-1">Approved</p>
-              <p className="text-3xl font-bold text-blue-900">
+              <p className="text-sm text-primary-900 mb-1">Approved</p>
+              <p className="text-3xl font-bold text-primary-950">
                 {requests.filter((r) => r.status === 'APPROVED').length}
               </p>
             </div>
-            <CheckCircle className="h-12 w-12 text-blue-600" />
+            <CheckCircle className="h-12 w-12 text-primary-950" />
           </div>
         </div>
         <div className="card bg-green-50">
@@ -367,7 +367,7 @@ export default function RefundManagementPage() {
                 </p>
               </div>
 
-              <div className="bg-blue-50 p-4 rounded-lg">
+              <div className="bg-accent-50 p-4 rounded-lg">
                 <p className="text-sm text-gray-600 mb-2">Amount Breakdown</p>
                 <div className="space-y-1 text-sm">
                   <div className="flex justify-between">

@@ -35,7 +35,7 @@ export default function SettingsManagementPage() {
       return {
         header: header.data || { logo: '', menuItems: [], topBarEnabled: true, topBarMessage: '' },
         footer: footer.data || { columns: [], socialLinks: [], copyrightText: '', showNewsletter: true },
-        branding: branding.data || { primaryColor: '#3B82F6', secondaryColor: '#1E40AF', logo: '', favicon: '' },
+        branding: branding.data || { primaryColor: '#05014A', secondaryColor: '#F48C1B', logo: '', favicon: '' },
         seo: seo.data || { defaultTitle: '', titleTemplate: '', defaultDescription: '', keywords: [] },
         general: general.data || { siteName: '', supportEmail: '', supportPhone: '', address: '' },
       };
@@ -99,7 +99,7 @@ export default function SettingsManagementPage() {
               onClick={() => setActiveTab(tab.id as any)}
               className={`flex items-center gap-2 px-4 py-3 border-b-2 font-medium transition-colors ${
                 activeTab === tab.id
-                  ? 'border-primary-600 text-primary-600'
+                  ? 'border-primary-950 text-primary-950'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
@@ -208,7 +208,7 @@ function HeaderSettings({ data, onSave, isSaving }: { data: any; onSave: (data: 
           type="button"
           onClick={() => setFormData({ ...formData, topBarEnabled: !formData.topBarEnabled })}
           className={`relative inline-flex h-6 w-11 items-center rounded-full ${
-            formData.topBarEnabled ? 'bg-primary-600' : 'bg-gray-300'
+            formData.topBarEnabled ? 'bg-primary-950' : 'bg-gray-300'
           }`}
         >
           <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${
@@ -323,7 +323,7 @@ function FooterSettings({ data, onSave, isSaving }: { data: any; onSave: (data: 
           type="button"
           onClick={() => setFormData({ ...formData, showNewsletter: !formData.showNewsletter })}
           className={`relative inline-flex h-6 w-11 items-center rounded-full ${
-            formData.showNewsletter ? 'bg-primary-600' : 'bg-gray-300'
+            formData.showNewsletter ? 'bg-primary-950' : 'bg-gray-300'
           }`}
         >
           <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${
@@ -398,8 +398,8 @@ function FooterSettings({ data, onSave, isSaving }: { data: any; onSave: (data: 
 // Branding Settings Component
 function BrandingSettings({ data, onSave, isSaving }: { data: any; onSave: (data: any) => void; isSaving: boolean }) {
   const [formData, setFormData] = useState({
-    primaryColor: data.primaryColor || '#3B82F6',
-    secondaryColor: data.secondaryColor || '#1E40AF',
+    primaryColor: data.primaryColor || '#05014A',
+    secondaryColor: data.secondaryColor || '#F48C1B',
     logo: data.logo || '',
     logoDark: data.logoDark || '',
     favicon: data.favicon || '',

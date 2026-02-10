@@ -178,7 +178,7 @@ export default function FlightBookingPage() {
             {/* Flight Summary */}
             <div className="card">
               <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-                <Plane className="h-5 w-5 mr-2 text-primary-600" />
+                <Plane className="h-5 w-5 mr-2 text-primary-950" />
                 Flight Details
               </h2>
               <div className="bg-gray-50 rounded-lg p-4">
@@ -197,7 +197,7 @@ export default function FlightBookingPage() {
                   <div className="flex-1 mx-8">
                     <div className="flex items-center justify-center">
                       <div className="h-px bg-gray-300 flex-1"></div>
-                      <Plane className="h-5 w-5 text-primary-600 mx-2" />
+                      <Plane className="h-5 w-5 text-primary-950 mx-2" />
                       <div className="h-px bg-gray-300 flex-1"></div>
                     </div>
                     <p className="text-center text-sm text-gray-600 mt-1">
@@ -239,7 +239,7 @@ export default function FlightBookingPage() {
             {/* Contact Information */}
             <div className="card">
               <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-                <Mail className="h-5 w-5 mr-2 text-primary-600" />
+                <Mail className="h-5 w-5 mr-2 text-primary-950" />
                 Contact Information
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -286,7 +286,7 @@ export default function FlightBookingPage() {
             {passengers.map((passenger, index) => (
               <div key={index} className="card">
                 <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-                  <User className="h-5 w-5 mr-2 text-primary-600" />
+                  <User className="h-5 w-5 mr-2 text-primary-950" />
                   Passenger {index + 1} 
                   {index < searchData.adults && ' (Adult)'}
                   {index >= searchData.adults && index < searchData.adults + searchData.children && ' (Child)'}
@@ -391,7 +391,7 @@ export default function FlightBookingPage() {
               <div className="border-t border-gray-200 pt-4 mb-6">
                 <div className="flex justify-between items-center">
                   <span className="text-lg font-semibold text-gray-900">Total Amount</span>
-                  <span className="text-2xl font-bold text-primary-600">
+                  <span className="text-2xl font-bold text-primary-950">
                     ${totalPrice.toFixed(2)}
                   </span>
                 </div>
@@ -404,7 +404,7 @@ export default function FlightBookingPage() {
                 </label>
                 <div className="space-y-2">
                   {user?.role === 'B2B_AGENT' && (
-                    <label className="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:border-primary-600">
+                    <label className="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:border-primary-950">
                       <input
                         type="radio"
                         name="payment"
@@ -413,11 +413,11 @@ export default function FlightBookingPage() {
                         onChange={(e) => setPaymentMethod(e.target.value as any)}
                         className="mr-3"
                       />
-                      <Wallet className="h-5 w-5 text-primary-600 mr-2" />
+                      <Wallet className="h-5 w-5 text-primary-950 mr-2" />
                       <span>Wallet Balance</span>
                     </label>
                   )}
-                  <label className="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:border-primary-600">
+                  <label className="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:border-primary-950">
                     <input
                       type="radio"
                       name="payment"
@@ -426,10 +426,10 @@ export default function FlightBookingPage() {
                       onChange={(e) => setPaymentMethod(e.target.value as any)}
                       className="mr-3"
                     />
-                    <CreditCard className="h-5 w-5 text-primary-600 mr-2" />
+                    <CreditCard className="h-5 w-5 text-primary-950 mr-2" />
                     <span>Credit/Debit Card</span>
                   </label>
-                  <label className="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:border-primary-600">
+                  <label className="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:border-primary-950">
                     <input
                       type="radio"
                       name="payment"
@@ -440,7 +440,7 @@ export default function FlightBookingPage() {
                     />
                     <span className="font-semibold text-green-600">eSewa</span>
                   </label>
-                  <label className="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:border-primary-600">
+                  <label className="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:border-primary-950">
                     <input
                       type="radio"
                       name="payment"
@@ -449,7 +449,7 @@ export default function FlightBookingPage() {
                       onChange={(e) => setPaymentMethod(e.target.value as any)}
                       className="mr-3"
                     />
-                    <span className="font-semibold text-purple-600">Khalti</span>
+                    <span className="font-semibold text-accent-500">Khalti</span>
                   </label>
                 </div>
               </div>

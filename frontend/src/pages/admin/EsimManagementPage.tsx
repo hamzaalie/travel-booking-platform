@@ -27,11 +27,11 @@ interface EsimOrder {
 
 const STATUS_COLORS: Record<string, string> = {
   PENDING: 'bg-yellow-100 text-yellow-700',
-  PROCESSING: 'bg-blue-100 text-blue-700',
+  PROCESSING: 'bg-accent-100 text-primary-900',
   ACTIVATED: 'bg-green-100 text-green-700',
   EXPIRED: 'bg-gray-100 text-gray-600',
   FAILED: 'bg-red-100 text-red-700',
-  REFUNDED: 'bg-purple-100 text-purple-700',
+  REFUNDED: 'bg-accent-100 text-accent-600',
 };
 
 export default function EsimManagementPage() {
@@ -85,14 +85,14 @@ export default function EsimManagementPage() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-4 gap-4">
-        <div className="card bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
+        <div className="card bg-gradient-to-br from-accent-50 to-accent-100 border-accent-200">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-500 rounded-lg">
+            <div className="p-2 bg-primary-900 rounded-lg">
               <Package className="h-5 w-5 text-white" />
             </div>
             <div>
-              <p className="text-sm text-blue-600">Total Orders</p>
-              <p className="text-2xl font-bold text-blue-800">{stats.total}</p>
+              <p className="text-sm text-primary-950">Total Orders</p>
+              <p className="text-2xl font-bold text-primary-950">{stats.total}</p>
             </div>
           </div>
         </div>
@@ -118,14 +118,14 @@ export default function EsimManagementPage() {
             </div>
           </div>
         </div>
-        <div className="card bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
+        <div className="card bg-gradient-to-br from-accent-50 to-accent-100 border-accent-200">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-purple-500 rounded-lg">
+            <div className="p-2 bg-accent-500 rounded-lg">
               <Smartphone className="h-5 w-5 text-white" />
             </div>
             <div>
-              <p className="text-sm text-purple-600">Revenue</p>
-              <p className="text-2xl font-bold text-purple-800">
+              <p className="text-sm text-accent-500">Revenue</p>
+              <p className="text-2xl font-bold text-accent-600">
                 NPR {stats.revenue.toLocaleString()}
               </p>
             </div>
@@ -276,7 +276,7 @@ export default function EsimManagementPage() {
                 onClick={() => setCurrentPage(i + 1)}
                 className={`px-3 py-1 rounded ${
                   currentPage === i + 1
-                    ? 'bg-primary-600 text-white'
+                    ? 'bg-primary-950 text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >

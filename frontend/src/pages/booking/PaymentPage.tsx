@@ -316,7 +316,7 @@ export default function PaymentPage() {
   if (!bookingData) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-12 w-12 text-primary-600 animate-spin" />
+        <Loader2 className="h-12 w-12 text-primary-950 animate-spin" />
       </div>
     );
   }
@@ -328,7 +328,7 @@ export default function PaymentPage() {
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <button
           onClick={() => navigate(-1)}
-          className="mb-6 flex items-center text-gray-600 hover:text-primary-600"
+          className="mb-6 flex items-center text-gray-600 hover:text-primary-950"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Booking Details
@@ -338,11 +338,11 @@ export default function PaymentPage() {
           <div className="text-center mb-8">
             <div className="bg-primary-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
               {bookingData.type === 'HOTEL' ? (
-                <Building2 className="h-8 w-8 text-primary-600" />
+                <Building2 className="h-8 w-8 text-primary-950" />
               ) : bookingData.type === 'CAR' ? (
-                <Car className="h-8 w-8 text-primary-600" />
+                <Car className="h-8 w-8 text-primary-950" />
               ) : (
-                <Plane className="h-8 w-8 text-primary-600" />
+                <Plane className="h-8 w-8 text-primary-950" />
               )}
             </div>
             <h1 className="text-3xl font-bold text-gray-900">Complete Payment</h1>
@@ -429,7 +429,7 @@ export default function PaymentPage() {
             <div className="border-t border-gray-200 pt-4">
               <div className="flex justify-between items-center">
                 <span className="text-xl font-bold text-gray-900">Total Amount</span>
-                <span className="text-3xl font-bold text-primary-600">
+                <span className="text-3xl font-bold text-primary-950">
                   {bookingData.type === 'HOTEL' ? bookingData.offer?.price?.currency : bookingData.type === 'CAR' ? bookingData.car?.currency : '$'} {total.toFixed(2)}
                 </span>
               </div>
@@ -439,13 +439,13 @@ export default function PaymentPage() {
           {/* Wallet Balance (for B2B agents) */}
           {bookingData.paymentMethod === 'WALLET' && (
             <div className="mb-6">
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="bg-accent-50 border border-accent-200 rounded-lg p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
-                    <Wallet className="h-5 w-5 text-blue-600 mr-2" />
-                    <span className="font-medium text-blue-900">Wallet Balance</span>
+                    <Wallet className="h-5 w-5 text-primary-950 mr-2" />
+                    <span className="font-medium text-primary-950">Wallet Balance</span>
                   </div>
-                  <span className="text-lg font-bold text-blue-600">
+                  <span className="text-lg font-bold text-primary-950">
                     ${walletBalance.toFixed(2)}
                   </span>
                 </div>

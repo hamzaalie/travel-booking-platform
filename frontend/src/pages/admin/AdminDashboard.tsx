@@ -25,9 +25,9 @@ export default function AdminDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Total Bookings</p>
-              <p className="text-3xl font-bold text-primary-700">{stats?.bookings.total || 0}</p>
+              <p className="text-3xl font-bold text-primary-900">{stats?.bookings.total || 0}</p>
             </div>
-            <Plane className="h-12 w-12 text-primary-600" />
+            <Plane className="h-12 w-12 text-primary-950" />
           </div>
         </div>
 
@@ -41,15 +41,15 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <div className="card bg-purple-50 border-purple-200">
+        <div className="card bg-accent-50 border-accent-200">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Total Revenue</p>
-              <p className="text-3xl font-bold text-purple-700">
+              <p className="text-3xl font-bold text-accent-600">
                 ${(stats?.revenue.total || 0).toLocaleString()}
               </p>
             </div>
-            <TrendingUp className="h-12 w-12 text-purple-600" />
+            <TrendingUp className="h-12 w-12 text-accent-500" />
           </div>
         </div>
 

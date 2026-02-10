@@ -126,7 +126,7 @@ export default function HotelDetailsPage() {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="flex items-center justify-center h-96">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-950"></div>
         </div>
       </div>
     );
@@ -272,7 +272,7 @@ export default function HotelDetailsPage() {
                       </div>
                       <div className="text-right ml-4">
                         <div className="text-sm text-gray-600 mb-1">Total Price</div>
-                        <div className="text-2xl font-bold text-primary-600">
+                        <div className="text-2xl font-bold text-primary-950">
                           {offer.price.currency} {offer.price.total.toFixed(2)}
                         </div>
                         {offer.price.taxes && offer.price.taxes > 0 && (
@@ -285,9 +285,9 @@ export default function HotelDetailsPage() {
 
                     {/* Cancellation Policy */}
                     {offer.cancellation && (
-                      <div className="flex items-start space-x-2 text-sm bg-blue-50 p-3 rounded-lg mb-3">
-                        <Info className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                        <div className="text-blue-900">
+                      <div className="flex items-start space-x-2 text-sm bg-accent-50 p-3 rounded-lg mb-3">
+                        <Info className="h-4 w-4 text-primary-950 mt-0.5 flex-shrink-0" />
+                        <div className="text-primary-950">
                           <div className="font-medium">Cancellation Policy</div>
                           <div>Free cancellation until {new Date(offer.cancellation.deadline).toLocaleString()}</div>
                           {offer.cancellation.description && (
@@ -348,7 +348,7 @@ export default function HotelDetailsPage() {
                 <div className="flex justify-between items-baseline">
                   <span className="text-gray-600">Starting from</span>
                   <div className="text-right">
-                    <span className="text-3xl font-bold text-primary-600">
+                    <span className="text-3xl font-bold text-primary-950">
                       {hotel.offers[0]?.price.currency} {Math.min(...hotel.offers.map(o => o.price.total)).toFixed(2)}
                     </span>
                     <div className="text-sm text-gray-600">/night</div>

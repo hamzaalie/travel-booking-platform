@@ -85,9 +85,9 @@ export default function B2BUserManagementPage() {
           <h1 className="text-3xl font-bold text-gray-900">B2B User Management</h1>
           <p className="text-gray-600 mt-1">Manage travel agents and operators</p>
         </div>
-        <div className="flex items-center gap-2 bg-blue-50 px-4 py-2 rounded-lg">
-          <Building2 className="h-5 w-5 text-blue-600" />
-          <span className="text-blue-700 font-semibold">
+        <div className="flex items-center gap-2 bg-accent-50 px-4 py-2 rounded-lg">
+          <Building2 className="h-5 w-5 text-primary-950" />
+          <span className="text-primary-900 font-semibold">
             {data?.total || 0} Total B2B Users
           </span>
         </div>
@@ -174,7 +174,7 @@ export default function B2BUserManagementPage() {
                         </div>
                         <div className="text-sm text-gray-500">{user.email}</div>
                         {user.companyName && (
-                          <div className="text-sm text-blue-600 flex items-center gap-1">
+                          <div className="text-sm text-primary-950 flex items-center gap-1">
                             <Building2 className="h-3 w-3" />
                             {user.companyName}
                           </div>
@@ -183,8 +183,8 @@ export default function B2BUserManagementPage() {
                     </td>
                     <td className="px-4 py-3">
                       <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
-                        ${user.role === 'AGENT' ? 'bg-purple-100 text-purple-700' :
-                          user.role === 'CORPORATE' ? 'bg-blue-100 text-blue-700' :
+                        ${user.role === 'AGENT' ? 'bg-accent-100 text-accent-600' :
+                          user.role === 'CORPORATE' ? 'bg-accent-100 text-primary-900' :
                           user.role === 'OPERATOR' ? 'bg-orange-100 text-orange-700' :
                           'bg-gray-100 text-gray-700'}`}
                       >
@@ -219,14 +219,14 @@ export default function B2BUserManagementPage() {
                       <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => setSelectedUser(user)}
-                          className="p-1 text-gray-400 hover:text-primary-600"
+                          className="p-1 text-gray-400 hover:text-primary-950"
                           title="View Details"
                         >
                           <Eye className="h-5 w-5" />
                         </button>
                         <button
                           onClick={() => handleEdit(user)}
-                          className="p-1 text-gray-400 hover:text-blue-600"
+                          className="p-1 text-gray-400 hover:text-primary-950"
                           title="Edit"
                         >
                           <Edit className="h-5 w-5" />
@@ -249,7 +249,7 @@ export default function B2BUserManagementPage() {
                 onClick={() => setCurrentPage(i + 1)}
                 className={`px-3 py-1 rounded ${
                   currentPage === i + 1
-                    ? 'bg-primary-600 text-white'
+                    ? 'bg-primary-950 text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
@@ -355,8 +355,8 @@ export default function B2BUserManagementPage() {
 
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <div className="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center">
-                <span className="text-blue-600 font-bold text-lg">
+              <div className="h-12 w-12 bg-accent-100 rounded-full flex items-center justify-center">
+                <span className="text-primary-950 font-bold text-lg">
                   {selectedUser.firstName?.[0]}{selectedUser.lastName?.[0]}
                 </span>
               </div>
@@ -404,15 +404,15 @@ export default function B2BUserManagementPage() {
             </div>
 
             <div className="border-t pt-4 grid grid-cols-2 gap-4">
-              <div className="bg-purple-50 p-3 rounded-lg">
-                <div className="text-purple-600 text-sm">Markup</div>
-                <div className="text-xl font-bold text-purple-700">
+              <div className="bg-accent-50 p-3 rounded-lg">
+                <div className="text-accent-500 text-sm">Markup</div>
+                <div className="text-xl font-bold text-accent-600">
                   {selectedUser.markupPercentage || 0}%
                 </div>
               </div>
-              <div className="bg-blue-50 p-3 rounded-lg">
-                <div className="text-blue-600 text-sm">Bookings</div>
-                <div className="text-xl font-bold text-blue-700">
+              <div className="bg-accent-50 p-3 rounded-lg">
+                <div className="text-primary-950 text-sm">Bookings</div>
+                <div className="text-xl font-bold text-primary-900">
                   {selectedUser._count.bookings}
                 </div>
               </div>

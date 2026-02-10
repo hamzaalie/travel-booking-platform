@@ -4,7 +4,7 @@ export default function CookiePolicyPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero */}
-      <div className="bg-gradient-to-r from-primary-600 to-primary-800 py-16 px-4">
+      <div className="bg-gradient-to-r from-primary-950 to-primary-950 py-16 px-4">
         <div className="max-w-4xl mx-auto text-center text-white">
           <Cookie className="h-16 w-16 mx-auto mb-4 opacity-80" />
           <h1 className="text-4xl font-bold mb-4">Cookie Policy</h1>
@@ -21,7 +21,7 @@ export default function CookiePolicyPage() {
           
           <section>
             <div className="flex items-center gap-3 mb-4">
-              <Info className="h-6 w-6 text-primary-600" />
+              <Info className="h-6 w-6 text-primary-950" />
               <h2 className="text-2xl font-bold text-gray-900">What Are Cookies?</h2>
             </div>
             <div className="prose prose-gray max-w-none">
@@ -35,7 +35,7 @@ export default function CookiePolicyPage() {
 
           <section>
             <div className="flex items-center gap-3 mb-4">
-              <Settings className="h-6 w-6 text-primary-600" />
+              <Settings className="h-6 w-6 text-primary-950" />
               <h2 className="text-2xl font-bold text-gray-900">Types of Cookies We Use</h2>
             </div>
             <div className="space-y-6">
@@ -48,16 +48,16 @@ export default function CookiePolicyPage() {
                 </p>
               </div>
               
-              <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                <h3 className="font-semibold text-blue-800 mb-2">Functional Cookies</h3>
+              <div className="p-4 bg-accent-50 rounded-lg border border-accent-200">
+                <h3 className="font-semibold text-primary-950 mb-2">Functional Cookies</h3>
                 <p className="text-gray-600 text-sm">
                   These cookies allow us to remember your preferences and provide enhanced features. 
                   This includes your language preference, currency selection, and recent searches.
                 </p>
               </div>
               
-              <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
-                <h3 className="font-semibold text-purple-800 mb-2">Analytics Cookies</h3>
+              <div className="p-4 bg-accent-50 rounded-lg border border-accent-200">
+                <h3 className="font-semibold text-accent-600 mb-2">Analytics Cookies</h3>
                 <p className="text-gray-600 text-sm">
                   We use analytics cookies to understand how visitors interact with our website. 
                   This helps us improve our services and user experience. All data is anonymized.
@@ -77,7 +77,7 @@ export default function CookiePolicyPage() {
 
           <section>
             <div className="flex items-center gap-3 mb-4">
-              <BarChart className="h-6 w-6 text-primary-600" />
+              <BarChart className="h-6 w-6 text-primary-950" />
               <h2 className="text-2xl font-bold text-gray-900">Third-Party Cookies</h2>
             </div>
             <div className="prose prose-gray max-w-none">
@@ -95,7 +95,7 @@ export default function CookiePolicyPage() {
 
           <section>
             <div className="flex items-center gap-3 mb-4">
-              <ToggleLeft className="h-6 w-6 text-primary-600" />
+              <ToggleLeft className="h-6 w-6 text-primary-950" />
               <h2 className="text-2xl font-bold text-gray-900">Managing Your Cookie Preferences</h2>
             </div>
             <div className="prose prose-gray max-w-none">
@@ -119,7 +119,7 @@ export default function CookiePolicyPage() {
 
           <section>
             <div className="flex items-center gap-3 mb-4">
-              <Shield className="h-6 w-6 text-primary-600" />
+              <Shield className="h-6 w-6 text-primary-950" />
               <h2 className="text-2xl font-bold text-gray-900">Your Privacy Rights</h2>
             </div>
             <div className="prose prose-gray max-w-none">
@@ -133,7 +133,7 @@ export default function CookiePolicyPage() {
                 <li>Access information about our cookie practices</li>
               </ul>
               <p className="text-gray-600 mt-4">
-                For questions about our cookie practices, contact us at privacy@travelbooking.com
+                For questions about our cookie practices, contact us at privacy@Peakpass Travel.com
               </p>
             </div>
           </section>

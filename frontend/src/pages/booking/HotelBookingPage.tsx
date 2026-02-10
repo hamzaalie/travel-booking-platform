@@ -128,7 +128,7 @@ export default function HotelBookingPage() {
             {/* Hotel Summary */}
             <div className="card">
               <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-                <Building2 className="h-5 w-5 mr-2 text-primary-600" />
+                <Building2 className="h-5 w-5 mr-2 text-primary-950" />
                 Hotel Details
               </h2>
               <div className="bg-gray-50 rounded-lg p-4 space-y-3">
@@ -157,28 +157,28 @@ export default function HotelBookingPage() {
 
                 <div className="grid grid-cols-2 gap-4 pt-3 border-t">
                   <div className="flex items-center text-gray-700">
-                    <Calendar className="h-4 w-4 mr-2 text-primary-600" />
+                    <Calendar className="h-4 w-4 mr-2 text-primary-950" />
                     <div>
                       <p className="text-xs text-gray-500">Check-in</p>
                       <p className="font-medium">{checkInDate.toLocaleDateString()}</p>
                     </div>
                   </div>
                   <div className="flex items-center text-gray-700">
-                    <Calendar className="h-4 w-4 mr-2 text-primary-600" />
+                    <Calendar className="h-4 w-4 mr-2 text-primary-950" />
                     <div>
                       <p className="text-xs text-gray-500">Check-out</p>
                       <p className="font-medium">{checkOutDate.toLocaleDateString()}</p>
                     </div>
                   </div>
                   <div className="flex items-center text-gray-700">
-                    <Users className="h-4 w-4 mr-2 text-primary-600" />
+                    <Users className="h-4 w-4 mr-2 text-primary-950" />
                     <div>
                       <p className="text-xs text-gray-500">Guests</p>
                       <p className="font-medium">{offerData.guests} {offerData.guests === 1 ? 'Guest' : 'Guests'}</p>
                     </div>
                   </div>
                   <div className="flex items-center text-gray-700">
-                    <Building2 className="h-4 w-4 mr-2 text-primary-600" />
+                    <Building2 className="h-4 w-4 mr-2 text-primary-950" />
                     <div>
                       <p className="text-xs text-gray-500">Room Type</p>
                       <p className="font-medium">{offerData.roomType}</p>
@@ -203,7 +203,7 @@ export default function HotelBookingPage() {
             {/* Contact Information */}
             <div className="card">
               <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-                <Mail className="h-5 w-5 mr-2 text-primary-600" />
+                <Mail className="h-5 w-5 mr-2 text-primary-950" />
                 Contact Information
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -254,7 +254,7 @@ export default function HotelBookingPage() {
             {/* Guest Information */}
             <div className="card">
               <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-                <User className="h-5 w-5 mr-2 text-primary-600" />
+                <User className="h-5 w-5 mr-2 text-primary-950" />
                 Primary Guest Information
               </h2>
               <div className="space-y-4">
@@ -325,7 +325,7 @@ export default function HotelBookingPage() {
             {/* Payment Method */}
             <div className="card">
               <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-                <CreditCard className="h-5 w-5 mr-2 text-primary-600" />
+                <CreditCard className="h-5 w-5 mr-2 text-primary-950" />
                 Payment Method
               </h2>
               <div className="space-y-3">
@@ -373,7 +373,7 @@ export default function HotelBookingPage() {
                     className="mr-3"
                   />
                   <div className="h-5 w-5 mr-3 flex items-center justify-center">
-                    <span className="text-purple-600 font-bold text-xs">K</span>
+                    <span className="text-accent-500 font-bold text-xs">K</span>
                   </div>
                   <div>
                     <p className="font-medium text-gray-900">Khalti</p>
@@ -432,7 +432,7 @@ export default function HotelBookingPage() {
                 <div className="flex justify-between items-baseline mb-2">
                   <span className="text-gray-900 font-semibold">Total Amount</span>
                   <div className="text-right">
-                    <span className="text-3xl font-bold text-primary-600">
+                    <span className="text-3xl font-bold text-primary-950">
                       {offerData.price.currency} {totalPrice.toFixed(2)}
                     </span>
                   </div>

@@ -59,7 +59,7 @@ export default function StaticPage() {
           </header>
 
           <div 
-            className="prose prose-lg max-w-none prose-headings:font-bold prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-primary-600 prose-a:hover:text-primary-800"
+            className="prose prose-lg max-w-none prose-headings:font-bold prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-primary-950 prose-a:hover:text-primary-950"
             dangerouslySetInnerHTML={{ __html: page.content }}
           />
         </article>

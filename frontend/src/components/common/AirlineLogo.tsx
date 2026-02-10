@@ -41,7 +41,7 @@ export default function AirlineLogo({
   return (
     <div className={`flex items-center gap-3 ${className}`}>
       {/* Logo Container */}
-      <div className={`${sizeClasses[size]} bg-primary-50 border border-primary-100 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0 shadow-sm`}>
+      <div className={`${sizeClasses[size]} bg-primary-50 border border-accent-100 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0 shadow-sm`}>
         {!imageError && code && code !== 'Unknown' ? (
           <>
             <img
@@ -52,11 +52,11 @@ export default function AirlineLogo({
               onError={() => setImageError(true)}
             />
             {!imageLoaded && (
-              <Plane className={`${iconSizes[size]} text-primary-600 absolute`} />
+              <Plane className={`${iconSizes[size]} text-primary-950 absolute`} />
             )}
           </>
         ) : (
-          <Plane className={`${iconSizes[size]} text-primary-600`} />
+          <Plane className={`${iconSizes[size]} text-primary-950`} />
         )}
       </div>
       

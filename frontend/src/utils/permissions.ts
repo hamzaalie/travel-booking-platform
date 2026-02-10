@@ -243,9 +243,9 @@ export const getNavigationItems = (role: UserRole): NavItem[] => {
  */
 export const RoleColors: Record<UserRole, { bg: string; text: string; border: string }> = {
   [UserRole.SUPER_ADMIN]: {
-    bg: 'bg-purple-100',
-    text: 'text-purple-800',
-    border: 'border-purple-300',
+    bg: 'bg-accent-100',
+    text: 'text-accent-600',
+    border: 'border-accent-300',
   },
   [UserRole.FINANCE_ADMIN]: {
     bg: 'bg-green-100',
@@ -253,9 +253,9 @@ export const RoleColors: Record<UserRole, { bg: string; text: string; border: st
     border: 'border-green-300',
   },
   [UserRole.OPERATIONS_TEAM]: {
-    bg: 'bg-blue-100',
-    text: 'text-blue-800',
-    border: 'border-blue-300',
+    bg: 'bg-accent-100',
+    text: 'text-primary-950',
+    border: 'border-accent-300',
   },
   [UserRole.B2B_AGENT]: {
     bg: 'bg-orange-100',

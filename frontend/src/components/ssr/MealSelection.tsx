@@ -135,7 +135,7 @@ export const MealSelection: React.FC<MealSelectionProps> = ({
       case MealType.VEGAN:
         return <Leaf className="w-5 h-5 text-green-600" />;
       case MealType.SEAFOOD_FREE:
-        return <Fish className="w-5 h-5 text-blue-600" />;
+        return <Fish className="w-5 h-5 text-primary-950" />;
       case MealType.CHILD_MEAL:
       case MealType.INFANT_MEAL:
         return <span className="text-xl">👶</span>;
@@ -159,7 +159,7 @@ export const MealSelection: React.FC<MealSelectionProps> = ({
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-lg">
+      <div className="bg-gradient-to-r from-green-50 to-accent-50 p-6 rounded-lg">
         <h3 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
           <UtensilsCrossed className="w-6 h-6 text-green-600" />
           Select Your Meals
@@ -358,7 +358,7 @@ export const MealSelection: React.FC<MealSelectionProps> = ({
       )}
 
       {/* Selection Summary */}
-      <div className="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-lg">
+      <div className="bg-gradient-to-r from-green-50 to-accent-50 p-6 rounded-lg">
         <h4 className="text-lg font-semibold text-gray-900 mb-4">Meal Summary</h4>
 
         {selectedMeals.size === 0 ? (

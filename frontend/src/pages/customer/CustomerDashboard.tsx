@@ -57,7 +57,7 @@ export default function CustomerDashboard() {
         <Link to="/search" className="card hover:shadow-lg transition-shadow cursor-pointer">
           <div className="flex items-center">
             <div className="bg-primary-100 p-3 rounded-full mr-4">
-              <Search className="h-6 w-6 text-primary-600" />
+              <Search className="h-6 w-6 text-primary-950" />
             </div>
             <div>
               <h3 className="font-semibold text-gray-900">Search Flights</h3>
@@ -68,8 +68,8 @@ export default function CustomerDashboard() {
 
         <Link to="/customer/bookings" className="card hover:shadow-lg transition-shadow cursor-pointer">
           <div className="flex items-center">
-            <div className="bg-blue-100 p-3 rounded-full mr-4">
-              <Plane className="h-6 w-6 text-blue-600" />
+            <div className="bg-accent-100 p-3 rounded-full mr-4">
+              <Plane className="h-6 w-6 text-primary-950" />
             </div>
             <div>
               <h3 className="font-semibold text-gray-900">My Bookings</h3>
@@ -78,7 +78,7 @@ export default function CustomerDashboard() {
           </div>
         </Link>
 
-        <div className="card bg-gradient-to-br from-primary-500 to-blue-600 text-white">
+        <div className="card bg-gradient-to-br from-primary-500 to-primary-950 text-white">
           <h3 className="font-semibold text-lg mb-2">Total Spent</h3>
           <p className="text-3xl font-bold">
             ${bookings?.reduce((sum: number, b: any) => sum + parseFloat(b.totalAmount || 0), 0).toFixed(2) || '0.00'}
@@ -90,14 +90,14 @@ export default function CustomerDashboard() {
       <div className="card">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-gray-900">Recent Bookings</h2>
-          <Link to="/customer/bookings" className="text-primary-600 hover:text-primary-700 font-medium">
+          <Link to="/customer/bookings" className="text-primary-950 hover:text-primary-900 font-medium">
             View All →
           </Link>
         </div>
 
         {isLoading ? (
           <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-950"></div>
             <p className="text-gray-600 mt-4">Loading bookings...</p>
           </div>
         ) : bookings && bookings.length > 0 ? (
@@ -111,7 +111,7 @@ export default function CustomerDashboard() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
                     <div className="bg-primary-100 p-3 rounded-lg">
-                      <Plane className="h-6 w-6 text-primary-600" />
+                      <Plane className="h-6 w-6 text-primary-950" />
                     </div>
                     <div>
                       <div className="flex items-center space-x-2">

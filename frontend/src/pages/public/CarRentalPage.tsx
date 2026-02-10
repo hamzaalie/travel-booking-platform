@@ -185,12 +185,12 @@ export default function CarRentalPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-16">
+      <div className="bg-gradient-to-r from-primary-950 to-primary-950 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
             <Car className="h-16 w-16 mx-auto mb-4" />
             <h1 className="text-4xl md:text-5xl font-bold mb-4">Rent Your Perfect Car</h1>
-            <p className="text-xl text-blue-100">Wide selection of vehicles at competitive prices</p>
+            <p className="text-xl text-accent-100">Wide selection of vehicles at competitive prices</p>
           </div>
 
           {/* Search Form */}
@@ -199,7 +199,7 @@ export default function CarRentalPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="relative" ref={pickupRef}>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <MapPin className="inline h-4 w-4 mr-1 text-blue-600" />
+                    <MapPin className="inline h-4 w-4 mr-1 text-primary-950" />
                     Pick-up Location
                   </label>
                   <input
@@ -224,11 +224,11 @@ export default function CarRentalPage() {
                           key={location.code}
                           type="button"
                           onClick={() => handlePickupSelect(location)}
-                          className="w-full px-4 py-3 text-left hover:bg-blue-50 transition-colors border-b border-gray-100 last:border-0"
+                          className="w-full px-4 py-3 text-left hover:bg-accent-50 transition-colors border-b border-gray-100 last:border-0"
                         >
                           <div className="flex items-center gap-3">
-                            <div className="bg-blue-100 p-2 rounded">
-                              <MapPin className="h-4 w-4 text-blue-600" />
+                            <div className="bg-accent-100 p-2 rounded">
+                              <MapPin className="h-4 w-4 text-primary-950" />
                             </div>
                             <div>
                               <p className="font-semibold text-gray-900">{location.name}</p>
@@ -243,7 +243,7 @@ export default function CarRentalPage() {
 
                 <div className="relative" ref={dropoffRef}>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <MapPin className="inline h-4 w-4 mr-1 text-blue-600" />
+                    <MapPin className="inline h-4 w-4 mr-1 text-primary-950" />
                     Drop-off Location
                   </label>
                   <input
@@ -267,11 +267,11 @@ export default function CarRentalPage() {
                           key={location.code}
                           type="button"
                           onClick={() => handleDropoffSelect(location)}
-                          className="w-full px-4 py-3 text-left hover:bg-blue-50 transition-colors border-b border-gray-100 last:border-0"
+                          className="w-full px-4 py-3 text-left hover:bg-accent-50 transition-colors border-b border-gray-100 last:border-0"
                         >
                           <div className="flex items-center gap-3">
-                            <div className="bg-blue-100 p-2 rounded">
-                              <MapPin className="h-4 w-4 text-blue-600" />
+                            <div className="bg-accent-100 p-2 rounded">
+                              <MapPin className="h-4 w-4 text-primary-950" />
                             </div>
                             <div>
                               <p className="font-semibold text-gray-900">{location.name}</p>
@@ -288,7 +288,7 @@ export default function CarRentalPage() {
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <Calendar className="inline h-4 w-4 mr-1 text-blue-600" />
+                    <Calendar className="inline h-4 w-4 mr-1 text-primary-950" />
                     Pick-up Date
                   </label>
                   <input
@@ -313,7 +313,7 @@ export default function CarRentalPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <Calendar className="inline h-4 w-4 mr-1 text-blue-600" />
+                    <Calendar className="inline h-4 w-4 mr-1 text-primary-950" />
                     Drop-off Date
                   </label>
                   <input
@@ -377,7 +377,7 @@ export default function CarRentalPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-3xl font-bold text-gray-900">
-              Available Cars <span className="text-blue-600">({results.length})</span>
+              Available Cars <span className="text-primary-950">({results.length})</span>
             </h2>
             <div className="flex items-center space-x-4">
               {calculateDays() > 0 && (
@@ -407,11 +407,11 @@ export default function CarRentalPage() {
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     />
                   ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
-                      <Car className="h-16 w-16 text-blue-400" />
+                    <div className="w-full h-full bg-gradient-to-br from-accent-100 to-accent-200 flex items-center justify-center">
+                      <Car className="h-16 w-16 text-primary-800" />
                     </div>
                   )}
-                  <div className="absolute top-3 left-3 bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                  <div className="absolute top-3 left-3 bg-primary-950 text-white px-3 py-1 rounded-full text-xs font-semibold">
                     {car.category}
                   </div>
                   {car.fuelType === 'Electric' && (
@@ -425,7 +425,7 @@ export default function CarRentalPage() {
                 {/* Car Details */}
                 <div className="space-y-4">
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors">
+                    <h3 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-primary-950 transition-colors">
                       {car.name}
                     </h3>
                     <p className="text-sm text-gray-600">or similar {car.category.toLowerCase()}</p>
@@ -434,19 +434,19 @@ export default function CarRentalPage() {
                   {/* Specifications */}
                   <div className="grid grid-cols-2 gap-3">
                     <div className="flex items-center space-x-2 text-sm text-gray-700">
-                      <Users className="h-4 w-4 text-blue-600" />
+                      <Users className="h-4 w-4 text-primary-950" />
                       <span>{car.passengers} Passengers</span>
                     </div>
                     <div className="flex items-center space-x-2 text-sm text-gray-700">
-                      <Shield className="h-4 w-4 text-blue-600" />
+                      <Shield className="h-4 w-4 text-primary-950" />
                       <span>{car.luggage} Bags</span>
                     </div>
                     <div className="flex items-center space-x-2 text-sm text-gray-700">
-                      <Settings className="h-4 w-4 text-blue-600" />
+                      <Settings className="h-4 w-4 text-primary-950" />
                       <span>{car.transmission}</span>
                     </div>
                     <div className="flex items-center space-x-2 text-sm text-gray-700">
-                      <Fuel className="h-4 w-4 text-blue-600" />
+                      <Fuel className="h-4 w-4 text-primary-950" />
                       <span>{car.fuelType}</span>
                     </div>
                   </div>
@@ -480,7 +480,7 @@ export default function CarRentalPage() {
                       <div>
                         <p className="text-xs text-gray-600 mb-1">From</p>
                         <div className="flex items-baseline space-x-1">
-                          <span className="text-3xl font-bold text-blue-600">
+                          <span className="text-3xl font-bold text-primary-950">
                             {car.currency === 'USD' ? '$' : car.currency} {car.pricePerDay?.toFixed(2) || '0.00'}
                           </span>
                           <span className="text-sm text-gray-600">/day</span>
