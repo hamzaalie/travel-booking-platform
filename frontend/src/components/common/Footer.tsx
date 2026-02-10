@@ -16,7 +16,7 @@ export default function Footer() {
           <div className="space-y-6">
             <div className="flex items-center space-x-3">
               <img 
-                src="/images/Peakpass Travel Brand Kit/Peakpass Logo Reversed Mono Color.png" 
+                src="/images/Peakpass Travel Brand Kit/Peakpass Logo Mono Color.png" 
                 alt="Peakpass Travel" 
                 className="h-12 w-auto" 
               />
