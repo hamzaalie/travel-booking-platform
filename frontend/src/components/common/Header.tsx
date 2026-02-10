@@ -109,14 +109,6 @@ export default function Header() {
                 <Smartphone className="h-4 w-4" />
                 <span>eSIM</span>
               </Link>
-
-              <Link 
-                to="/blog" 
-                className="flex items-center space-x-2 px-4 py-2 rounded-lg text-gray-700 hover:text-primary-950 hover:bg-accent-50 transition-all duration-200 font-medium"
-              >
-                <BookOpen className="h-4 w-4" />
-                <span>Blog</span>
-              </Link>
               
               {isAuthenticated ? (
                 <>
