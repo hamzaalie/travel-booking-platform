@@ -199,7 +199,7 @@ export default function ReportingDashboardPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-accent-100 text-sm mb-1">Total Revenue</p>
-              <p className="text-3xl font-bold">${reportData.totalRevenue.toLocaleString()}</p>
+              <p className="text-3xl font-bold">NPR {reportData.totalRevenue.toLocaleString()}</p>
               <p className="text-accent-100 text-xs mt-1 flex items-center">
                 <TrendingUp className="h-3 w-3 mr-1" />
                 +12.5% from last period
@@ -241,7 +241,7 @@ export default function ReportingDashboardPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-orange-100 text-sm mb-1">Total Commission</p>
-              <p className="text-3xl font-bold">${reportData.totalCommission.toLocaleString()}</p>
+              <p className="text-3xl font-bold">NPR {reportData.totalCommission.toLocaleString()}</p>
               <p className="text-orange-100 text-xs mt-1">Avg: 12.5% markup</p>
             </div>
             <BarChart3 className="h-12 w-12 text-orange-200" />
@@ -266,7 +266,7 @@ export default function ReportingDashboardPage() {
                 dataKey="revenue"
                 stroke="#05014A"
                 strokeWidth={2}
-                name="Revenue ($)"
+                name="Revenue (NPR)"
               />
             </LineChart>
           </ResponsiveContainer>
@@ -300,7 +300,7 @@ export default function ReportingDashboardPage() {
               <YAxis dataKey="name" type="category" width={100} tick={{ fontSize: 12 }} />
               <Tooltip />
               <Legend />
-              <Bar dataKey="revenue" fill="#05014A" name="Revenue ($)" />
+              <Bar dataKey="revenue" fill="#05014A" name="Revenue (NPR)" />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -315,7 +315,7 @@ export default function ReportingDashboardPage() {
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                label={(props: any) => `${props.service}: $${props.revenue.toLocaleString()}`}
+                label={(props: any) => `${props.service}: NPR ${props.revenue.toLocaleString()}`}
                 outerRadius={100}
                 fill="#F48C1B"
                 dataKey="revenue"
@@ -370,10 +370,10 @@ export default function ReportingDashboardPage() {
                     {booking.service}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
-                    ${booking.amount.toFixed(2)}
+                    NPR {booking.amount.toFixed(2)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium">
-                    ${booking.commission.toFixed(2)}
+                    NPR {booking.commission.toFixed(2)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {new Date(booking.date).toLocaleString()}
@@ -390,7 +390,7 @@ export default function ReportingDashboardPage() {
         <div className="card">
           <h4 className="text-sm font-medium text-gray-600 mb-2">Average Booking Value</h4>
           <p className="text-2xl font-bold text-gray-900">
-            ${(reportData.totalRevenue / reportData.totalBookings).toFixed(2)}
+            NPR {(reportData.totalRevenue / reportData.totalBookings).toFixed(2)}
           </p>
         </div>
         <div className="card">

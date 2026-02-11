@@ -120,7 +120,7 @@ export default function MarkupManagementPage() {
             <h3 className="font-semibold text-primary-950 mb-1">About Markups</h3>
             <p className="text-sm text-primary-950">
               Global markups apply to all bookings. Agent-specific markups override global markups.
-              Use PERCENTAGE for % markup or FIXED for flat dollar amount.
+              Use PERCENTAGE for % markup or FIXED for flat NPR amount.
             </p>
           </div>
         </div>
@@ -145,7 +145,7 @@ export default function MarkupManagementPage() {
                   className="input"
                 >
                   <option value="PERCENTAGE">Percentage (%)</option>
-                  <option value="FIXED">Fixed Amount ($)</option>
+                  <option value="FIXED">Fixed Amount (NPR)</option>
                 </select>
               </div>
               <div>
@@ -160,7 +160,7 @@ export default function MarkupManagementPage() {
                   value={formData.value}
                   onChange={(e) => setFormData({ ...formData, value: e.target.value })}
                   className="input"
-                  placeholder={formData.type === 'PERCENTAGE' ? 'e.g., 10 for 10%' : 'e.g., 50 for $50'}
+                  placeholder={formData.type === 'PERCENTAGE' ? 'e.g., 10 for 10%' : 'e.g., 50 for NPR 50'}
                 />
               </div>
             </div>
@@ -212,7 +212,7 @@ export default function MarkupManagementPage() {
                 <div className="flex justify-between items-start mb-3">
                   <div>
                     <div className="text-3xl font-bold text-primary-900">
-                      {markup.type === 'PERCENTAGE' ? `${markup.value}%` : `$${markup.value}`}
+                      {markup.type === 'PERCENTAGE' ? `${markup.value}%` : `NPR ${markup.value}`}
                     </div>
                     <div className="text-sm text-gray-600 mt-1">
                       {markup.type === 'PERCENTAGE' ? 'Percentage' : 'Fixed Amount'}
@@ -280,7 +280,7 @@ export default function MarkupManagementPage() {
                     <td className="px-4 py-3 text-sm font-medium">{markup.agent?.agencyName || 'Unknown'}</td>
                     <td className="px-4 py-3 text-sm">{markup.type}</td>
                     <td className="px-4 py-3 text-sm font-bold">
-                      {markup.type === 'PERCENTAGE' ? `${markup.value}%` : `$${markup.value}`}
+                      {markup.type === 'PERCENTAGE' ? `${markup.value}%` : `NPR ${markup.value}`}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-600">{markup.description || '-'}</td>
                   </tr>

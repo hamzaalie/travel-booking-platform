@@ -10,7 +10,8 @@ import { MultiCitySearchForm } from '@/components/flights/MultiCitySearchForm';
 import { MultiCityResults } from '@/components/flights/MultiCityResults';
 import { type MultiCityFlightOffer } from '../../shared/multiCityTypes';
 import axios from 'axios';
-import { Plane, ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Plane } from 'lucide-react';
+import FlightSearchLoader from '@/components/common/FlightSearchLoader';
 
 interface SearchResponse {
   searchId: string;
@@ -149,18 +150,10 @@ export const MultiCitySearchPage: React.FC = () => {
           <div id="results-section" className="lg:col-span-2">
             {isSearching && (
               <div className="bg-white rounded-lg shadow-lg p-8">
-                <div className="flex flex-col items-center justify-center space-y-4">
-                  <div className="relative">
-                    <div className="w-20 h-20 border-4 border-accent-200 border-t-primary-950 rounded-full animate-spin"></div>
-                    <Plane className="w-8 h-8 text-primary-950 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
-                  </div>
-                  <div className="text-center">
-                    <p className="text-lg font-semibold text-gray-900">Searching flights...</p>
-                    <p className="text-sm text-gray-600 mt-1">
-                      Finding the best options for your multi-city journey
-                    </p>
-                  </div>
-                </div>
+                <FlightSearchLoader
+                  message="Searching flights..."
+                  subMessage="Finding the best options for your multi-city journey"
+                />
               </div>
             )}
 

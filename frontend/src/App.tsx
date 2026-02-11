@@ -50,6 +50,7 @@ import AgentMarkupsPage from './pages/agent/AgentMarkupsPage';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AgentApprovalPage from './pages/admin/AgentApprovalPage';
 import AllBookingsPage from './pages/admin/AllBookingsPage';
+import AdminBookingDetailPage from './pages/admin/AdminBookingDetailPage';
 import FundRequestsPage from './pages/admin/FundRequestsPage';
 import MarkupManagementPage from './pages/admin/MarkupManagementPage';
 import ReportingDashboardPage from './pages/admin/ReportingDashboardPage';
@@ -64,6 +65,12 @@ import PageManagementPage from './pages/admin/PageManagementPage';
 import BlogManagementPage from './pages/admin/BlogManagementPage';
 import CurrencyManagementPage from './pages/admin/CurrencyManagementPage';
 import EsimManagementPage from './pages/admin/EsimManagementPage';
+import ApiManagementPage from './pages/admin/ApiManagementPage';
+import PaymentGatewayManagementPage from './pages/admin/PaymentGatewayManagementPage';
+import PopularDestinationsPage from './pages/admin/PopularDestinationsPage';
+import B2BPortalManagementPage from './pages/admin/B2BPortalManagementPage';
+import EsimCommissionPage from './pages/admin/EsimCommissionPage';
+import BookingCustomizationPage from './pages/admin/BookingCustomizationPage';
 
 // Protected Route Component
 const ProtectedRoute = ({ children, allowedRoles }: { children: React.ReactNode; allowedRoles: string[] }) => {
@@ -160,6 +167,7 @@ function App() {
         <Route path="agents/:agentId/documents" element={<AgentDocumentsPage />} />
         <Route path="agents/:agentId" element={<AgentDocumentsPage />} />
         <Route path="bookings" element={<AllBookingsPage />} />
+        <Route path="bookings/:id" element={<AdminBookingDetailPage />} />
         <Route path="fund-requests" element={<FundRequestsPage />} />
         <Route path="markups" element={<MarkupManagementPage />} />
         <Route path="refunds" element={<RefundManagementPage />} />
@@ -172,6 +180,12 @@ function App() {
         <Route path="blog" element={<BlogManagementPage />} />
         <Route path="currencies" element={<CurrencyManagementPage />} />
         <Route path="esim" element={<EsimManagementPage />} />
+        <Route path="api-management" element={<ApiManagementPage />} />
+        <Route path="payment-gateways" element={<PaymentGatewayManagementPage />} />
+        <Route path="popular-destinations" element={<PopularDestinationsPage />} />
+        <Route path="b2b-portal" element={<B2BPortalManagementPage />} />
+        <Route path="esim-commission" element={<EsimCommissionPage />} />
+        <Route path="booking-customize" element={<BookingCustomizationPage />} />
       </Route>
 
       {/* 404 eror solved*/}

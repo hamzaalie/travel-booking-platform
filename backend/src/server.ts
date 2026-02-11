@@ -29,6 +29,7 @@ import contentRoutes from './routes/content.routes';
 import esimRoutes from './routes/esim.routes';
 import flightChangeRoutes from './routes/flight-change.routes';
 import sabreRoutes from './routes/sabre.routes';
+import adminExtendedRoutes from './routes/admin-extended.routes';
 
 // Validate configuration
 validateConfig();
@@ -125,6 +126,7 @@ app.use('/api/content', contentRoutes);
 app.use('/api/esim', esimRoutes);
 app.use('/api/flight-change', flightChangeRoutes);
 app.use('/api/sabre', sabreRoutes);
+app.use('/api/admin-extended', adminExtendedRoutes);
 
 // Serve frontend in production
 if (config.env === 'production') {

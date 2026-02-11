@@ -57,7 +57,7 @@ export default function SearchForm({ onSearch }: SearchFormProps) {
 
   const totalPassengers = adults + children + infants;
 
-  // Filter airports based on input
+  // Filter airports based on input done with all the changes required to show country and city in the dropdown and also search by them
   const filterAirports = (input: string) => {
     if (!input) return [];
     const searchTerm = input.toLowerCase();

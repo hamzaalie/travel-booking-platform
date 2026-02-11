@@ -121,7 +121,7 @@ export default function AgentApprovalPage() {
       {agent.status === 'APPROVED' && agent.wallet && (
         <div className="bg-green-50 border border-green-200 rounded-lg p-3 mt-4">
           <p className="text-sm text-green-800">
-            <strong>Wallet Balance:</strong> ${parseFloat(agent.wallet.balance || 0).toFixed(2)}
+            <strong>Wallet Balance:</strong> NPR {parseFloat(agent.wallet.balance || 0).toFixed(2)}
           </p>
         </div>
       )}

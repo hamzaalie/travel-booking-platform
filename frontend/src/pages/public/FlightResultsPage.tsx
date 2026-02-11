@@ -5,9 +5,10 @@ import { useSelector } from 'react-redux';
 import { flightApi } from '@/services/api';
 import { RootState } from '@/store';
 import { convertPrice } from '@/store/slices/currencySlice';
-import { Plane, Calendar, Users, ArrowRight, Loader2, Clock, AlertCircle, ChevronDown, ChevronUp, Luggage, XCircle } from 'lucide-react';
+import { Plane, Calendar, Users, ArrowRight, Clock, AlertCircle, ChevronDown, ChevronUp, Luggage, XCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 import AirlineLogo from '@/components/common/AirlineLogo';
+import FlightSearchLoader from '@/components/common/FlightSearchLoader';
 import { getAirlineName } from '@/utils/airlines';
 
 export default function FlightResultsPage() {
@@ -119,11 +120,7 @@ export default function FlightResultsPage() {
       {/* Results */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center py-20">
-            <Loader2 className="h-16 w-16 text-primary-950 animate-spin mb-6" />
-            <p className="text-xl font-semibold text-gray-900 mb-2">Searching for the best flights...</p>
-            <p className="text-gray-600">Please wait while we find available options</p>
-          </div>
+          <FlightSearchLoader />
         ) : isError ? (
           <div className="text-center py-20">
             <div className="bg-red-100 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">

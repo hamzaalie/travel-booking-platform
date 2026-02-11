@@ -290,9 +290,9 @@ export default function RefundManagementPage() {
                     </td>
                     <td className="px-6 py-4">
                       <div>
-                        <p className="text-sm text-gray-500">Original: ${request.originalAmount.toFixed(2)}</p>
-                        <p className="text-sm text-red-600">Penalty: -${request.penalty.toFixed(2)}</p>
-                        <p className="text-sm font-bold text-green-600">Refund: ${request.refundAmount.toFixed(2)}</p>
+                        <p className="text-sm text-gray-500">Original: NPR {request.originalAmount.toFixed(2)}</p>
+                        <p className="text-sm text-red-600">Penalty: -NPR {request.penalty.toFixed(2)}</p>
+                        <p className="text-sm font-bold text-green-600">Refund: NPR {request.refundAmount.toFixed(2)}</p>
                       </div>
                     </td>
                     <td className="px-6 py-4">
@@ -372,15 +372,15 @@ export default function RefundManagementPage() {
                 <div className="space-y-1 text-sm">
                   <div className="flex justify-between">
                     <span>Original Amount:</span>
-                    <span className="font-semibold">${selectedRequest.originalAmount.toFixed(2)}</span>
+                    <span className="font-semibold">NPR {selectedRequest.originalAmount.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-red-600">
                     <span>Cancellation Penalty:</span>
-                    <span className="font-semibold">-${selectedRequest.penalty.toFixed(2)}</span>
+                    <span className="font-semibold">-NPR {selectedRequest.penalty.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between border-t pt-1">
                     <span className="font-medium">Calculated Refund:</span>
-                    <span className="font-bold text-green-600">${selectedRequest.refundAmount.toFixed(2)}</span>
+                    <span className="font-bold text-green-600">NPR {selectedRequest.refundAmount.toFixed(2)}</span>
                   </div>
                 </div>
               </div>
@@ -393,7 +393,7 @@ export default function RefundManagementPage() {
               {actionType === 'APPROVE' && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Final Refund Amount (USD) *
+                    Final Refund Amount (NPR) *
                   </label>
                   <input
                     type="number"

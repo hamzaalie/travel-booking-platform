@@ -234,8 +234,29 @@ export const adminApi = {
   bulkUpdateAgentMarkupSettings: (agentIds: string[], settings: any) =>
     api.post('/admin/agents/bulk-markup-settings', { agentIds, ...settings }),
   
-  verifyDocument: (documentId: string, action: 'VERIFIED' | 'REJECTED', rejectionReason?: string) =>
-    api.post(`/admin/documents/${documentId}/verify`, { action, rejectionReason }),
+  verifyDocument: (documentId: string, action: any) =>
+    api.post(`/admin/documents/${documentId}/verify`, typeof action === 'string' ? { action } : action),
+
+  // Admin login as user (Direct Login)
+  loginAsUser: (userId: string) =>
+    api.post(`/admin-extended/login-as-user/${userId}`),
+
+  // Get bookings with extended params
+  getBookings: (params?: any) =>
+    api.get('/admin/bookings', { params }),
+
+  // Booking management actions
+  updateBookingStatus: (id: string, data: { status: string; note?: string }) =>
+    api.put(`/admin-extended/bookings/${id}/status`, data),
+
+  initiateRefund: (id: string, data: { reason: string; penaltyAmount: number; refundAmount: number; adminNotes?: string }) =>
+    api.post(`/admin-extended/bookings/${id}/refund`, data),
+
+  createFlightChangeRequest: (id: string, data: { requestType: string; reason: string; requestedChanges: any; adminNotes?: string }) =>
+    api.post(`/admin-extended/bookings/${id}/change-request`, data),
+
+  resendTicketEmail: (id: string) =>
+    api.post(`/admin-extended/bookings/${id}/resend-ticket`),
 };
 
 // Payment API
@@ -577,3 +598,88 @@ export const sabreApi = {
 };
 
 export default api;
+
+// ============================================================================
+// ADMIN API MANAGEMENT (Amadeus, Sabre, Hotels, eSIM, etc.)
+// ============================================================================
+export const adminApiManagementApi = {
+  getProviders: (params?: { type?: string }) =>
+    api.get('/admin-extended/api-providers', { params }),
+  
+  toggleProvider: (id: string, isEnabled: boolean) =>
+    api.put(`/admin-extended/api-providers/${id}/toggle`, { isEnabled }),
+  
+  testConnection: (id: string) =>
+    api.post(`/admin-extended/api-providers/${id}/test`),
+  
+  updateConfig: (id: string, config: any) =>
+    api.put(`/admin-extended/api-providers/${id}/config`, config),
+  
+  setPrimary: (id: string, type: string) =>
+    api.put(`/admin-extended/api-providers/${id}/primary`, { type }),
+};
+
+// ============================================================================
+// ADMIN PAYMENT GATEWAY MANAGEMENT
+// ============================================================================
+export const adminPaymentGatewayApi = {
+  getGateways: () =>
+    api.get('/admin-extended/payment-gateways'),
+  
+  toggleGateway: (id: string, isEnabled: boolean) =>
+    api.put(`/admin-extended/payment-gateways/${id}/toggle`, { isEnabled }),
+  
+  testGateway: (id: string) =>
+    api.post(`/admin-extended/payment-gateways/${id}/test`),
+  
+  updateConfig: (id: string, config: any) =>
+    api.put(`/admin-extended/payment-gateways/${id}/config`, config),
+};
+
+// ============================================================================
+// ADMIN POPULAR DESTINATIONS
+// ============================================================================
+export const adminPopularDestinationsApi = {
+  getAll: () =>
+    api.get('/admin-extended/popular-destinations'),
+  
+  create: (data: any) =>
+    api.post('/admin-extended/popular-destinations', data),
+  
+  update: (id: string, data: any) =>
+    api.put(`/admin-extended/popular-destinations/${id}`, data),
+  
+  delete: (id: string) =>
+    api.delete(`/admin-extended/popular-destinations/${id}`),
+  
+  toggle: (id: string, isActive: boolean) =>
+    api.put(`/admin-extended/popular-destinations/${id}/toggle`, { isActive }),
+};
+
+// ============================================================================
+// ADMIN ESIM COMMISSION & MARKUP
+// ============================================================================
+export const adminEsimCommissionApi = {
+  getRules: () =>
+    api.get('/admin-extended/esim-commission'),
+  
+  createRule: (data: any) =>
+    api.post('/admin-extended/esim-commission', data),
+  
+  updateRule: (id: string, data: any) =>
+    api.put(`/admin-extended/esim-commission/${id}`, data),
+  
+  deleteRule: (id: string) =>
+    api.delete(`/admin-extended/esim-commission/${id}`),
+  
+  toggleRule: (id: string, isActive: boolean) =>
+    api.put(`/admin-extended/esim-commission/${id}/toggle`, { isActive }),
+};
+
+// ============================================================================
+// ADMIN BOOKING CUSTOMIZATION
+// ============================================================================
+export const adminBookingCustomizationApi = {
+  updateBooking: (id: string, data: any) =>
+    api.put(`/admin-extended/bookings/${id}/customize`, data),
+};

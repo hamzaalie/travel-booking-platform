@@ -547,7 +547,7 @@ export default function AgentMarkupManagementPage() {
                           {agent.markupType ? (
                             <span className="inline-flex items-center text-sm">
                               {agent.markupType === 'FIXED' ? (
-                                <DollarSign className="h-3 w-3 mr-1 text-gray-400" />
+                                <span className="text-xs font-medium mr-1 text-gray-400">NPR</span>
                               ) : (
                                 <Percent className="h-3 w-3 mr-1 text-gray-400" />
                               )}
@@ -562,7 +562,7 @@ export default function AgentMarkupManagementPage() {
                           {agent.discountType ? (
                             <span className="inline-flex items-center text-sm text-green-600">
                               {agent.discountType === 'FIXED' ? (
-                                <DollarSign className="h-3 w-3 mr-1" />
+                                <span className="text-xs font-medium mr-1">NPR</span>
                               ) : (
                                 <Percent className="h-3 w-3 mr-1" />
                               )}
@@ -577,7 +577,7 @@ export default function AgentMarkupManagementPage() {
                           {agent.commissionType ? (
                             <span className="inline-flex items-center text-sm text-accent-500">
                               {agent.commissionType === 'FIXED' ? (
-                                <DollarSign className="h-3 w-3 mr-1" />
+                                <span className="text-xs font-medium mr-1">NPR</span>
                               ) : (
                                 <Percent className="h-3 w-3 mr-1" />
                               )}

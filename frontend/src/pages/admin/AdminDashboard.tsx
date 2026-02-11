@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { adminApi } from '@/services/api';
-import { Users, Plane, DollarSign, TrendingUp } from 'lucide-react';
+import { Users, Plane, DollarSign, TrendingUp, CreditCard, MapPin, Wifi, Shield, Armchair, Settings } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export default function AdminDashboard() {
   const { data: stats, isLoading } = useQuery({
@@ -46,7 +47,7 @@ export default function AdminDashboard() {
             <div>
               <p className="text-sm text-gray-600">Total Revenue</p>
               <p className="text-3xl font-bold text-accent-600">
-                ${(stats?.revenue.total || 0).toLocaleString()}
+                NPR {(stats?.revenue.total || 0).toLocaleString()}
               </p>
             </div>
             <TrendingUp className="h-12 w-12 text-accent-500" />
@@ -67,15 +68,15 @@ export default function AdminDashboard() {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         <div className="card">
           <h3 className="text-xl font-semibold mb-4">Pending Agent Approvals</h3>
           <p className="text-gray-600 mb-4">
             {stats?.agents.pending || 0} agents waiting for approval
           </p>
-          <a href="/admin/agents" className="btn btn-primary">
+          <Link to="/admin/agents" className="btn btn-primary">
             Review Agents
-          </a>
+          </Link>
         </div>
 
         <div className="card">
@@ -83,10 +84,39 @@ export default function AdminDashboard() {
           <p className="text-gray-600 mb-4">
             {stats?.fundRequests.pending || 0} fund requests to process
           </p>
-          <a href="/admin/fund-requests" className="btn btn-primary">
+          <Link to="/admin/fund-requests" className="btn btn-primary">
             Process Requests
-          </a>
+          </Link>
         </div>
+      </div>
+
+      {/* Management Quick Links */}
+      <h2 className="text-xl font-semibold mb-4">Management</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {[
+          { to: '/admin/b2b-portal', icon: Shield, label: 'B2B Portal', desc: 'Agent verification, documents & direct login', color: 'text-indigo-600 bg-indigo-50' },
+          { to: '/admin/booking-customize', icon: Armchair, label: 'Booking Customization', desc: 'Fare class, seats & services config', color: 'text-blue-600 bg-blue-50' },
+          { to: '/admin/esim-commission', icon: Wifi, label: 'eSIM Commission', desc: 'Markup & commission rules for eSIM', color: 'text-emerald-600 bg-emerald-50' },
+          { to: '/admin/payment-gateways', icon: CreditCard, label: 'Payment Gateways', desc: 'eSewa, Khalti, Stripe & more', color: 'text-purple-600 bg-purple-50' },
+          { to: '/admin/api-management', icon: Settings, label: 'API Management', desc: 'Amadeus, Sabre & provider config', color: 'text-orange-600 bg-orange-50' },
+          { to: '/admin/popular-destinations', icon: MapPin, label: 'Popular Destinations', desc: 'Homepage destinations management', color: 'text-rose-600 bg-rose-50' },
+        ].map((item) => (
+          <Link
+            key={item.to}
+            to={item.to}
+            className="card hover:shadow-md transition-shadow group"
+          >
+            <div className="flex items-start gap-3">
+              <div className={`p-2 rounded-lg ${item.color}`}>
+                <item.icon className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="font-medium group-hover:text-primary-950 transition-colors">{item.label}</h3>
+                <p className="text-sm text-gray-500">{item.desc}</p>
+              </div>
+            </div>
+          </Link>
+        ))}
       </div>
     </div>
   );

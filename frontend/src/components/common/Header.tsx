@@ -1,15 +1,110 @@
-import { Link } from 'react-router-dom';
+﻿import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import { useQuery } from '@tanstack/react-query';
 import { RootState } from '@/store';
 import { logout } from '@/store/slices/authSlice';
-import { LogOut, User, Menu, X, Home, Search, Briefcase, Mail, Phone, Smartphone, BookOpen } from 'lucide-react';
-import { useState } from 'react';
+import { settingsApi } from '@/services/api';
+import {
+  LogOut, User, Menu, X, Home, Search, Briefcase,
+  Mail, Phone, Smartphone, Plane, Hotel, Car, Globe,
+} from 'lucide-react';
+import { useState, useMemo } from 'react';
 import CurrencySelector from './CurrencySelector';
+
+const NAV_ICONS: Record<string, any> = {
+  home: Home,
+  search: Search,
+  flights: Plane,
+  'search flights': Plane,
+  hotels: Hotel,
+  'car rental': Car,
+  cars: Car,
+  esim: Smartphone,
+  briefcase: Briefcase,
+};
+
+const DEFAULT_HEADER = {
+  logo: '/images/Peakpass Travel Brand Kit/Peakpass Logo Full Color.png',
+  showTopBar: true,
+  topBarMessage: '24/7 Customer Support',
+  phoneNumber: '+1 (234) 567-890',
+  email: 'support@peakpasstravel.com',
+  navigationItems: [
+    { label: 'Home', href: '/', icon: 'home' },
+    { label: 'Search Flights', href: '/search', icon: 'flights' },
+    { label: 'Hotels', href: '/hotels', icon: 'hotels' },
+    { label: 'Car Rental', href: '/cars', icon: 'cars' },
+    { label: 'eSIM', href: '/esim', icon: 'esim' },
+  ],
+};
+
+const DEFAULT_BRANDING = {
+  logo: '/images/Peakpass Travel Brand Kit/Peakpass Logo Full Color.png',
+};
+
+const DEFAULT_GENERAL = {
+  siteName: 'Peakpass Travel',
+};
 
 export default function Header() {
   const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const { data: headerSettings } = useQuery({
+    queryKey: ['public-header-settings'],
+    queryFn: async () => {
+      try {
+        const response: any = await settingsApi.getHeader();
+        return response.data || DEFAULT_HEADER;
+      } catch {
+        return DEFAULT_HEADER;
+      }
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const { data: brandingSettings } = useQuery({
+    queryKey: ['public-branding-settings'],
+    queryFn: async () => {
+      try {
+        const response: any = await settingsApi.getBranding();
+        return response.data || DEFAULT_BRANDING;
+      } catch {
+        return DEFAULT_BRANDING;
+      }
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const { data: generalSettings } = useQuery({
+    queryKey: ['public-general-settings'],
+    queryFn: async () => {
+      try {
+        const response: any = await settingsApi.getGeneral();
+        return response.data || DEFAULT_GENERAL;
+      } catch {
+        return DEFAULT_GENERAL;
+      }
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const header = headerSettings || DEFAULT_HEADER;
+  const branding = brandingSettings || DEFAULT_BRANDING;
+  const general = generalSettings || DEFAULT_GENERAL;
+
+  const logoUrl = header.logo || branding.logo || DEFAULT_HEADER.logo;
+  const siteName = general.siteName || DEFAULT_GENERAL.siteName;
+  const phoneNumber = header.phoneNumber || DEFAULT_HEADER.phoneNumber;
+  const emailAddr = header.email || DEFAULT_HEADER.email;
+  const topBarMessage = header.topBarMessage || DEFAULT_HEADER.topBarMessage;
+  const showTopBar = header.showTopBar !== false;
+  const navItems = useMemo(() => {
+    return header.navigationItems?.length > 0
+      ? header.navigationItems
+      : DEFAULT_HEADER.navigationItems;
+  }, [header.navigationItems]);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -30,32 +125,45 @@ export default function Header() {
     }
   };
 
+  const getNavIcon = (item: any) => {
+    const key = (item.icon || item.label || '').toLowerCase();
+    return NAV_ICONS[key] || Globe;
+  };
+
   return (
     <>
       {/* Top Bar */}
-      <div className="bg-gradient-to-r from-primary-950 to-primary-900 text-white py-2 hidden md:block">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center text-sm">
-            <div className="flex items-center space-x-6">
-              <a href="tel:+1234567890" className="flex items-center hover:text-accent-400 transition-colors">
-                <Phone className="h-4 w-4 mr-2" />
-                +1 (234) 567-890
-              </a>
-              <a href="mailto:support@peakpasstravel.com" className="flex items-center hover:text-accent-400 transition-colors">
-                <Mail className="h-4 w-4 mr-2" />
-                support@peakpasstravel.com
-              </a>
-            </div>
-            <div className="flex items-center space-x-4">
-              <CurrencySelector />
-              <span className="flex items-center">
-                <span className="w-2 h-2 bg-accent-500 rounded-full mr-2 animate-pulse"></span>
-                24/7 Customer Support
-              </span>
+      {showTopBar && (
+        <div className="bg-gradient-to-r from-primary-950 to-primary-900 text-white py-2 hidden md:block">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center text-sm">
+              <div className="flex items-center space-x-6">
+                {phoneNumber && (
+                  <a href={`tel:${phoneNumber.replace(/[^\d+]/g, '')}`} className="flex items-center hover:text-accent-400 transition-colors">
+                    <Phone className="h-4 w-4 mr-2" />
+                    {phoneNumber}
+                  </a>
+                )}
+                {emailAddr && (
+                  <a href={`mailto:${emailAddr}`} className="flex items-center hover:text-accent-400 transition-colors">
+                    <Mail className="h-4 w-4 mr-2" />
+                    {emailAddr}
+                  </a>
+                )}
+              </div>
+              <div className="flex items-center space-x-4">
+                <CurrencySelector />
+                {topBarMessage && (
+                  <span className="flex items-center">
+                    <span className="w-2 h-2 bg-accent-500 rounded-full mr-2 animate-pulse"></span>
+                    {topBarMessage}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Main Header */}
       <header className="bg-white shadow-md border-b border-gray-200 sticky top-0 z-50">
@@ -63,53 +171,29 @@ export default function Header() {
           <div className="flex justify-between items-center h-20">
             {/* Logo */}
             <Link to="/" className="flex items-center group">
-              <img 
-                src="/images/Peakpass Travel Brand Kit/Peakpass Logo Full Color.png" 
-                alt="Peakpass Travel" 
-                className="h-14 w-auto group-hover:scale-105 transition-transform duration-300" 
+              <img
+                src={logoUrl}
+                alt={siteName}
+                className="h-14 w-auto group-hover:scale-105 transition-transform duration-300"
               />
             </Link>
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center space-x-1">
-              <Link 
-                to="/" 
-                className="flex items-center space-x-2 px-4 py-2 rounded-lg text-gray-700 hover:text-primary-950 hover:bg-accent-50 transition-all duration-200 font-medium"
-              >
-                <Home className="h-4 w-4" />
-                <span>Home</span>
-              </Link>
-              
-              <Link 
-                to="/search" 
-                className="flex items-center space-x-2 px-4 py-2 rounded-lg text-gray-700 hover:text-primary-950 hover:bg-accent-50 transition-all duration-200 font-medium"
-              >
-                <Search className="h-4 w-4" />
-                <span>Search Flights</span>
-              </Link>
+              {navItems.map((item: any, idx: number) => {
+                const Icon = getNavIcon(item);
+                return (
+                  <Link
+                    key={idx}
+                    to={item.href}
+                    className="flex items-center space-x-2 px-4 py-2 rounded-lg text-gray-700 hover:text-primary-950 hover:bg-accent-50 transition-all duration-200 font-medium"
+                  >
+                    <Icon className="h-4 w-4" />
+                    <span>{item.label}</span>
+                  </Link>
+                );
+              })}
 
-              <Link 
-                to="/hotels" 
-                className="flex items-center space-x-2 px-4 py-2 rounded-lg text-gray-700 hover:text-primary-950 hover:bg-accent-50 transition-all duration-200 font-medium"
-              >
-                <span>Hotels</span>
-              </Link>
-
-              <Link 
-                to="/cars" 
-                className="flex items-center space-x-2 px-4 py-2 rounded-lg text-gray-700 hover:text-primary-950 hover:bg-accent-50 transition-all duration-200 font-medium"
-              >
-                <span>Car Rental</span>
-              </Link>
-
-              <Link 
-                to="/esim" 
-                className="flex items-center space-x-2 px-4 py-2 rounded-lg text-gray-700 hover:text-primary-950 hover:bg-accent-50 transition-all duration-200 font-medium"
-              >
-                <Smartphone className="h-4 w-4" />
-                <span>eSIM</span>
-              </Link>
-              
               {isAuthenticated ? (
                 <>
                   <Link
@@ -129,8 +213,8 @@ export default function Header() {
                 </>
               ) : (
                 <>
-                  <Link 
-                    to="/login" 
+                  <Link
+                    to="/login"
                     className="px-4 py-2 rounded-lg text-gray-700 hover:text-primary-950 hover:bg-accent-50 transition-all duration-200 font-medium ml-2"
                   >
                     Login
@@ -163,41 +247,20 @@ export default function Header() {
         {mobileMenuOpen && (
           <div className="md:hidden border-t border-gray-200 bg-white shadow-lg">
             <div className="px-4 py-6 space-y-3">
-              <Link
-                to="/"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-accent-50 hover:text-primary-950 transition-all duration-200 font-medium"
-              >
-                <Home className="h-5 w-5" />
-                <span>Home</span>
-              </Link>
-
-              <Link
-                to="/search"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-accent-50 hover:text-primary-950 transition-all duration-200 font-medium"
-              >
-                <Search className="h-5 w-5" />
-                <span>Search Flights</span>
-              </Link>
-
-              <Link
-                to="/hotels"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-accent-50 hover:text-primary-950 transition-all duration-200 font-medium"
-              >
-                <Briefcase className="h-5 w-5" />
-                <span>Hotels</span>
-              </Link>
-
-              <Link
-                to="/cars"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-accent-50 hover:text-primary-950 transition-all duration-200 font-medium"
-              >
-                <Briefcase className="h-5 w-5" />
-                <span>Car Rental</span>
-              </Link>
+              {navItems.map((item: any, idx: number) => {
+                const Icon = getNavIcon(item);
+                return (
+                  <Link
+                    key={idx}
+                    to={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-accent-50 hover:text-primary-950 transition-all duration-200 font-medium"
+                  >
+                    <Icon className="h-5 w-5" />
+                    <span>{item.label}</span>
+                  </Link>
+                );
+              })}
 
               {isAuthenticated ? (
                 <>

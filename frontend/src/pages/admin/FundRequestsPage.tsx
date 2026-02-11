@@ -66,7 +66,7 @@ export default function FundRequestsPage() {
           </div>
           <div>
             <h3 className="text-2xl font-bold text-gray-900">
-              ${request.amount.toFixed(2)}
+              NPR {parseFloat(request.amount || 0).toFixed(2)}
             </h3>
             <p className="text-sm text-gray-600 mt-1">
               {request.agent?.agencyName}
@@ -147,14 +147,14 @@ export default function FundRequestsPage() {
           <h3 className="text-sm font-medium text-gray-600 mb-2">Pending Requests</h3>
           <p className="text-3xl font-bold text-yellow-700">{pendingRequests.length}</p>
           <p className="text-sm text-gray-600 mt-2">
-            Total: ${pendingRequests.reduce((sum: number, r: any) => sum + r.amount, 0).toFixed(2)}
+            Total: NPR {pendingRequests.reduce((sum: number, r: any) => sum + parseFloat(r.amount || 0), 0).toFixed(2)}
           </p>
         </div>
         <div className="card bg-green-50 border-green-200">
           <h3 className="text-sm font-medium text-gray-600 mb-2">Approved Requests</h3>
           <p className="text-3xl font-bold text-green-700">{approvedRequests.length}</p>
           <p className="text-sm text-gray-600 mt-2">
-            Total: ${approvedRequests.reduce((sum: number, r: any) => sum + r.amount, 0).toFixed(2)}
+            Total: NPR {approvedRequests.reduce((sum: number, r: any) => sum + parseFloat(r.amount || 0), 0).toFixed(2)}
           </p>
         </div>
         <div className="card bg-red-50 border-red-200">

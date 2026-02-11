@@ -92,7 +92,7 @@ export default function AllBookingsPage() {
         </div>
         <div className="card bg-accent-50">
           <p className="text-sm text-gray-600">Total Revenue</p>
-          <p className="text-2xl font-bold text-accent-600">${stats.totalRevenue.toFixed(0)}</p>
+          <p className="text-2xl font-bold text-accent-600">NPR {stats.totalRevenue.toFixed(0)}</p>
         </div>
       </div>
 
@@ -180,7 +180,7 @@ export default function AllBookingsPage() {
                       {new Date(booking.createdAt).toLocaleDateString()}
                     </td>
                     <td className="px-4 py-3">
-                      <div className="font-bold text-gray-900">${booking.totalPrice?.toFixed(2)}</div>
+                      <div className="font-bold text-gray-900">NPR {booking.totalPrice?.toFixed(2)}</div>
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center space-x-2">
@@ -192,7 +192,7 @@ export default function AllBookingsPage() {
                     </td>
                     <td className="px-4 py-3">
                       <Link
-                        to={`/bookings/${booking.id}`}
+                        to={`/admin/bookings/${booking.id}`}
                         className="text-primary-950 hover:text-primary-900 text-sm font-medium"
                       >
                         View Details
