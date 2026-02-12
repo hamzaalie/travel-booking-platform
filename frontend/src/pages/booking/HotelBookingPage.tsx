@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
+import { convertPrice } from '@/store/slices/currencySlice';
 import { Building2, User, Mail, CreditCard, Calendar, Users, MapPin } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -15,6 +16,20 @@ export default function HotelBookingPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const { currentCurrency, currencies, exchangeRates } = useSelector(
+    (state: RootState) => state.currency
+  );
+
+  // Format price with currency conversion
+  const formatPrice = (amount: number, sourceCurrency?: string) => {
+    const source = sourceCurrency || 'USD';
+    if (currentCurrency === source) {
+      const info = currencies.find(c => c.code === source);
+      const symbol = info?.symbol || source;
+      return `${symbol} ${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    }
+    return convertPrice(amount, currentCurrency, exchangeRates, currencies, source);
+  };
   
   const [hotelData, setHotelData] = useState<any>(null);
   const [offerData, setOfferData] = useState<any>(null);
@@ -411,14 +426,14 @@ export default function HotelBookingPage() {
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Room Rate</span>
                   <span className="font-medium text-gray-900">
-                    {offerData.price.currency} {offerData.price.base?.toFixed(2) || offerData.price.total?.toFixed(2)}
+                    {formatPrice(parseFloat(offerData.price.base || offerData.price.total), offerData.price.currency)}
                   </span>
                 </div>
                 {offerData.price.taxes && offerData.price.taxes > 0 && (
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Taxes & Fees</span>
                     <span className="font-medium text-gray-900">
-                      {offerData.price.currency} {offerData.price.taxes.toFixed(2)}
+                      {formatPrice(offerData.price.taxes, offerData.price.currency)}
                     </span>
                   </div>
                 )}
@@ -433,7 +448,7 @@ export default function HotelBookingPage() {
                   <span className="text-gray-900 font-semibold">Total Amount</span>
                   <div className="text-right">
                     <span className="text-3xl font-bold text-primary-950">
-                      {offerData.price.currency} {totalPrice.toFixed(2)}
+                      {formatPrice(totalPrice, offerData.price.currency)}
                     </span>
                   </div>
                 </div>

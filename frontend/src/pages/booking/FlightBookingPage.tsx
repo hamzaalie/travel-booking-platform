@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
+import { convertPrice } from '@/store/slices/currencySlice';
 import { Plane, User, Mail, CreditCard, Wallet } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getAirlineName } from '@/utils/airlines';
@@ -19,6 +20,20 @@ interface PassengerForm {
 export default function FlightBookingPage() {
   const navigate = useNavigate();
   const { user, isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const { currentCurrency, currencies, exchangeRates } = useSelector(
+    (state: RootState) => state.currency
+  );
+
+  // Format price with currency conversion
+  const formatPrice = (amount: number, sourceCurrency?: string) => {
+    const source = sourceCurrency || 'USD';
+    if (currentCurrency === source) {
+      const info = currencies.find(c => c.code === source);
+      const symbol = info?.symbol || source;
+      return `${symbol} ${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    }
+    return convertPrice(amount, currentCurrency, exchangeRates, currencies, source);
+  };
   
   const [flightData, setFlightData] = useState<any>(null);
   const [searchData, setSearchData] = useState<any>(null);
@@ -383,7 +398,7 @@ export default function FlightBookingPage() {
                 {searchData.adults > 0 && (
                   <div className="flex justify-between text-gray-700">
                     <span>Adult × {searchData.adults}</span>
-                    <span>${basePrice.toFixed(2)}</span>
+                    <span>{formatPrice(basePrice, flightData?.price?.currency)}</span>
                   </div>
                 )}
               </div>
@@ -392,7 +407,7 @@ export default function FlightBookingPage() {
                 <div className="flex justify-between items-center">
                   <span className="text-lg font-semibold text-gray-900">Total Amount</span>
                   <span className="text-2xl font-bold text-primary-950">
-                    ${totalPrice.toFixed(2)}
+                    {formatPrice(totalPrice, flightData?.price?.currency)}
                   </span>
                 </div>
               </div>

@@ -3,6 +3,7 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { esimApi } from '@/services/api';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
+import { convertPrice } from '@/store/slices/currencySlice';
 import { useNavigate } from 'react-router-dom';
 import { Smartphone, Globe, Wifi, Clock, Search, Check, ShoppingCart } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -24,9 +25,23 @@ interface EsimProduct {
 export default function EsimPage() {
   const navigate = useNavigate();
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const { currentCurrency, currencies, exchangeRates } = useSelector(
+    (state: RootState) => state.currency
+  );
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRegion, setSelectedRegion] = useState<string>('all');
   const [selectedProduct, setSelectedProduct] = useState<EsimProduct | null>(null);
+
+  // Currency formatting helper - converts from source currency to user's selected currency
+  const formatPrice = (amount: number, sourceCurrency: string = 'USD') => {
+    if (currentCurrency === sourceCurrency) {
+      // Same currency, no conversion needed
+      const info = currencies.find(c => c.code === sourceCurrency);
+      const symbol = info?.symbol || sourceCurrency;
+      return `${symbol} ${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    }
+    return convertPrice(amount, currentCurrency, exchangeRates, currencies, sourceCurrency);
+  };
 
   const { data: products, isLoading } = useQuery({
     queryKey: ['esim-products', searchTerm, selectedRegion],
@@ -58,11 +73,10 @@ export default function EsimPage() {
 
   const purchaseMutation = useMutation({
     mutationFn: (productId: string) => esimApi.purchase(productId),
-    onSuccess: (data: any) => {
-      toast.success('eSIM purchased successfully!');
-      if (data?.data?.orderId) {
-        navigate(`/customer/esim/${data.data.orderId}`);
-      }
+    onSuccess: () => {
+      toast.success('eSIM purchased successfully! Check your email for activation instructions.');
+      // Navigate to customer dashboard/bookings since eSIM orders are handled there
+      navigate('/customer/bookings');
     },
     onError: () => {
       toast.error('Failed to purchase eSIM');
@@ -226,7 +240,7 @@ export default function EsimPage() {
                 <div className="flex items-center justify-between pt-4 border-t">
                   <div>
                     <span className="text-2xl font-bold text-primary-950">
-                      {product.currency} {product.price}
+                      {formatPrice(product.price, product.currency)}
                     </span>
                   </div>
                   <button
@@ -291,7 +305,7 @@ export default function EsimPage() {
               <div className="flex justify-between pt-4 border-t">
                 <span className="text-gray-900 font-semibold">Total</span>
                 <span className="text-xl font-bold text-primary-950">
-                  {selectedProduct.currency} {selectedProduct.price}
+                  {formatPrice(selectedProduct.price, selectedProduct.currency)}
                 </span>
               </div>
             </div>

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
+import { convertPrice } from '@/store/slices/currencySlice';
 import { bookingApi, paymentApi, hotelApi, walletApi, carRentalApi } from '@/services/api';
 import { Wallet, Loader2, ArrowLeft, Building2, Plane, Car } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -9,6 +10,20 @@ import toast from 'react-hot-toast';
 export default function PaymentPage() {
   const navigate = useNavigate();
   const { user } = useSelector((state: RootState) => state.auth);
+  const { currentCurrency, currencies, exchangeRates } = useSelector(
+    (state: RootState) => state.currency
+  );
+
+  // Format price with currency conversion
+  const formatPrice = (amount: number, sourceCurrency?: string) => {
+    const source = sourceCurrency || 'USD';
+    if (currentCurrency === source) {
+      const info = currencies.find(c => c.code === source);
+      const symbol = info?.symbol || source;
+      return `${symbol} ${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    }
+    return convertPrice(amount, currentCurrency, exchangeRates, currencies, source);
+  };
   
   const [bookingData, setBookingData] = useState<any>(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -376,7 +391,7 @@ export default function PaymentPage() {
                   </div>
                   <div className="flex justify-between text-gray-700">
                     <span>Total Price</span>
-                    <span>{bookingData.offer?.price?.currency} {parseFloat(bookingData.offer?.price?.total || '0').toFixed(2)}</span>
+                    <span>{formatPrice(parseFloat(bookingData.offer?.price?.total || '0'), bookingData.offer?.price?.currency)}</span>
                   </div>
                 </>
               ) : bookingData.type === 'CAR' ? (
@@ -405,7 +420,7 @@ export default function PaymentPage() {
                   </div>
                   <div className="flex justify-between text-gray-700">
                     <span>Total Price</span>
-                    <span>{bookingData.car?.currency} {(bookingData.car?.pricePerDay * Math.ceil((new Date(bookingData.searchParams?.dropoffDate).getTime() - new Date(bookingData.searchParams?.pickupDate).getTime()) / (1000 * 60 * 60 * 24))).toFixed(2)}</span>
+                    <span>{formatPrice(bookingData.car?.pricePerDay * Math.ceil((new Date(bookingData.searchParams?.dropoffDate).getTime() - new Date(bookingData.searchParams?.pickupDate).getTime()) / (1000 * 60 * 60 * 24)), bookingData.car?.currency)}</span>
                   </div>
                 </>
               ) : (
@@ -420,7 +435,7 @@ export default function PaymentPage() {
                     <span>
                       {bookingData.searchData.adults + bookingData.searchData.children + bookingData.searchData.infants} Passenger(s)
                     </span>
-                    <span>${parseFloat(bookingData.flightOffer.price?.total || bookingData.flightOffer.price?.grandTotal || '0').toFixed(2)}</span>
+                    <span>{formatPrice(parseFloat(bookingData.flightOffer.price?.total || bookingData.flightOffer.price?.grandTotal || '0'), bookingData.flightOffer.price?.currency)}</span>
                   </div>
                 </>
               )}
@@ -430,7 +445,7 @@ export default function PaymentPage() {
               <div className="flex justify-between items-center">
                 <span className="text-xl font-bold text-gray-900">Total Amount</span>
                 <span className="text-3xl font-bold text-primary-950">
-                  {bookingData.type === 'HOTEL' ? bookingData.offer?.price?.currency : bookingData.type === 'CAR' ? bookingData.car?.currency : '$'} {total.toFixed(2)}
+                  {formatPrice(total, bookingData.type === 'HOTEL' ? bookingData.offer?.price?.currency : bookingData.type === 'CAR' ? bookingData.car?.currency : bookingData.flightOffer?.price?.currency || 'USD')}
                 </span>
               </div>
             </div>
@@ -446,7 +461,7 @@ export default function PaymentPage() {
                     <span className="font-medium text-primary-950">Wallet Balance</span>
                   </div>
                   <span className="text-lg font-bold text-primary-950">
-                    ${walletBalance.toFixed(2)}
+                    {formatPrice(walletBalance, 'USD')}
                   </span>
                 </div>
                 {walletBalance < total && (
@@ -483,7 +498,7 @@ export default function PaymentPage() {
                 </>
               ) : (
                 <>
-                  Pay {bookingData.type === 'HOTEL' ? bookingData.offer?.price?.currency : bookingData.type === 'CAR' ? bookingData.car?.currency : '$'}{total.toFixed(2)}
+                  Pay {formatPrice(total, bookingData.type === 'HOTEL' ? bookingData.offer?.price?.currency : bookingData.type === 'CAR' ? bookingData.car?.currency : bookingData.flightOffer?.price?.currency || 'USD')}
                 </>
               )}
             </button>

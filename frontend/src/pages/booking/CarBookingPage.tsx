@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
+import { convertPrice } from '@/store/slices/currencySlice';
 import { Car, User, CreditCard, Calendar, MapPin, Clock } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -20,6 +21,20 @@ export default function CarBookingPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const { currentCurrency, currencies, exchangeRates } = useSelector(
+    (state: RootState) => state.currency
+  );
+
+  // Format price with currency conversion
+  const formatPrice = (amount: number, sourceCurrency?: string) => {
+    const source = sourceCurrency || 'USD';
+    if (currentCurrency === source) {
+      const info = currencies.find(c => c.code === source);
+      const symbol = info?.symbol || source;
+      return `${symbol} ${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    }
+    return convertPrice(amount, currentCurrency, exchangeRates, currencies, source);
+  };
   
   const [carData, setCarData] = useState<any>(null);
   const [searchParams, setSearchParams] = useState<any>(null);
@@ -470,7 +485,7 @@ export default function CarBookingPage() {
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Daily Rate</span>
                   <span className="font-medium text-gray-900">
-                    {carData.currency === 'USD' ? '$' : carData.currency} {carData.pricePerDay.toFixed(2)}
+                    {formatPrice(carData.pricePerDay, carData.currency)}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
@@ -480,7 +495,7 @@ export default function CarBookingPage() {
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Subtotal</span>
                   <span className="font-medium text-gray-900">
-                    {carData.currency === 'USD' ? '$' : carData.currency} {totalPrice.toFixed(2)}
+                    {formatPrice(totalPrice, carData.currency)}
                   </span>
                 </div>
               </div>
@@ -490,7 +505,7 @@ export default function CarBookingPage() {
                   <span className="text-gray-900 font-semibold">Total Amount</span>
                   <div className="text-right">
                     <span className="text-3xl font-bold text-primary-950">
-                      {carData.currency === 'USD' ? '$' : carData.currency} {totalPrice.toFixed(2)}
+                      {formatPrice(totalPrice, carData.currency)}
                     </span>
                   </div>
                 </div>
