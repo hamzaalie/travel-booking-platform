@@ -18,7 +18,7 @@ export default function MarkupManagementPage() {
   const [platformPercentage, setPlatformPercentage] = useState<string>('5');
   const [platformEnabled, setPlatformEnabled] = useState(true);
 
-  const { data: platformMarkup, isLoading: platformLoading } = useQuery({
+  const { data: _platformMarkup, isLoading: platformLoading } = useQuery({
     queryKey: ['platformMarkup'],
     queryFn: async () => {
       const response: any = await settingsApi.getPlatformMarkup();
