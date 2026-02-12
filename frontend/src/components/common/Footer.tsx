@@ -70,8 +70,8 @@ const DEFAULT_GENERAL = {
 };
 
 const DEFAULT_BRANDING = {
-  logo: '/images/Peakpass Travel Brand Kit/Peakpass Logo Full Color.png',
-  logoDark: '/images/Peakpass Travel Brand Kit/Peakpass Logo Mono Color.png',
+  logo: '/images/logo.png',
+  logoDark: '/images/logo-dark.png',
 };
 
 export default function Footer() {
@@ -162,7 +162,7 @@ export default function Footer() {
           {/* Company Info */}
           <div className="space-y-6 lg:col-span-2">
             <div className="flex items-center space-x-3">
-              <img src={logoUrl} alt={siteName} className="h-12 w-auto" />
+              <img src={logoUrl} alt={siteName} className="h-12 w-auto" onError={(e) => { (e.target as HTMLImageElement).src = '/images/logo.png'; }} />
             </div>
             <p className="text-gray-400 leading-relaxed">
               The most advanced B2B & B2C travel booking platform with Amadeus GDS integration,

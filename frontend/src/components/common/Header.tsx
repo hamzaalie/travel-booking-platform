@@ -24,7 +24,7 @@ const NAV_ICONS: Record<string, any> = {
 };
 
 const DEFAULT_HEADER = {
-  logo: '/images/Peakpass Travel Brand Kit/Peakpass Logo Full Color.png',
+  logo: '/images/logo.png',
   showTopBar: true,
   topBarMessage: '24/7 Customer Support',
   phoneNumber: '+1 (234) 567-890',
@@ -39,7 +39,7 @@ const DEFAULT_HEADER = {
 };
 
 const DEFAULT_BRANDING = {
-  logo: '/images/Peakpass Travel Brand Kit/Peakpass Logo Full Color.png',
+  logo: '/images/logo.png',
 };
 
 const DEFAULT_GENERAL = {
@@ -175,6 +175,7 @@ export default function Header() {
                 src={logoUrl}
                 alt={siteName}
                 className="h-14 w-auto group-hover:scale-105 transition-transform duration-300"
+                onError={(e) => { (e.target as HTMLImageElement).src = '/images/logo.png'; }}
               />
             </Link>
 
