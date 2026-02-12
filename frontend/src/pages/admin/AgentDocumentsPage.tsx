@@ -110,7 +110,7 @@ export default function AgentDocumentsPage() {
   // Verify document mutation done already 
   const verifyMutation = useMutation({
     mutationFn: async ({ documentId, action, reason }: { documentId: string; action: 'VERIFIED' | 'REJECTED'; reason?: string }) => {
-      return await adminApi.verifyDocument(documentId, action, reason);
+      return await adminApi.verifyDocument(documentId, { action, reason });
     },
     onSuccess: (_, variables) => {
       toast.success(`Document ${variables.action.toLowerCase()} successfully!`);

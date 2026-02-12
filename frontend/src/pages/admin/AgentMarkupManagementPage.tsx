@@ -7,7 +7,6 @@ import {
   Edit, 
   Save, 
   X, 
-  DollarSign, 
   Percent, 
   Users,
   TrendingUp,
