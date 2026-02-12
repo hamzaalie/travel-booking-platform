@@ -27,19 +27,32 @@ router.get(
 router.get(
   '/detect',
   asyncHandler(async (req, res) => {
-    // Get client IP
-    const ip = req.headers['x-forwarded-for'] as string || 
+    // Get client IP (first entry if comma-separated from x-forwarded-for)
+    const rawIp = req.headers['x-forwarded-for'] as string || 
                req.socket.remoteAddress || 
                '0.0.0.0';
+    const ip = rawIp.split(',')[0].trim();
     
-    const currency = await currencyService.getCurrencyByIP(ip);
-    const currencyDetails = await currencyService.getCurrencyByCode(currency);
+    let currencyCode = 'NPR';
+    let currencyDetails = null;
+
+    try {
+      currencyCode = await currencyService.getCurrencyByIP(ip);
+      currencyDetails = await currencyService.getCurrencyByCode(currencyCode);
+    } catch (error) {
+      // Fallback silently to defaults
+    }
 
     res.json({
       success: true,
       data: {
-        currencyCode: currency,
-        details: currencyDetails,
+        currencyCode,
+        details: currencyDetails || {
+          code: currencyCode,
+          name: currencyCode === 'NPR' ? 'Nepalese Rupee' : currencyCode,
+          symbol: currencyCode === 'NPR' ? 'Rs' : currencyCode,
+          rate: 1,
+        },
       },
     });
   })

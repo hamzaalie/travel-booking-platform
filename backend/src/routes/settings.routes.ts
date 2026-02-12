@@ -92,6 +92,26 @@ router.get(
   })
 );
 
+// GET /api/settings/general - Get general settings (public)
+router.get(
+  '/general',
+  asyncHandler(async (_req, res) => {
+    const general = await siteSettingsService.getGeneralSettings();
+
+    res.json({
+      success: true,
+      data: {
+        siteName: general.siteName,
+        siteDescription: general.siteDescription,
+        defaultCurrency: general.defaultCurrency,
+        timezone: general.timezone,
+        maintenanceMode: general.maintenanceMode,
+        maintenanceMessage: general.maintenanceMessage,
+      },
+    });
+  })
+);
+
 // ============================================================================
 // ADMIN ROUTES
 // ============================================================================
