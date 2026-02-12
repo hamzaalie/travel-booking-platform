@@ -141,6 +141,53 @@ router.get(
 // ADMIN ROUTES
 // ============================================================================
 
+// GET /api/esim/admin/orders - Get all eSIM orders (admin)
+router.get(
+  '/admin/orders',
+  authenticate,
+  authorizeAdmin(),
+  asyncHandler(async (req: AuthRequest, res) => {
+    const { status, page, limit } = req.query;
+
+    const result = await esimService.getAllOrders({
+      status: status as string,
+      page: page ? parseInt(page as string) : undefined,
+      limit: limit ? parseInt(limit as string) : undefined,
+    });
+
+    res.json({
+      success: true,
+      data: result,
+    });
+  })
+);
+
+// PUT /api/esim/admin/orders/:orderId/status - Update order status (admin)
+router.put(
+  '/admin/orders/:orderId/status',
+  authenticate,
+  authorizeAdmin(),
+  asyncHandler(async (req: AuthRequest, res) => {
+    const { orderId } = req.params;
+    const { status } = req.body;
+
+    if (!status) {
+      return res.status(400).json({
+        success: false,
+        error: 'Status is required',
+      });
+    }
+
+    const order = await esimService.updateOrderStatus(orderId, status);
+
+    res.json({
+      success: true,
+      message: `Order status updated to ${status}`,
+      data: order,
+    });
+  })
+);
+
 // POST /api/esim/admin/sync - Sync products from provider
 router.post(
   '/admin/sync',

@@ -1,0 +1,4 @@
+﻿-- AlterEnum
+ALTER TYPE "EsimOrderStatus" ADD VALUE 'ACTIVATED';
+ALTER TYPE "EsimOrderStatus" ADD VALUE 'EXPIRED';
+ALTER TYPE "EsimOrderStatus" ADD VALUE 'REFUNDED';

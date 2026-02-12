@@ -680,8 +680,11 @@ enum EsimOrderStatus {
   PENDING
   PROCESSING
   COMPLETED
+  ACTIVATED
+  EXPIRED
   FAILED
   CANCELLED
+  REFUNDED
 }
 
 // ============================================================================

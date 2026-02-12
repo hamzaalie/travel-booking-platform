@@ -48,7 +48,9 @@ const defaultConfig: EsimConfig = {
   apiKey: process.env.ESIM_API_KEY || '',
   apiSecret: process.env.ESIM_API_SECRET || '',
   baseUrl: process.env.ESIM_API_URL || 'https://sandbox-partners-api.airalo.com/v2',
-  sandboxMode: process.env.ESIM_SANDBOX === 'true' || process.env.NODE_ENV !== 'production',
+  sandboxMode: process.env.ESIM_SANDBOX !== undefined
+    ? process.env.ESIM_SANDBOX === 'true'
+    : process.env.NODE_ENV !== 'production',
 };
 
 export class EsimService {
@@ -356,6 +358,60 @@ export class EsimService {
     }
 
     return order;
+  }
+
+  /**
+   * Update order status (admin)
+   */
+  async updateOrderStatus(orderId: string, status: string) {
+    const validStatuses = ['PENDING', 'PROCESSING', 'COMPLETED', 'ACTIVATED', 'EXPIRED', 'FAILED', 'CANCELLED', 'REFUNDED'];
+    if (!validStatuses.includes(status)) {
+      throw new AppError(`Invalid status: ${status}. Must be one of: ${validStatuses.join(', ')}`, 400);
+    }
+
+    const order = await prisma.esimOrder.findUnique({
+      where: { id: orderId },
+      include: { product: true },
+    });
+
+    if (!order) {
+      throw new AppError('Order not found', 404);
+    }
+
+    const updated = await prisma.esimOrder.update({
+      where: { id: orderId },
+      data: { status: status as any },
+      include: { product: true },
+    });
+
+    logger.info(`eSIM order ${orderId} status updated to ${status}`);
+    return updated;
+  }
+
+  /**
+   * Get all orders (admin)
+   */
+  async getAllOrders(params?: { status?: string; page?: number; limit?: number }) {
+    const where: any = {};
+    if (params?.status) {
+      where.status = params.status;
+    }
+
+    const limit = params?.limit || 50;
+    const page = params?.page || 1;
+
+    const [orders, total] = await Promise.all([
+      prisma.esimOrder.findMany({
+        where,
+        include: { product: true },
+        orderBy: { createdAt: 'desc' },
+        take: limit,
+        skip: (page - 1) * limit,
+      }),
+      prisma.esimOrder.count({ where }),
+    ]);
+
+    return { orders, total };
   }
 
   /**
