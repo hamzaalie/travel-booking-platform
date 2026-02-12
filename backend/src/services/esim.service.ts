@@ -2,6 +2,7 @@ import { prisma } from '../config/database';
 import { logger } from '../config/logger';
 import { AppError } from '../middleware/error.middleware';
 import axios, { AxiosInstance } from 'axios';
+import FormData from 'form-data';
 
 /**
  * eSIM Service
@@ -85,19 +86,31 @@ export class EsimService {
   async authenticate(): Promise<void> {
     try {
       if (this.config.provider === 'airalo') {
-        const response = await this.client.post('/token', {
-          client_id: this.config.apiKey,
-          client_secret: this.config.apiSecret,
-          grant_type: 'client_credentials',
-        });
+        // Airalo requires multipart/form-data for token endpoint
+        const formData = new FormData();
+        formData.append('client_id', this.config.apiKey);
+        formData.append('client_secret', this.config.apiSecret || '');
+        formData.append('grant_type', 'client_credentials');
+
+        const response = await axios.post(
+          `${this.config.baseUrl}/token`,
+          formData,
+          {
+            headers: {
+              ...formData.getHeaders(),
+              'Accept': 'application/json',
+            },
+            timeout: 30000,
+          }
+        );
 
         this.accessToken = response.data.data.access_token;
-        // Token valid for 1 hour, refresh 5 minutes before expiry
-        this.tokenExpiry = new Date(Date.now() + 55 * 60 * 1000);
+        // Token valid for 24 hours per Airalo docs, refresh 1 hour before expiry
+        this.tokenExpiry = new Date(Date.now() + 23 * 60 * 60 * 1000);
         logger.info('eSIM API authenticated successfully');
       }
     } catch (error: any) {
-      logger.error('eSIM authentication failed:', error.message);
+      logger.error('eSIM authentication failed:', error.response?.data || error.message);
       throw new AppError('Failed to authenticate with eSIM provider', 500);
     }
   }
@@ -113,6 +126,8 @@ export class EsimService {
 
   /**
    * Get available eSIM packages/products
+   * Airalo returns: data[] = countries, each with operators[], each with packages[]
+   * We flatten this into a simple list of purchasable packages
    */
   async getProducts(params?: {
     country?: string;
@@ -123,33 +138,50 @@ export class EsimService {
     try {
       await this.ensureAuthenticated();
 
-      // Fetch from provider API
-      const response = await this.client.get('/packages', {
-        params: {
-          filter: params?.country ? { type: params.country } : undefined,
-          limit: params?.limit || 50,
-          page: params?.page || 1,
-        },
-      });
+      // Build Airalo query params
+      const queryParams: any = {};
+      if (params?.country) queryParams['filter[country]'] = params.country;
+      if (params?.region === 'Global' || params?.region === 'global') queryParams['filter[type]'] = 'global';
+      if (params?.limit) queryParams.limit = params.limit;
+      if (params?.page) queryParams.page = params.page;
 
-      const products = response.data.data.map((item: any) => ({
-        id: item.id,
-        name: item.name,
-        description: item.description,
-        countries: item.coverage,
-        regions: item.regions || [],
-        dataAmount: item.data || item.data_amount,
-        validityDays: item.validity || item.day,
-        price: item.price,
-        currency: item.currency || 'USD',
-      }));
+      const response = await this.client.get('/packages', { params: queryParams });
+
+      // Airalo response: { data: [ { slug, country_code, title, operators: [ { packages: [...] } ] } ] }
+      const countries = response.data.data || [];
+      const products: EsimProduct[] = [];
+
+      for (const country of countries) {
+        const countryName = country.title || country.slug || '';
+        const countryCode = country.country_code || '';
+
+        for (const operator of (country.operators || [])) {
+          for (const pkg of (operator.packages || [])) {
+            products.push({
+              id: pkg.id,
+              name: pkg.title || `${countryName} - ${pkg.id}`,
+              description: operator.other_info || pkg.short_info || '',
+              countries: countryCode ? [countryCode] : [],
+              regions: operator.type === 'global' ? [country.slug] : [],
+              dataAmount: pkg.is_unlimited
+                ? 'Unlimited'
+                : pkg.amount >= 1024
+                  ? `${(pkg.amount / 1024).toFixed(pkg.amount % 1024 === 0 ? 0 : 1)} GB`
+                  : `${pkg.amount} MB`,
+              validityDays: pkg.day || 0,
+              price: pkg.price || 0,
+              currency: 'USD',
+            });
+          }
+        }
+      }
 
       return {
         products,
         total: response.data.meta?.total || products.length,
       };
     } catch (error: any) {
-      logger.error('Failed to fetch eSIM products:', error.message);
+      logger.error('Failed to fetch eSIM products:', error.response?.data || error.message);
       
       // Return cached products from database as fallback
       const cachedProducts = await prisma.esimProduct.findMany({
@@ -176,30 +208,12 @@ export class EsimService {
   }
 
   /**
-   * Get product details by ID
+   * Get product details by ID (Airalo package_id like "change-7days-1gb")
    */
   async getProductById(productId: string): Promise<EsimProduct | null> {
     try {
-      await this.ensureAuthenticated();
-
-      const response = await this.client.get(`/packages/${productId}`);
-      const item = response.data.data;
-
-      return {
-        id: item.id,
-        name: item.name,
-        description: item.description,
-        countries: item.coverage,
-        regions: item.regions || [],
-        dataAmount: item.data || item.data_amount,
-        validityDays: item.validity || item.day,
-        price: item.price,
-        currency: item.currency || 'USD',
-      };
-    } catch (error: any) {
-      logger.error('Failed to fetch eSIM product:', error.message);
-      
-      // Try from database
+      // Airalo doesn't have a single-package endpoint; search in full list
+      // First try from database cache
       const cached = await prisma.esimProduct.findUnique({
         where: { externalId: productId },
       });
@@ -218,6 +232,11 @@ export class EsimService {
         };
       }
 
+      // Fallback: fetch all products and find by ID
+      const { products } = await this.getProducts({ limit: 500 });
+      return products.find(p => p.id === productId) || null;
+    } catch (error: any) {
+      logger.error('Failed to fetch eSIM product:', error.message);
       return null;
     }
   }
@@ -229,10 +248,15 @@ export class EsimService {
     try {
       await this.ensureAuthenticated();
 
-      const response = await this.client.get('/countries');
-      return response.data.data.map((item: any) => ({
-        code: item.country_code,
-        name: item.title || item.name,
+      // Use packages endpoint with filter[type]=local to get countries with coverage
+      const response = await this.client.get('/packages', {
+        params: { 'filter[type]': 'local', limit: 250 },
+      });
+      
+      const countries = response.data.data || [];
+      return countries.map((item: any) => ({
+        code: item.country_code || '',
+        name: item.title || item.slug || '',
         flag: item.image?.url || '',
       }));
     } catch (error: any) {
@@ -269,13 +293,23 @@ export class EsimService {
         throw new AppError('eSIM product not found', 404);
       }
 
-      // Place order with provider
-      const response = await this.client.post('/orders', {
-        package_id: productId,
-        quantity,
-        type: 'sim', // or 'esim' depending on provider
-        description: `eSIM Order for ${product.name}`,
-      });
+      // Place order with Airalo
+      const orderFormData = new FormData();
+      orderFormData.append('package_id', productId);
+      orderFormData.append('quantity', String(quantity));
+
+      const response = await axios.post(
+        `${this.config.baseUrl}/orders`,
+        orderFormData,
+        {
+          headers: {
+            ...orderFormData.getHeaders(),
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${this.accessToken}`,
+          },
+          timeout: 30000,
+        }
+      );
 
       const orderData = response.data.data;
 
