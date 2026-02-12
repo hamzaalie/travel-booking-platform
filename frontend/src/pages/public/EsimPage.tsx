@@ -36,7 +36,23 @@ export default function EsimPage() {
       if (selectedRegion !== 'all') params.region = selectedRegion;
       
       const response: any = await esimApi.getProducts(params);
-      return response.data || [];
+      const result = response.data?.data || response.data || {};
+      const items = result.products || result || [];
+      
+      // Normalize API response fields to match component expectations
+      return Array.isArray(items) ? items.map((p: any) => ({
+        id: p.id,
+        name: p.name,
+        description: p.description || '',
+        country: Array.isArray(p.countries) ? p.countries.join(', ') : (p.country || ''),
+        region: Array.isArray(p.regions) ? p.regions[0] : (p.region || ''),
+        dataAmount: p.dataAmount || p.data_amount || '',
+        validity: p.validityDays || p.validity || 0,
+        price: p.price || 0,
+        currency: p.currency || 'USD',
+        provider: p.providerName || p.provider || 'Airalo',
+        features: p.features || [],
+      })) : [];
     },
   });
 

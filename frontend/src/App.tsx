@@ -27,6 +27,8 @@ import EsewaCallbackPage from './pages/booking/EsewaCallbackPage';
 import EsewaFailurePage from './pages/booking/EsewaFailurePage';
 import BookingConfirmationPage from './pages/booking/BookingConfirmationPage';
 import EsimPage from './pages/public/EsimPage';
+import AboutPage from './pages/public/AboutPage';
+import ContactPage from './pages/public/ContactPage';
 import BlogPage, { BlogPostPage } from './pages/public/BlogPage';
 import StaticPage from './pages/public/StaticPage';
 import PrivacyPolicyPage from './pages/legal/PrivacyPolicyPage';
@@ -110,6 +112,8 @@ function App() {
         <Route path="/payment/esewa/failure" element={<EsewaFailurePage />} />
         <Route path="/booking/confirmation/:id" element={<BookingConfirmationPage />} />
         <Route path="/esim" element={<EsimPage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/contact" element={<ContactPage />} />
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/blog/:slug" element={<BlogPostPage />} />
         <Route path="/page/:slug" element={<StaticPage />} />
