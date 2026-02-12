@@ -101,16 +101,17 @@ router.get(
     for (const hotel of hotels) {
       if (hotel.offers) {
         for (const offer of hotel.offers) {
-          if (offer.price?.total) {
-            const applied = await pricingService.applyPlatformMarkup(offer.price.total);
+          const o = offer as any;
+          if (o.price?.total) {
+            const applied = await pricingService.applyPlatformMarkup(o.price.total);
             if (applied.markup > 0) {
-              offer.price.total = applied.price;
-              if (offer.price.base) {
-                const baseApplied = await pricingService.applyPlatformMarkup(offer.price.base);
-                offer.price.base = baseApplied.price;
+              o.price.total = applied.price;
+              if (o.price.base) {
+                const baseApplied = await pricingService.applyPlatformMarkup(o.price.base);
+                o.price.base = baseApplied.price;
               }
-              offer.price.platformMarkup = applied.markup;
-              offer.price.platformMarkupPercentage = applied.percentage;
+              o.price.platformMarkup = applied.markup;
+              o.price.platformMarkupPercentage = applied.percentage;
             }
           }
         }

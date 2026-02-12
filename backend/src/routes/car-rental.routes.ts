@@ -72,12 +72,17 @@ router.get(
 
     // Apply platform markup to car rental prices for all users
     for (const offer of offers) {
-      if (offer.pricePerDay) {
-        const applied = await pricingService.applyPlatformMarkup(offer.pricePerDay);
+      const o = offer as any;
+      if (o.price?.total) {
+        const applied = await pricingService.applyPlatformMarkup(o.price.total);
         if (applied.markup > 0) {
-          offer.pricePerDay = applied.price;
-          offer.platformMarkup = applied.markup;
-          offer.platformMarkupPercentage = applied.percentage;
+          o.price.total = applied.price;
+          if (o.price.base) {
+            const baseApplied = await pricingService.applyPlatformMarkup(o.price.base);
+            o.price.base = baseApplied.price;
+          }
+          o.price.platformMarkup = applied.markup;
+          o.price.platformMarkupPercentage = applied.percentage;
         }
       }
     }
