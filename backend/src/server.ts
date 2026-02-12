@@ -71,7 +71,10 @@ app.use(
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Rate limiting
+// Trust proxy (required for Railway / reverse proxy deployments)
+app.set('trust proxy', 1);
+
+// Rate limiting - general API limiter
 const limiter = rateLimit({
   windowMs: config.rateLimit.windowMs,
   max: config.rateLimit.maxRequests,
