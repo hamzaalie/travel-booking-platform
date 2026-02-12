@@ -15,6 +15,7 @@ export interface PriceCalculationResult {
   taxes: number;
   globalMarkup: number;
   agentMarkup: number;
+  platformMarkup: number;
   totalMarkup: number;
   subtotal: number;
   totalPrice: number;
@@ -163,7 +164,32 @@ export class PricingService {
         agentMarkup -= agentDiscount;
       }
 
-      const totalMarkup = globalMarkup + agentMarkup;
+      // Get platform markup percentage from site settings
+      let platformMarkup = 0;
+      try {
+        const platformMarkupSetting = await prisma.siteSetting.findUnique({
+          where: { key: 'platform_markup' },
+        });
+        if (platformMarkupSetting?.value) {
+          const settings = platformMarkupSetting.value as any;
+          if (settings.enabled && settings.percentage > 0) {
+            platformMarkup = (subtotal * settings.percentage) / 100;
+            appliedMarkups.push({
+              id: 'platform-markup',
+              name: 'Platform Markup',
+              type: 'PERCENTAGE',
+              value: settings.percentage,
+              amount: platformMarkup,
+              isGlobal: true,
+              isPlatform: true,
+            });
+          }
+        }
+      } catch (err) {
+        logger.warn('Failed to fetch platform markup setting:', err);
+      }
+
+      const totalMarkup = globalMarkup + agentMarkup + platformMarkup;
       const totalPrice = Math.max(0, subtotal + totalMarkup); // Ensure price doesn't go negative
 
       // Commission calculation (agent profit from their markup)
@@ -174,6 +200,7 @@ export class PricingService {
         taxes: input.taxes,
         globalMarkup,
         agentMarkup,
+        platformMarkup,
         totalMarkup,
         subtotal,
         totalPrice,
@@ -339,6 +366,80 @@ export class PricingService {
     }
 
     return markup;
+  }
+  /**
+   * Get platform markup settings
+   */
+  async getPlatformMarkup(): Promise<{ percentage: number; enabled: boolean }> {
+    try {
+      const setting = await prisma.siteSetting.findUnique({
+        where: { key: 'platform_markup' },
+      });
+      if (setting?.value) {
+        const val = setting.value as any;
+        return { percentage: val.percentage || 0, enabled: val.enabled ?? true };
+      }
+    } catch (err) {
+      logger.warn('Failed to fetch platform markup:', err);
+    }
+    return { percentage: 5, enabled: true }; // Default 5%
+  }
+
+  /**
+   * Update platform markup settings
+   */
+  async updatePlatformMarkup(percentage: number, enabled: boolean, userId?: string): Promise<{ percentage: number; enabled: boolean }> {
+    if (percentage < 0 || percentage > 100) {
+      throw new AppError('Platform markup percentage must be between 0 and 100', 400);
+    }
+
+    await prisma.siteSetting.upsert({
+      where: { key: 'platform_markup' },
+      update: {
+        value: { percentage, enabled },
+        updatedAt: new Date(),
+      },
+      create: {
+        key: 'platform_markup',
+        value: { percentage, enabled },
+        category: 'pricing',
+      },
+    });
+
+    if (userId) {
+      try {
+        await prisma.auditLog.create({
+          data: {
+            userId,
+            action: 'SETTING_UPDATED',
+            entity: 'SiteSetting',
+            entityId: 'platform_markup',
+            changes: { percentage, enabled },
+          },
+        });
+      } catch (err) {
+        logger.warn('Failed to create audit log for platform markup update:', err);
+      }
+    }
+
+    return { percentage, enabled };
+  }
+
+  /**
+   * Apply platform markup to a price (for B2C customers)
+   * Returns the marked-up price
+   */
+  async applyPlatformMarkup(originalPrice: number): Promise<{ price: number; markup: number; percentage: number }> {
+    const settings = await this.getPlatformMarkup();
+    if (!settings.enabled || settings.percentage <= 0) {
+      return { price: originalPrice, markup: 0, percentage: 0 };
+    }
+    const markup = (originalPrice * settings.percentage) / 100;
+    return {
+      price: parseFloat((originalPrice + markup).toFixed(2)),
+      markup: parseFloat(markup.toFixed(2)),
+      percentage: settings.percentage,
+    };
   }
 }
 

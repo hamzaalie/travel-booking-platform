@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { asyncHandler } from '../middleware/error.middleware';
 import { authenticate, AuthRequest } from '../middleware/auth.middleware';
 import { carRentalService } from '../services/car-rental.service';
+import { pricingService } from '../services/pricing.service';
 import { validate } from '../middleware/validation.middleware';
 import Joi from 'joi';
 
@@ -68,6 +69,18 @@ router.get(
     };
 
     const offers = await carRentalService.searchCarRentals(searchParams);
+
+    // Apply platform markup to car rental prices for all users
+    for (const offer of offers) {
+      if (offer.pricePerDay) {
+        const applied = await pricingService.applyPlatformMarkup(offer.pricePerDay);
+        if (applied.markup > 0) {
+          offer.pricePerDay = applied.price;
+          offer.platformMarkup = applied.markup;
+          offer.platformMarkupPercentage = applied.percentage;
+        }
+      }
+    }
 
     res.json({
       success: true,

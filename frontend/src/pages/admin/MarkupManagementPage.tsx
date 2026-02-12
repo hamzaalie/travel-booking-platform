@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { adminApi } from '@/services/api';
-import { TrendingUp, Plus, Edit, Trash2, Save, X } from 'lucide-react';
+import { adminApi, settingsApi } from '@/services/api';
+import { TrendingUp, Plus, Edit, Trash2, Save, X, Percent, ToggleLeft, ToggleRight } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function MarkupManagementPage() {
@@ -13,6 +13,46 @@ export default function MarkupManagementPage() {
     value: '',
     description: '',
   });
+
+  // Platform Markup State
+  const [platformPercentage, setPlatformPercentage] = useState<string>('5');
+  const [platformEnabled, setPlatformEnabled] = useState(true);
+
+  const { data: platformMarkup, isLoading: platformLoading } = useQuery({
+    queryKey: ['platformMarkup'],
+    queryFn: async () => {
+      const response: any = await settingsApi.getPlatformMarkup();
+      return response.data?.data || response.data;
+    },
+    onSuccess: (data: any) => {
+      if (data) {
+        setPlatformPercentage(data.percentage?.toString() || '5');
+        setPlatformEnabled(data.enabled ?? true);
+      }
+    },
+  } as any);
+
+  const updatePlatformMarkupMutation = useMutation({
+    mutationFn: async (data: { percentage: number; enabled: boolean }) => {
+      return await settingsApi.updatePlatformMarkup(data);
+    },
+    onSuccess: () => {
+      toast.success('Platform markup updated successfully!');
+      queryClient.invalidateQueries({ queryKey: ['platformMarkup'] });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.error || 'Failed to update platform markup');
+    },
+  });
+
+  const handlePlatformMarkupSave = () => {
+    const pct = parseFloat(platformPercentage);
+    if (isNaN(pct) || pct < 0 || pct > 100) {
+      toast.error('Percentage must be between 0 and 100');
+      return;
+    }
+    updatePlatformMarkupMutation.mutate({ percentage: pct, enabled: platformEnabled });
+  };
 
   const { data: markups, isLoading } = useQuery({
     queryKey: ['globalMarkups'],
@@ -110,6 +150,84 @@ export default function MarkupManagementPage() {
           <Plus className="h-5 w-5 mr-2" />
           Add Global Markup
         </button>
+      </div>
+
+      {/* Platform Markup Section */}
+      <div className="card mb-6 border-2 border-primary-200 bg-gradient-to-r from-primary-50 to-accent-50">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center space-x-3">
+            <div className="p-2 bg-primary-100 rounded-lg">
+              <Percent className="h-6 w-6 text-primary-950" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-gray-900">Platform Markup (B2C)</h2>
+              <p className="text-sm text-gray-600">
+                This percentage is added to all prices for customers. Applied on top of provider prices for flights, hotels, and car rentals.
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => {
+              setPlatformEnabled(!platformEnabled);
+            }}
+            className="flex items-center space-x-2 text-sm font-medium"
+          >
+            {platformEnabled ? (
+              <ToggleRight className="h-8 w-8 text-green-600" />
+            ) : (
+              <ToggleLeft className="h-8 w-8 text-gray-400" />
+            )}
+            <span className={platformEnabled ? 'text-green-600' : 'text-gray-500'}>
+              {platformEnabled ? 'Active' : 'Disabled'}
+            </span>
+          </button>
+        </div>
+
+        {platformLoading ? (
+          <div className="text-center py-4">
+            <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-primary-950"></div>
+          </div>
+        ) : (
+          <div className="flex items-end space-x-4">
+            <div className="flex-1 max-w-xs">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Markup Percentage (%)
+              </label>
+              <div className="relative">
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="0.1"
+                  value={platformPercentage}
+                  onChange={(e) => setPlatformPercentage(e.target.value)}
+                  className="input pr-8"
+                  placeholder="5"
+                />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 font-medium">%</span>
+              </div>
+            </div>
+            <div className="flex-1 max-w-sm">
+              <div className="bg-white rounded-lg border border-gray-200 p-3">
+                <p className="text-xs text-gray-500 mb-1">Example: If provider price is $100</p>
+                <p className="text-lg font-bold text-primary-950">
+                  Customer pays: ${(100 + (100 * (parseFloat(platformPercentage) || 0) / 100)).toFixed(2)}
+                </p>
+                <p className="text-xs text-gray-500">
+                  Your profit: ${(100 * (parseFloat(platformPercentage) || 0) / 100).toFixed(2)} per $100
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={handlePlatformMarkupSave}
+              disabled={updatePlatformMarkupMutation.isPending}
+              className="btn btn-primary py-3 px-6"
+            >
+              <Save className="h-4 w-4 mr-2" />
+              {updatePlatformMarkupMutation.isPending ? 'Saving...' : 'Save'}
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Info Card */}

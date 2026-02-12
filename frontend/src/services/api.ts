@@ -379,6 +379,13 @@ export const settingsApi = {
   
   updateGeneral: (data: any) =>
     api.put('/settings/general', data),
+  
+  // Platform Markup
+  getPlatformMarkup: () =>
+    api.get('/settings/platform-markup'),
+  
+  updatePlatformMarkup: (data: { percentage: number; enabled: boolean }) =>
+    api.put('/settings/platform-markup', data),
 };
 
 // Content API (Pages & Blog)

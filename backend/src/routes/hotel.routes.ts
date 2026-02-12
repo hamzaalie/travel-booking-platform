@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { asyncHandler } from '../middleware/error.middleware';
 import { authenticate, AuthRequest } from '../middleware/auth.middleware';
 import { hotelService } from '../services/hotel.service';
+import { pricingService } from '../services/pricing.service';
 import { validate } from '../middleware/validation.middleware';
 import Joi from 'joi';
 
@@ -95,6 +96,26 @@ router.get(
     };
 
     const hotels = await hotelService.searchHotels(searchParams);
+
+    // Apply platform markup to hotel prices for all users
+    for (const hotel of hotels) {
+      if (hotel.offers) {
+        for (const offer of hotel.offers) {
+          if (offer.price?.total) {
+            const applied = await pricingService.applyPlatformMarkup(offer.price.total);
+            if (applied.markup > 0) {
+              offer.price.total = applied.price;
+              if (offer.price.base) {
+                const baseApplied = await pricingService.applyPlatformMarkup(offer.price.base);
+                offer.price.base = baseApplied.price;
+              }
+              offer.price.platformMarkup = applied.markup;
+              offer.price.platformMarkupPercentage = applied.percentage;
+            }
+          }
+        }
+      }
+    }
 
     res.json({
       success: true,

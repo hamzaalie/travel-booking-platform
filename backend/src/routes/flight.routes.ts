@@ -46,6 +46,18 @@ router.get(
         flight.price.withMarkup = pricing.totalPrice;
         flight.price.commission = pricing.commission;
       }
+    } else {
+      // Apply platform markup for B2C customers
+      for (const flight of flights) {
+        const total = parseFloat(flight.price.total);
+        const result = await pricingService.applyPlatformMarkup(total);
+        if (result.markup > 0) {
+          flight.price.total = result.price.toString();
+          flight.price.grandTotal = result.price.toString();
+          flight.price.platformMarkup = result.markup;
+          flight.price.platformMarkupPercentage = result.percentage;
+        }
+      }
     }
 
     res.json({
@@ -175,6 +187,18 @@ router.post(
 
         offer.price.withMarkup = pricing.totalPrice;
         offer.price.commission = pricing.commission;
+      }
+    } else {
+      // Apply platform markup for B2C customers
+      for (const offer of result.offers) {
+        const total = typeof offer.price.total === 'number' ? offer.price.total : parseFloat(offer.price.total);
+        const applied = await pricingService.applyPlatformMarkup(total);
+        if (applied.markup > 0) {
+          offer.price.total = applied.price;
+          offer.price.grandTotal = applied.price;
+          offer.price.platformMarkup = applied.markup;
+          offer.price.platformMarkupPercentage = applied.percentage;
+        }
       }
     }
 

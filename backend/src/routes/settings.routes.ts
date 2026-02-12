@@ -3,6 +3,7 @@ import { asyncHandler } from '../middleware/error.middleware';
 import { authenticate, AuthRequest } from '../middleware/auth.middleware';
 import { authorizeAdmin } from '../middleware/authorization.middleware';
 import { siteSettingsService } from '../services/site-settings.service';
+import { pricingService } from '../services/pricing.service';
 
 const router = Router();
 
@@ -212,6 +213,54 @@ router.post(
     res.json({
       success: true,
       message: 'Settings initialized successfully',
+    });
+  })
+);
+
+// ============================================================================
+// PLATFORM MARKUP ROUTES (must be before /:key catch-all)
+// ============================================================================
+
+// GET /api/settings/platform-markup - Get platform markup settings
+router.get(
+  '/platform-markup',
+  authenticate,
+  authorizeAdmin(),
+  asyncHandler(async (_req: AuthRequest, res) => {
+    const markup = await pricingService.getPlatformMarkup();
+
+    res.json({
+      success: true,
+      data: markup,
+    });
+  })
+);
+
+// PUT /api/settings/platform-markup - Update platform markup settings
+router.put(
+  '/platform-markup',
+  authenticate,
+  authorizeAdmin(),
+  asyncHandler(async (req: AuthRequest, res) => {
+    const { percentage, enabled } = req.body;
+
+    if (percentage === undefined || typeof percentage !== 'number') {
+      return res.status(400).json({
+        success: false,
+        error: 'Percentage is required and must be a number',
+      });
+    }
+
+    const markup = await pricingService.updatePlatformMarkup(
+      percentage,
+      enabled !== undefined ? enabled : true,
+      req.user!.id
+    );
+
+    res.json({
+      success: true,
+      message: 'Platform markup updated successfully',
+      data: markup,
     });
   })
 );
