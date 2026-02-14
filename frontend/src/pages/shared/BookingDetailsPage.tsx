@@ -76,13 +76,13 @@ export default function BookingDetailsPage() {
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
         <div className="flex items-center space-x-4">
           <button onClick={() => navigate(-1)} className="btn btn-secondary">
             <ArrowLeft className="h-5 w-5" />
           </button>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Booking Details</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Booking Details</h1>
             <p className="text-gray-600">Reference: {booking.bookingReference}</p>
           </div>
         </div>
@@ -140,7 +140,7 @@ export default function BookingDetailsPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="flex items-center space-x-3">
                   <Calendar className="h-5 w-5 text-gray-400" />
                   <div>
@@ -206,7 +206,7 @@ export default function BookingDetailsPage() {
                       {passenger.type || 'Adult'}
                     </span>
                   </div>
-                  <div className="grid grid-cols-2 gap-2 text-sm text-gray-600">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-gray-600">
                     {passenger.dateOfBirth && (
                       <p><strong>DOB:</strong> {new Date(passenger.dateOfBirth).toLocaleDateString()}</p>
                     )}

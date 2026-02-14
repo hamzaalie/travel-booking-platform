@@ -1097,7 +1097,7 @@ export default function AdminBookingDetailPage() {
             {/* Penalty Quick Select */}
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">Penalty Rule</label>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {PENALTY_RULES.map((rule) => (
                   <button
                     key={rule.percentage}
@@ -1119,7 +1119,7 @@ export default function AdminBookingDetailPage() {
             </div>
 
             {/* Custom Penalty */}
-            <div className="mb-4 grid grid-cols-2 gap-3">
+            <div className="mb-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Penalty Type</label>
                 <select

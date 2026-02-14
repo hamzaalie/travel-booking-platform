@@ -191,7 +191,7 @@ export default function HotelDetailsPage() {
             <div className="card">
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h1 className="text-3xl font-bold text-gray-900 mb-2">{hotel.name}</h1>
+                  <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">{hotel.name}</h1>
                   <div className="flex items-center text-gray-600">
                     <MapPin className="h-5 w-5 mr-2" />
                     <span>
@@ -348,7 +348,7 @@ export default function HotelDetailsPage() {
                 <div className="flex justify-between items-baseline">
                   <span className="text-gray-600">Starting from</span>
                   <div className="text-right">
-                    <span className="text-3xl font-bold text-primary-950">
+                    <span className="text-2xl sm:text-3xl font-bold text-primary-950">
                       {hotel.offers[0]?.price.currency} {Math.min(...hotel.offers.map(o => o.price.total)).toFixed(2)}
                     </span>
                     <div className="text-sm text-gray-600">/night</div>

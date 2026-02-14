@@ -104,7 +104,7 @@ export default function BookingDetailsPage() {
                   <Plane className="h-8 w-8 text-primary-950" />
                 </div>
                 <div>
-                  <h1 className="text-3xl font-bold text-gray-900">
+                  <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
                     {booking.origin} → {booking.destination}
                   </h1>
                   <p className="text-gray-600">Booking Reference: <span className="font-semibold">{booking.bookingReference}</span></p>
@@ -118,7 +118,7 @@ export default function BookingDetailsPage() {
               <span className={`inline-block px-4 py-2 rounded-full text-sm font-medium border ${getStatusColor(booking.status)}`}>
                 {booking.status}
               </span>
-              <p className="text-3xl font-bold text-gray-900 mt-2">
+              <p className="text-2xl md:text-3xl font-bold text-gray-900 mt-2">
                 ${parseFloat(booking.totalAmount || 0).toFixed(2)}
               </p>
             </div>

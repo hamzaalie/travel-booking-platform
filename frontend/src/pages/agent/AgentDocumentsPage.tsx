@@ -45,6 +45,7 @@ function getStatusBadge(status: string) {
 export default function AgentDocumentsPage() {
   const queryClient = useQueryClient();
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [_uploadField, setUploadField] = useState<string | null>(null);
 
   const { data: documents, isLoading } = useQuery({
     queryKey: ['agentDocuments'],
@@ -113,7 +114,7 @@ export default function AgentDocumentsPage() {
   if (isLoading) {
     return (
       <div className="animate-pulse space-y-4">
-        <div className="h-8 bg-gray-200 rounded w-48" />
+        <div className="h-8 bg-gray-200 rounded w-full sm:w-48" />
         <div className="grid gap-4">
           {[1, 2, 3].map(i => (
             <div key={i} className="h-24 bg-gray-200 rounded" />
@@ -125,10 +126,10 @@ export default function AgentDocumentsPage() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">My Documents</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">My Documents</h1>
+          <p className="text-gray-600 mt-1 text-sm sm:text-base">
             Upload and manage your business documents for verification
           </p>
         </div>
@@ -228,7 +229,7 @@ export default function AgentDocumentsPage() {
 
           return (
             <div key={docType.field} className="card border hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <div className={`p-2 rounded-lg ${hasDoc ? 'bg-green-100' : 'bg-gray-100'}`}>
                     <FileText className={`h-5 w-5 ${hasDoc ? 'text-green-600' : 'text-gray-400'}`} />

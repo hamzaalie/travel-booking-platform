@@ -161,10 +161,10 @@ export default function BookingCustomizationPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Booking Customization</h1>
-          <p className="text-gray-600 mt-1">Admin B2C/B2B booking management - Fare Class, Seat Assignment, Meal & Baggage</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Booking Customization</h1>
+          <p className="text-gray-600 mt-1 text-sm sm:text-base">Admin B2C/B2B booking management - Fare Class, Seat Assignment, Meal & Baggage</p>
         </div>
       </div>
 

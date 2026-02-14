@@ -220,7 +220,7 @@ export default function AgentDocumentsPage() {
   return (
     <div className="p-6">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigate(-1)}
@@ -242,9 +242,9 @@ export default function AgentDocumentsPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Agent Info Sidebar */}
-        <div className="col-span-1 space-y-6">
+        <div className="lg:col-span-1 space-y-6">
           {/* Basic Info Card */}
           <div className="card">
             <h3 className="text-lg font-semibold mb-4 flex items-center">
@@ -345,9 +345,9 @@ export default function AgentDocumentsPage() {
         </div>
 
         {/* Documents Section */}
-        <div className="col-span-2">
+        <div className="lg:col-span-2">
           {/* Summary */}
-          <div className="grid grid-cols-3 gap-4 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
             <div className="card bg-yellow-50 border border-yellow-200">
               <div className="flex items-center">
                 <Clock className="h-8 w-8 text-yellow-600 mr-3" />
@@ -399,7 +399,7 @@ export default function AgentDocumentsPage() {
                         : 'border-red-200 bg-red-50'
                     }`}
                   >
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                       <div className="flex items-center gap-4">
                         <div className="bg-white p-2 rounded-lg shadow-sm">
                           {isImageFile(doc.documentUrl) ? (
@@ -427,7 +427,7 @@ export default function AgentDocumentsPage() {
                         </div>
                       </div>
                       
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-3 flex-wrap">
                         {getStatusBadge(doc.verificationStatus)}
                         
                         <div className="flex gap-2">
@@ -549,7 +549,7 @@ export default function AgentDocumentsPage() {
             {previewUrl.toLowerCase().includes('.pdf') ? (
               <iframe
                 src={previewUrl}
-                className="w-[800px] h-[90vh]"
+                className="w-full max-w-[800px] h-[90vh]"
                 title="Document Preview"
               />
             ) : (

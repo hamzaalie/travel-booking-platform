@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Upload, Building, User, CreditCard, FileText, Globe, X, Check } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -286,13 +286,13 @@ export default function AgentRegistrationPage() {
               className="h-16 w-auto" 
             />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">Agent Registration</h1>
-          <p className="text-gray-600 mt-2">Complete your registration to become a travel agent partner</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Agent Registration</h1>
+          <p className="text-gray-600 mt-2 text-sm sm:text-base">Complete your registration to become a travel agent partner</p>
         </div>
 
         {/* Progress Steps */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
-          <div className="flex justify-between">
+        <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 mb-6">
+          <div className="flex justify-between overflow-x-auto">
             {steps.map((step, index) => (
               <div key={step.number} className="flex items-center">
                 <div className="flex flex-col items-center">
@@ -314,7 +314,7 @@ export default function AgentRegistrationPage() {
                   </span>
                 </div>
                 {index < steps.length - 1 && (
-                  <div className={`w-16 h-1 mx-2 ${currentStep > step.number ? 'bg-primary-950' : 'bg-gray-200'}`} />
+                  <div className={`w-8 sm:w-16 h-1 mx-1 sm:mx-2 ${currentStep > step.number ? 'bg-primary-950' : 'bg-gray-200'}`} />
                 )}
               </div>
             ))}
@@ -322,7 +322,7 @@ export default function AgentRegistrationPage() {
         </div>
 
         {/* Form */}
-        <div className="bg-white rounded-xl shadow-lg p-8">
+        <div className="bg-white rounded-xl shadow-lg p-4 sm:p-8">
           <form onSubmit={handleSubmit}>
             {/* Step 1: Account Details */}
             {currentStep === 1 && (
@@ -344,7 +344,7 @@ export default function AgentRegistrationPage() {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Password <span className="text-red-500">*</span>
@@ -383,7 +383,7 @@ export default function AgentRegistrationPage() {
               <div className="space-y-6">
                 <h2 className="text-xl font-semibold text-gray-900 mb-4">Personal Information</h2>
                 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       First Name <span className="text-red-500">*</span>
@@ -412,7 +412,7 @@ export default function AgentRegistrationPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Phone Number <span className="text-red-500">*</span>
@@ -441,7 +441,7 @@ export default function AgentRegistrationPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Date of Birth
@@ -472,7 +472,7 @@ export default function AgentRegistrationPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Citizenship Number
@@ -500,7 +500,7 @@ export default function AgentRegistrationPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Emergency Contact Name
@@ -548,7 +548,7 @@ export default function AgentRegistrationPage() {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Business Type
@@ -581,7 +581,7 @@ export default function AgentRegistrationPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Company Registration Number
@@ -608,7 +608,7 @@ export default function AgentRegistrationPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Year Established
@@ -674,7 +674,7 @@ export default function AgentRegistrationPage() {
                   </select>
                 </div>
 
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Address
@@ -723,7 +723,7 @@ export default function AgentRegistrationPage() {
                   Bank details are required for commission payments and refunds.
                 </p>
                 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Bank Name
@@ -752,7 +752,7 @@ export default function AgentRegistrationPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Account Holder Name
@@ -790,7 +790,7 @@ export default function AgentRegistrationPage() {
                   Please upload clear, readable copies of your documents. Files should be in JPG, PNG, or PDF format.
                 </p>
                 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <DocumentUpload 
                     fieldName="citizenshipFront" 
                     label="Citizenship (Front)" 
@@ -803,7 +803,7 @@ export default function AgentRegistrationPage() {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <DocumentUpload 
                     fieldName="panCard" 
                     label="PAN Card" 
@@ -814,7 +814,7 @@ export default function AgentRegistrationPage() {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <DocumentUpload 
                     fieldName="companyRegistration" 
                     label="Company Registration Certificate" 
@@ -825,7 +825,7 @@ export default function AgentRegistrationPage() {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <DocumentUpload 
                     fieldName="profilePhoto" 
                     label="Profile Photo" 

@@ -46,7 +46,7 @@ export default function CustomerDashboard() {
     <div>
       {/* Welcome Section */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
           Welcome back, {user?.firstName}!
         </h1>
         <p className="text-gray-600 mt-2">Manage your bookings and explore new destinations</p>
@@ -80,7 +80,7 @@ export default function CustomerDashboard() {
 
         <div className="card bg-gradient-to-br from-primary-500 to-primary-950 text-white">
           <h3 className="font-semibold text-lg mb-2">Total Spent</h3>
-          <p className="text-3xl font-bold">
+          <p className="text-2xl md:text-3xl font-bold">
             ${bookings?.reduce((sum: number, b: any) => sum + parseFloat(b.totalAmount || 0), 0).toFixed(2) || '0.00'}
           </p>
         </div>
@@ -88,7 +88,7 @@ export default function CustomerDashboard() {
 
       {/* Recent Bookings */}
       <div className="card">
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
           <h2 className="text-2xl font-bold text-gray-900">Recent Bookings</h2>
           <Link to="/customer/bookings" className="text-primary-950 hover:text-primary-900 font-medium">
             View All →

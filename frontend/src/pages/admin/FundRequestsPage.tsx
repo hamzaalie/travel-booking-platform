@@ -139,7 +139,7 @@ export default function FundRequestsPage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-8">Fund Requests</h1>
+      <h1 className="text-2xl md:text-3xl font-bold mb-8">Fund Requests</h1>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">

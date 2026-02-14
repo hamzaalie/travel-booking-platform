@@ -80,7 +80,7 @@ export default function BookingConfirmationPage() {
           <div className="bg-green-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
             <CheckCircle className="h-12 w-12 text-green-600" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Booking Confirmed!</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Booking Confirmed!</h1>
           <p className="text-lg text-gray-600 mb-4">
             Your booking has been successfully confirmed
           </p>
@@ -132,12 +132,12 @@ export default function BookingConfirmationPage() {
           <div className="bg-gray-50 rounded-lg p-6">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <p className="text-3xl font-bold text-gray-900">{booking.origin}</p>
+                <p className="text-xl sm:text-3xl font-bold text-gray-900">{booking.origin}</p>
                 <p className="text-sm text-gray-600 mt-1">
                   {new Date(booking.departureDate).toLocaleDateString()}
                 </p>
               </div>
-              <div className="flex-1 mx-8">
+              <div className="flex-1 mx-3 sm:mx-8">
                 <div className="flex items-center justify-center">
                   <div className="h-px bg-gray-300 flex-1"></div>
                   <Plane className="h-6 w-6 text-primary-950 mx-4" />
@@ -148,7 +148,7 @@ export default function BookingConfirmationPage() {
                 </p>
               </div>
               <div className="text-right">
-                <p className="text-3xl font-bold text-gray-900">{booking.destination}</p>
+                <p className="text-xl sm:text-3xl font-bold text-gray-900">{booking.destination}</p>
                 {booking.returnDate && (
                   <p className="text-sm text-gray-600 mt-1">
                     {new Date(booking.returnDate).toLocaleDateString()}

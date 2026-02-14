@@ -116,7 +116,7 @@ export default function EsimPage() {
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-accent-500 to-primary-950 py-12 px-4">
         <div className="max-w-7xl mx-auto text-white">
-          <h1 className="text-4xl font-bold mb-4">Stay Connected Anywhere</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">Stay Connected Anywhere</h1>
           <p className="text-xl text-white/90 mb-6">
             Get instant data connectivity with eSIM. No physical SIM needed. 
             Works in 190+ countries.
@@ -155,7 +155,7 @@ export default function EsimPage() {
             <select
               value={selectedRegion}
               onChange={(e) => setSelectedRegion(e.target.value)}
-              className="input w-48"
+              className="input w-full sm:w-48"
             >
               {regions.map((region) => (
                 <option key={region} value={region}>

@@ -64,8 +64,8 @@ export default function AllBookingsPage() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">All Bookings</h1>
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">All Bookings</h1>
         <button className="btn btn-secondary">
           <Download className="h-5 w-5 mr-2" />
           Export CSV
@@ -73,7 +73,7 @@ export default function AllBookingsPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mb-6">
         <div className="card bg-primary-50">
           <p className="text-sm text-gray-600">Total Bookings</p>
           <p className="text-2xl font-bold text-primary-900">{stats.total}</p>

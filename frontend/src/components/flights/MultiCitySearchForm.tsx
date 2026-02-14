@@ -358,7 +358,7 @@ export const MultiCitySearchForm: React.FC<MultiCitySearchFormProps> = ({
         <div className="space-y-4">
           <h4 className="text-sm font-semibold text-gray-900">Passengers</h4>
           
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <Controller
               name="adults"
               control={control}

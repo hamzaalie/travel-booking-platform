@@ -140,12 +140,12 @@ export default function ReportingDashboardPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Reports & Analytics</h1>
           <p className="text-sm text-gray-600 mt-1">Sales, revenue, and performance insights</p>
         </div>
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center gap-3">
           <button onClick={handleExportPDF} className="btn btn-secondary">
             <Download className="h-5 w-5 mr-2" />
             Export PDF

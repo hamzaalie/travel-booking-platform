@@ -54,7 +54,7 @@ export default function AgentBookingsPage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-8">My Bookings</h1>
+      <h1 className="text-2xl md:text-3xl font-bold mb-8">My Bookings</h1>
 
       {/* Filters */}
       <div className="card mb-6">
@@ -97,7 +97,7 @@ export default function AgentBookingsPage() {
             <div key={booking.id} className="card hover:shadow-lg transition-shadow">
               <div className="space-y-4">
                 {/* Header with Status and Reference */}
-                <div className="flex items-center justify-between pb-3 border-b">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b">
                   <div className="flex items-center space-x-3">
                     <div className="bg-primary-100 p-2 rounded-lg">
                       <Plane className="h-6 w-6 text-primary-950" />
@@ -127,7 +127,7 @@ export default function AgentBookingsPage() {
                 </div>
 
                 {/* Booking Details */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                   <div>
                     <p className="text-xs text-gray-500">Type</p>
                     <p className="text-sm font-medium text-gray-900">{booking.bookingType || 'FLIGHT'}</p>

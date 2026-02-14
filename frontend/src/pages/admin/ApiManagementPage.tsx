@@ -290,10 +290,10 @@ export default function ApiManagementPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">API Management</h1>
-          <p className="text-gray-600 mt-1">Manage and monitor all API integrations (Amadeus, Sabre, Hotels, eSIM, Payments)</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">API Management</h1>
+          <p className="text-gray-600 mt-1 text-sm sm:text-base">Manage and monitor all API integrations (Amadeus, Sabre, Hotels, eSIM, Payments)</p>
         </div>
         <div className="flex items-center gap-2 bg-accent-50 px-4 py-2 rounded-lg">
           <Activity className="h-5 w-5 text-primary-950" />
@@ -417,7 +417,7 @@ export default function ApiManagementPage() {
                     </div>
 
                     {/* Stats Row */}
-                    <div className="grid grid-cols-3 gap-4 mb-4 text-center">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4 text-center">
                       <div className="bg-gray-50 rounded-lg p-2">
                         <p className="text-xs text-gray-500">Requests</p>
                         <p className="font-semibold">{provider.stats.totalRequests.toLocaleString()}</p>

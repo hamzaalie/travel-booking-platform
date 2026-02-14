@@ -141,8 +141,8 @@ export default function MarkupManagementPage() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Markup Management</h1>
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Markup Management</h1>
         <button
           onClick={() => setShowAddForm(!showAddForm)}
           className="btn btn-primary"
@@ -154,7 +154,7 @@ export default function MarkupManagementPage() {
 
       {/* Platform Markup Section */}
       <div className="card mb-6 border-2 border-primary-200 bg-gradient-to-r from-primary-50 to-accent-50">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-primary-100 rounded-lg">
               <Percent className="h-6 w-6 text-primary-950" />
@@ -188,7 +188,7 @@ export default function MarkupManagementPage() {
             <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-primary-950"></div>
           </div>
         ) : (
-          <div className="flex items-end space-x-4">
+          <div className="flex flex-col sm:flex-row sm:items-end gap-4">
             <div className="flex-1 max-w-xs">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Markup Percentage (%)

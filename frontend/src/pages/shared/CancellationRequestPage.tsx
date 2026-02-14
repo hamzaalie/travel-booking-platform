@@ -148,7 +148,7 @@ export default function CancellationRequestPage() {
       {/* Header */}
       <div className="flex items-center space-x-3">
         <XCircle className="h-8 w-8 text-red-600" />
-        <h1 className="text-3xl font-bold text-gray-900">Request Cancellation</h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Request Cancellation</h1>
       </div>
 
       {/* Warning Alert */}
@@ -169,7 +169,7 @@ export default function CancellationRequestPage() {
       <div className="card">
         <h2 className="text-xl font-semibold text-gray-900 mb-4">Booking Details</h2>
         
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <p className="text-sm text-gray-600">Booking Reference</p>
             <p className="font-semibold text-gray-900">{booking.bookingReference}</p>

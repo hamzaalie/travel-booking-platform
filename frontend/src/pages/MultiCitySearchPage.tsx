@@ -104,7 +104,7 @@ export const MultiCitySearchPage: React.FC = () => {
           <div className="flex items-center space-x-3">
             <Plane className="w-8 h-8" />
             <div>
-              <h1 className="text-3xl font-bold">Multi-City Flight Search</h1>
+              <h1 className="text-2xl md:text-3xl font-bold">Multi-City Flight Search</h1>
               <p className="text-accent-100 mt-1">
                 Book complex itineraries with multiple destinations
               </p>

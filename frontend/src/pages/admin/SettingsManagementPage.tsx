@@ -103,8 +103,8 @@ export default function SettingsManagementPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Site Settings</h1>
-        <p className="text-gray-600 mt-1">Manage header, footer, branding, and SEO settings</p>
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Site Settings</h1>
+        <p className="text-gray-600 mt-1 text-sm sm:text-base">Manage header, footer, branding, and SEO settings</p>
       </div>
 
       <div className="border-b">
@@ -732,7 +732,7 @@ function FooterSettings({ data, onSave, isSaving }: { data: any; onSave: (d: any
               <select
                 value={link.platform}
                 onChange={(e) => updateSocialLink(idx, 'platform', e.target.value)}
-                className="input w-40"
+                className="input w-full sm:w-40"
               >
                 <option value="">Platform</option>
                 <option value="facebook">Facebook</option>

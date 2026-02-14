@@ -229,7 +229,7 @@ export default function AgentMarkupManagementPage() {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <div className="card bg-accent-50 border border-accent-200">
           <div className="flex items-center">
             <Users className="h-10 w-10 text-primary-950 mr-3" />
@@ -285,13 +285,13 @@ export default function AgentMarkupManagementPage() {
                 placeholder="Search agents..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="input pl-10 w-64"
+                className="input pl-10 w-full sm:w-64"
               />
             </div>
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="input w-40"
+              className="input w-full sm:w-40"
             >
               <option value="">All Status</option>
               <option value="APPROVED">Active</option>

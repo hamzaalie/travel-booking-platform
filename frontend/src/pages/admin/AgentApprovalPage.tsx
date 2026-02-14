@@ -130,21 +130,21 @@ export default function AgentApprovalPage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-8">Agent Management</h1>
+      <h1 className="text-2xl md:text-3xl font-bold mb-8">Agent Management</h1>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div className="card bg-yellow-50 border-yellow-200">
           <h3 className="text-sm font-medium text-gray-600 mb-2">Pending Approval</h3>
-          <p className="text-3xl font-bold text-yellow-700">{pendingAgents.length}</p>
+          <p className="text-2xl md:text-3xl font-bold text-yellow-700">{pendingAgents.length}</p>
         </div>
         <div className="card bg-green-50 border-green-200">
           <h3 className="text-sm font-medium text-gray-600 mb-2">Approved Agents</h3>
-          <p className="text-3xl font-bold text-green-700">{approvedAgents.length}</p>
+          <p className="text-2xl md:text-3xl font-bold text-green-700">{approvedAgents.length}</p>
         </div>
         <div className="card bg-red-50 border-red-200">
           <h3 className="text-sm font-medium text-gray-600 mb-2">Rejected</h3>
-          <p className="text-3xl font-bold text-red-700">{rejectedAgents.length}</p>
+          <p className="text-2xl md:text-3xl font-bold text-red-700">{rejectedAgents.length}</p>
         </div>
       </div>
 

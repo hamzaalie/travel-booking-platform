@@ -80,9 +80,9 @@ export default function B2BUserManagementPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">B2B User Management</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">B2B User Management</h1>
           <p className="text-gray-600 mt-1">Manage travel agents and operators</p>
         </div>
         <div className="flex items-center gap-2 bg-accent-50 px-4 py-2 rounded-lg">
@@ -117,7 +117,7 @@ export default function B2BUserManagementPage() {
               setRoleFilter(e.target.value);
               setCurrentPage(1);
             }}
-            className="input w-48"
+            className="input w-full sm:w-48"
           >
             <option value="all">All Roles</option>
             <option value="AGENT">Agents</option>
@@ -345,7 +345,7 @@ export default function B2BUserManagementPage() {
 
       {/* User Details Sidebar */}
       {selectedUser && !isEditModalOpen && (
-        <div className="fixed inset-y-0 right-0 w-96 bg-white shadow-xl p-6 overflow-y-auto z-40">
+        <div className="fixed inset-y-0 right-0 w-full sm:w-96 bg-white shadow-xl p-4 sm:p-6 overflow-y-auto z-40">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-semibold">User Details</h3>
             <button onClick={() => setSelectedUser(null)} className="text-gray-400 hover:text-gray-600">
@@ -403,7 +403,7 @@ export default function B2BUserManagementPage() {
               </div>
             </div>
 
-            <div className="border-t pt-4 grid grid-cols-2 gap-4">
+            <div className="border-t pt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="bg-accent-50 p-3 rounded-lg">
                 <div className="text-accent-500 text-sm">Markup</div>
                 <div className="text-xl font-bold text-accent-600">

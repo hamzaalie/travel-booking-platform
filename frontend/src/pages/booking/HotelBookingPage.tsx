@@ -133,7 +133,7 @@ export default function HotelBookingPage() {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Complete Your Hotel Booking</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Complete Your Hotel Booking</h1>
           <p className="text-gray-600 mt-2">Fill in guest details to continue</p>
         </div>
 
@@ -170,7 +170,7 @@ export default function HotelBookingPage() {
                   </div>
                 )}
 
-                <div className="grid grid-cols-2 gap-4 pt-3 border-t">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-3 border-t">
                   <div className="flex items-center text-gray-700">
                     <Calendar className="h-4 w-4 mr-2 text-primary-950" />
                     <div>
@@ -447,7 +447,7 @@ export default function HotelBookingPage() {
                 <div className="flex justify-between items-baseline mb-2">
                   <span className="text-gray-900 font-semibold">Total Amount</span>
                   <div className="text-right">
-                    <span className="text-3xl font-bold text-primary-950">
+                    <span className="text-2xl sm:text-3xl font-bold text-primary-950">
                       {formatPrice(totalPrice, offerData.price.currency)}
                     </span>
                   </div>

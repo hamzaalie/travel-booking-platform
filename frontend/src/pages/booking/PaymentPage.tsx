@@ -360,7 +360,7 @@ export default function PaymentPage() {
                 <Plane className="h-8 w-8 text-primary-950" />
               )}
             </div>
-            <h1 className="text-3xl font-bold text-gray-900">Complete Payment</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Complete Payment</h1>
             <p className="text-gray-600 mt-2">{bookingData.type === 'HOTEL' ? 'Hotel' : bookingData.type === 'CAR' ? 'Car Rental' : 'Flight'} Booking - Secure payment processing</p>
           </div>
 
@@ -444,7 +444,7 @@ export default function PaymentPage() {
             <div className="border-t border-gray-200 pt-4">
               <div className="flex justify-between items-center">
                 <span className="text-xl font-bold text-gray-900">Total Amount</span>
-                <span className="text-3xl font-bold text-primary-950">
+                <span className="text-2xl sm:text-3xl font-bold text-primary-950">
                   {formatPrice(total, bookingData.type === 'HOTEL' ? bookingData.offer?.price?.currency : bookingData.type === 'CAR' ? bookingData.car?.currency : bookingData.flightOffer?.price?.currency || 'USD')}
                 </span>
               </div>

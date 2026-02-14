@@ -16,7 +16,7 @@ export default function AgentMarkupsPage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-8">My Markups</h1>
+      <h1 className="text-2xl md:text-3xl font-bold mb-8">My Markups</h1>
 
       {/* Info Card */}
       <div className="card bg-accent-50 border-accent-200 mb-6">
@@ -94,7 +94,7 @@ export default function AgentMarkupsPage() {
                   <div key={markup.id} className="card border-2 border-gray-200">
                     <div className="flex items-center justify-between mb-3">
                       <div>
-                        <div className="text-3xl font-bold text-gray-700">
+                        <div className="text-2xl md:text-3xl font-bold text-gray-700">
                           {markup.type === 'PERCENTAGE' ? `${markup.value}%` : `$${markup.value}`}
                         </div>
                         <div className="text-sm text-gray-600 mt-1">

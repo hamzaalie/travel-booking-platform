@@ -166,9 +166,9 @@ export default function EsimCommissionPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">E-SIM Commission & Markup</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">E-SIM Commission & Markup</h1>
           <p className="text-gray-600 mt-1">Configure E-SIM markup and commission rates for B2B and B2C channels</p>
         </div>
         <button
@@ -346,7 +346,7 @@ export default function EsimCommissionPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Channel Type</label>
                   <select
@@ -370,7 +370,7 @@ export default function EsimCommissionPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Markup Type</label>
                   <select
@@ -394,7 +394,7 @@ export default function EsimCommissionPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Commission Type</label>
                   <select

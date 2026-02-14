@@ -139,9 +139,9 @@ export default function FlightResultsPage() {
           </div>
         ) : flights && flights.length > 0 ? (
           <>
-            <div className="mb-8 flex items-center justify-between">
+            <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
-                <h2 className="text-3xl font-display font-bold text-gray-900 mb-2">
+                <h2 className="text-2xl md:text-3xl font-display font-bold text-gray-900 mb-2">
                   {flights.length} Flight{flights.length > 1 ? 's' : ''} Found
                 </h2>
                 <p className="text-gray-600">Choose the best option for your journey</p>
@@ -207,7 +207,7 @@ export default function FlightResultsPage() {
                   <div key={flight.id || index} className="card bg-white border border-gray-200 hover:shadow-xl transition-all duration-300">
                     <div className="p-6">
                       {/* Main Flight Info */}
-                      <div className="flex items-center justify-between gap-6 mb-4">
+                      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-6 mb-4">
                         {/* Airline Logo & Info */}
                         <AirlineLogo 
                           code={airlineCode} 
@@ -221,21 +221,21 @@ export default function FlightResultsPage() {
                           {/* Departure */}
                           <div className="text-left">
                             <p className="text-sm text-gray-600 mb-1">{firstSegment?.departure?.iataCode}</p>
-                            <p className="text-3xl font-bold text-gray-900">
+                            <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">
                               {formatTime(firstSegment?.departure?.at)}
                             </p>
-                            <p className="text-sm text-gray-600 mt-1">{formatDate(firstSegment?.departure?.at)}</p>
+                            <p className="text-xs sm:text-sm text-gray-600 mt-1">{formatDate(firstSegment?.departure?.at)}</p>
                           </div>
 
                           {/* Duration & Stops */}
-                          <div className="flex-1 px-6 text-center">
+                          <div className="flex-1 px-3 sm:px-6 text-center">
                             <div className="relative flex items-center justify-center mb-2">
                               <div className="absolute w-full h-0.5 bg-gray-300"></div>
                               <div className="relative bg-white px-2">
                                 <Plane className="h-5 w-5 text-primary-950 transform rotate-90" />
                               </div>
                             </div>
-                            <p className="text-sm font-semibold text-gray-700">
+                            <p className="text-xs sm:text-sm font-semibold text-gray-700">
                               {formatDuration(itinerary?.duration)}
                             </p>
                             <p className="text-xs text-gray-500 mt-1">
@@ -246,27 +246,29 @@ export default function FlightResultsPage() {
                           {/* Arrival */}
                           <div className="text-right">
                             <p className="text-sm text-gray-600 mb-1">{lastSegment?.arrival?.iataCode}</p>
-                            <p className="text-3xl font-bold text-gray-900">
+                            <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">
                               {formatTime(lastSegment?.arrival?.at)}
                             </p>
-                            <p className="text-sm text-gray-600 mt-1">{formatDate(lastSegment?.arrival?.at)}</p>
+                            <p className="text-xs sm:text-sm text-gray-600 mt-1">{formatDate(lastSegment?.arrival?.at)}</p>
                           </div>
                         </div>
 
                         {/* Price & Book Button */}
-                        <div className="text-right border-l pl-6">
-                          <p className="text-sm text-gray-600 mb-1">Total</p>
-                          <p className="text-3xl font-bold text-primary-950 mb-1">
-                            {formatPrice(parseFloat(flight.price?.total || flight.price?.grandTotal || '0'), flight.price?.currency)}
-                          </p>
-                          <p className="text-xs text-gray-600 mb-3">/ person</p>
+                        <div className="flex lg:flex-col items-center lg:items-end justify-between lg:justify-start lg:text-right border-t lg:border-t-0 lg:border-l pt-4 lg:pt-0 lg:pl-6">
+                          <div>
+                            <p className="text-sm text-gray-600 mb-1">Total</p>
+                            <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-primary-950 mb-1">
+                              {formatPrice(parseFloat(flight.price?.total || flight.price?.grandTotal || '0'), flight.price?.currency)}
+                            </p>
+                            <p className="text-xs text-gray-600 mb-3">/ person</p>
+                          </div>
                           <button
                             onClick={() => {
                               sessionStorage.setItem('selectedFlight', JSON.stringify(flight));
                               sessionStorage.setItem('searchData', JSON.stringify(searchData));
                               navigate('/booking/flight');
                             }}
-                            className="btn btn-primary w-full font-bold"
+                            className="btn btn-primary font-bold px-6 lg:w-full"
                           >
                             BOOK NOW
                           </button>
@@ -274,8 +276,8 @@ export default function FlightResultsPage() {
                       </div>
 
                       {/* Additional Info Row */}
-                      <div className="flex items-center justify-between pt-4 border-t border-gray-200">
-                        <div className="flex items-center gap-6 text-sm">
+                      <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-gray-200">
+                        <div className="flex flex-wrap items-center gap-3 sm:gap-6 text-sm">
                           {/* Flight Details Button */}
                           <button
                             onClick={() => setExpandedFlight(isExpanded ? null : index)}
@@ -372,7 +374,7 @@ export default function FlightResultsPage() {
                           {/* Baggage Details */}
                           <div className="mt-6 pt-4 border-t border-gray-200">
                             <h5 className="font-semibold text-gray-900 mb-3">Baggage Information</h5>
-                            <div className="grid grid-cols-2 gap-4 text-sm">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                               <div className="flex items-center gap-2">
                                 <Luggage className="h-5 w-5 text-gray-600" />
                                 <div>

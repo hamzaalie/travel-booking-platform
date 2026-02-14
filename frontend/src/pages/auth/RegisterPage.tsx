@@ -64,7 +64,7 @@ export default function RegisterPage() {
                 className="h-16 w-auto" 
               />
             </div>
-            <h2 className="text-3xl font-bold text-gray-900">Create Account</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Create Account</h2>
             <p className="text-gray-600 mt-2">Join our travel booking platform</p>
           </div>
 
@@ -84,7 +84,7 @@ export default function RegisterPage() {
               </select>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   First Name

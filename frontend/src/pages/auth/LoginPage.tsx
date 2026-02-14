@@ -46,7 +46,7 @@ export default function LoginPage() {
                 className="h-16 w-auto" 
               />
             </div>
-            <h2 className="text-3xl font-bold text-gray-900">Welcome Back</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Welcome Back</h2>
             <p className="text-gray-600 mt-2">Sign in to your account</p>
           </div>
 

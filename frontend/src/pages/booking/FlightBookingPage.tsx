@@ -183,7 +183,7 @@ export default function FlightBookingPage() {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Complete Your Booking</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Complete Your Booking</h1>
           <p className="text-gray-600 mt-2">Fill in passenger details to continue</p>
         </div>
 
@@ -209,7 +209,7 @@ export default function FlightBookingPage() {
                       }
                     </p>
                   </div>
-                  <div className="flex-1 mx-8">
+                  <div className="flex-1 mx-3 sm:mx-8">
                     <div className="flex items-center justify-center">
                       <div className="h-px bg-gray-300 flex-1"></div>
                       <Plane className="h-5 w-5 text-primary-950 mx-2" />

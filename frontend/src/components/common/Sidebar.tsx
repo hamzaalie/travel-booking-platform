@@ -21,9 +21,14 @@ import {
   Wifi,
   Shield,
   Armchair,
+  X,
 } from 'lucide-react';
 
-export default function Sidebar() {
+interface SidebarProps {
+  onClose?: () => void;
+}
+
+export default function Sidebar({ onClose }: SidebarProps) {
   const location = useLocation();
   const { user } = useSelector((state: RootState) => state.auth);
 
@@ -76,10 +81,18 @@ export default function Sidebar() {
   return (
     <aside className="w-64 h-full bg-white border-r border-gray-200 shadow-sm">
       <div className="h-full flex flex-col">
-        <div className="p-6 border-b border-gray-200">
-          <h2 className="text-xl font-bold text-gray-900">
+        <div className="p-4 sm:p-6 border-b border-gray-200 flex items-center justify-between">
+          <h2 className="text-lg sm:text-xl font-bold text-gray-900">
             {user?.role === 'SUPER_ADMIN' ? 'Admin Panel' : user?.role === 'B2B_AGENT' ? 'Agent Portal' : 'My Account'}
           </h2>
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="lg:hidden p-1 rounded-md hover:bg-gray-100 text-gray-500"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          )}
         </div>
         
         <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
@@ -91,6 +104,7 @@ export default function Sidebar() {
               <Link
                 key={item.path}
                 to={item.path}
+                onClick={onClose}
                 className={`flex items-center space-x-3 px-4 py-2.5 rounded-lg transition-colors ${
                   isActive
                     ? 'bg-accent-50 text-primary-950 font-medium border-l-4 border-accent-500'

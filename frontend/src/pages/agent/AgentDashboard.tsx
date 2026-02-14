@@ -58,7 +58,7 @@ export default function AgentDashboard() {
     <div>
       {/* Welcome Section */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
           Welcome, {user?.firstName}!
         </h1>
         <p className="text-gray-600 mt-2">{user?.agent?.agencyName}</p>
@@ -70,7 +70,7 @@ export default function AgentDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-green-100 text-sm mb-1">Wallet Balance</p>
-              <p className="text-3xl font-bold">${parseFloat(wallet?.balance || 0).toFixed(2)}</p>
+              <p className="text-2xl md:text-3xl font-bold">${parseFloat(wallet?.balance || 0).toFixed(2)}</p>
             </div>
             <Wallet className="h-12 w-12 text-green-200" />
           </div>
@@ -83,7 +83,7 @@ export default function AgentDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-600 text-sm mb-1">Total Bookings</p>
-              <p className="text-3xl font-bold text-primary-900">{bookings?.length || 0}</p>
+              <p className="text-2xl md:text-3xl font-bold text-primary-900">{bookings?.length || 0}</p>
             </div>
             <Plane className="h-12 w-12 text-primary-950" />
           </div>
@@ -96,7 +96,7 @@ export default function AgentDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-600 text-sm mb-1">This Month</p>
-              <p className="text-3xl font-bold text-accent-600">${monthRevenue.toFixed(2)}</p>
+              <p className="text-2xl md:text-3xl font-bold text-accent-600">${monthRevenue.toFixed(2)}</p>
             </div>
             <TrendingUp className="h-12 w-12 text-accent-500" />
           </div>
@@ -107,7 +107,7 @@ export default function AgentDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-600 text-sm mb-1">Your Markup</p>
-              <p className="text-3xl font-bold text-orange-700">
+              <p className="text-2xl md:text-3xl font-bold text-orange-700">
                 {markups && markups.length > 0 ? `${markups[0].value}${markups[0].type === 'PERCENTAGE' ? '%' : '$'}` : 'Default'}
               </p>
             </div>
@@ -123,8 +123,8 @@ export default function AgentDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Transactions */}
         <div className="card">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold text-gray-900">Recent Transactions</h2>
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
+            <h2 className="text-lg sm:text-xl font-bold text-gray-900">Recent Transactions</h2>
             <Link to="/agent/wallet" className="text-primary-950 hover:text-primary-900 font-medium text-sm">
               View All →
             </Link>
@@ -133,7 +133,7 @@ export default function AgentDashboard() {
           {recentTransactions && recentTransactions.length > 0 ? (
             <div className="space-y-3">
               {recentTransactions.map((tx: any) => (
-                <div key={tx.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div key={tx.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3 bg-gray-50 rounded-lg">
                   <div className="flex items-center space-x-3">
                     <div className={`p-2 rounded-full ${tx.type === 'CREDIT' ? 'bg-green-100' : 'bg-red-100'}`}>
                       {tx.type === 'CREDIT' ? (

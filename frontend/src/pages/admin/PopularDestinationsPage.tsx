@@ -188,9 +188,9 @@ export default function PopularDestinationsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Popular Destinations</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Popular Destinations</h1>
           <p className="text-gray-600 mt-1">Manage and set popular destinations displayed on the homepage</p>
         </div>
         <button
@@ -326,12 +326,12 @@ export default function PopularDestinationsPage() {
       {isFormOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b flex justify-between items-center">
+            <div className="p-4 sm:p-6 border-b flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
               <h2 className="text-xl font-bold">{editingId ? 'Edit Destination' : 'Add New Destination'}</h2>
               <button onClick={resetForm}><X className="h-5 w-5 text-gray-500" /></button>
             </div>
             <div className="p-6 space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Destination Name *</label>
                   <input
@@ -354,7 +354,7 @@ export default function PopularDestinationsPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">IATA Code</label>
                   <input
@@ -399,7 +399,7 @@ export default function PopularDestinationsPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Starting Price (NPR)</label>
                   <input

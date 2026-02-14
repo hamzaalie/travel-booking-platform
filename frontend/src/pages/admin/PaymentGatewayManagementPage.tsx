@@ -229,9 +229,9 @@ export default function PaymentGatewayManagementPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Payment Gateways</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Payment Gateways</h1>
           <p className="text-gray-600 mt-1">Manage payment gateways - enable/disable, configure API keys, monitor transactions</p>
         </div>
         <div className="flex items-center gap-2 bg-green-50 px-4 py-2 rounded-lg">
@@ -428,7 +428,7 @@ export default function PaymentGatewayManagementPage() {
                 </select>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Transaction Fee</label>
                   <input
@@ -452,7 +452,7 @@ export default function PaymentGatewayManagementPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Min Amount (NPR)</label>
                   <input

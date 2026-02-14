@@ -93,11 +93,11 @@ export default function WalletPage() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">My Wallet</h1>
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">My Wallet</h1>
         <button
           onClick={() => setShowRequestForm(!showRequestForm)}
-          className="btn btn-primary"
+          className="btn btn-primary w-full sm:w-auto"
         >
           <Plus className="h-5 w-5 mr-2" />
           Request Funds
@@ -123,7 +123,7 @@ export default function WalletPage() {
 
         <div className="card">
           <h3 className="text-sm font-medium text-gray-600 mb-2">Total Credits</h3>
-          <p className="text-3xl font-bold text-green-600">
+          <p className="text-2xl md:text-3xl font-bold text-green-600">
             ${transactionsData?.transactions
               ?.filter((t: any) => t.type === 'CREDIT')
               ?.reduce((sum: number, t: any) => sum + t.amount, 0)
@@ -133,7 +133,7 @@ export default function WalletPage() {
 
         <div className="card">
           <h3 className="text-sm font-medium text-gray-600 mb-2">Total Debits</h3>
-          <p className="text-3xl font-bold text-red-600">
+          <p className="text-2xl md:text-3xl font-bold text-red-600">
             ${transactionsData?.transactions
               ?.filter((t: any) => t.type === 'DEBIT')
               ?.reduce((sum: number, t: any) => sum + t.amount, 0)
@@ -258,11 +258,11 @@ export default function WalletPage() {
 
       {/* Transaction History */}
       <div className="card">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold">Transaction History</h2>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <h2 className="text-xl sm:text-2xl font-bold">Transaction History</h2>
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className={`btn btn-secondary flex items-center gap-2 ${showFilters ? 'bg-gray-200' : ''}`}
+            className={`btn btn-secondary flex items-center justify-center gap-2 w-full sm:w-auto ${showFilters ? 'bg-gray-200' : ''}`}
           >
             <Filter className="h-4 w-4" />
             Filters
@@ -281,13 +281,13 @@ export default function WalletPage() {
               <option value="DEBIT">Debits Only</option>
             </select>
           </div>
-        )>
+        )}
 
         {transactionsData?.transactions && transactionsData.transactions.length > 0 ? (
           <>
             <div className="space-y-3">
               {transactionsData.transactions.map((tx: any) => (
-                <div key={tx.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50">
+                <div key={tx.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50">
                   <div className="flex items-center space-x-4">
                     <div className={`p-3 rounded-full ${tx.type === 'CREDIT' ? 'bg-green-100' : 'bg-red-100'}`}>
                       {tx.type === 'CREDIT' ? (

@@ -375,8 +375,8 @@ export default function CarRentalPage() {
       {/* Results Section */}
       {results.length > 0 && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-3xl font-bold text-gray-900">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
               Available Cars <span className="text-primary-950">({results.length})</span>
             </h2>
             <div className="flex items-center space-x-4">
@@ -432,7 +432,7 @@ export default function CarRentalPage() {
                   </div>
 
                   {/* Specifications */}
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div className="flex items-center space-x-2 text-sm text-gray-700">
                       <Users className="h-4 w-4 text-primary-950" />
                       <span>{car.passengers} Passengers</span>
@@ -480,7 +480,7 @@ export default function CarRentalPage() {
                       <div>
                         <p className="text-xs text-gray-600 mb-1">From</p>
                         <div className="flex items-baseline space-x-1">
-                          <span className="text-3xl font-bold text-primary-950">
+                          <span className="text-2xl sm:text-3xl font-bold text-primary-950">
                             {car.currency === 'USD' ? '$' : car.currency} {car.pricePerDay?.toFixed(2) || '0.00'}
                           </span>
                           <span className="text-sm text-gray-600">/day</span>

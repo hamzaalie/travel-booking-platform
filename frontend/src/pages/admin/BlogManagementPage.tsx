@@ -146,9 +146,9 @@ export default function BlogManagementPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Blog Management</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Blog Management</h1>
           <p className="text-gray-600 mt-1">Create and manage blog posts</p>
         </div>
         {!isEditing && (
@@ -255,7 +255,7 @@ export default function BlogManagementPage() {
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="card space-y-6">
-          <div className="flex justify-between items-center border-b pb-4">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 border-b pb-4">
             <h3 className="text-lg font-semibold">
               {selectedPost ? 'Edit Blog Post' : 'Create New Post'}
             </h3>
@@ -272,7 +272,7 @@ export default function BlogManagementPage() {
             </button>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Title *</label>
               <input
@@ -329,7 +329,7 @@ export default function BlogManagementPage() {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Featured Image URL</label>
               <input
@@ -379,7 +379,7 @@ export default function BlogManagementPage() {
             </div>
           </div>
 
-          <div className="flex items-center justify-between border-t pt-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-t pt-4">
             <label className="flex items-center gap-2">
               <input
                 type="checkbox"
