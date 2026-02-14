@@ -138,6 +138,7 @@ export const fieldToDocumentType: Record<string, string> = {
   panCard: 'PAN_CARD',
   companyRegistration: 'COMPANY_REGISTRATION',
   vatCertificate: 'VAT_CERTIFICATE',
+  tourismCertificate: 'TOURISM_CERTIFICATE',
   profilePhoto: 'PROFILE_PHOTO',
   signature: 'SIGNATURE',
   passport: 'PASSPORT',

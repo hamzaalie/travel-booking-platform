@@ -47,6 +47,7 @@ import AgentDashboard from './pages/agent/AgentDashboard';
 import AgentBookingsPage from './pages/agent/AgentBookingsPage';
 import WalletPage from './pages/agent/WalletPage';
 import AgentMarkupsPage from './pages/agent/AgentMarkupsPage';
+import AgentDocumentsPageAgent from './pages/agent/AgentDocumentsPage';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -154,6 +155,7 @@ function App() {
         <Route path="bookings" element={<AgentBookingsPage />} />
         <Route path="wallet" element={<WalletPage />} />
         <Route path="markups" element={<AgentMarkupsPage />} />
+        <Route path="documents" element={<AgentDocumentsPageAgent />} />
       </Route>
 
       {/* Admin Routes */}

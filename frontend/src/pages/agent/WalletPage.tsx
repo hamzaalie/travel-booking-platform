@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { walletApi } from '@/services/api';
-import { Wallet, ArrowDownRight, ArrowUpRight, Plus } from 'lucide-react';
+import { Wallet, ArrowDownRight, ArrowUpRight, Plus, Upload, X, Filter } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function WalletPage() {
@@ -10,7 +10,12 @@ export default function WalletPage() {
   const [amount, setAmount] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('BANK_TRANSFER');
   const [notes, setNotes] = useState('');
+  const [paymentProofFile, setPaymentProofFile] = useState<File | null>(null);
+  const [paymentProofPreview, setPaymentProofPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [page, setPage] = useState(1);
+  const [filterType, setFilterType] = useState<string>('');
+  const [showFilters, setShowFilters] = useState(false);
 
   const { data: wallet } = useQuery({
     queryKey: ['wallet'],
@@ -21,9 +26,11 @@ export default function WalletPage() {
   });
 
   const { data: transactionsData } = useQuery({
-    queryKey: ['transactions', page],
+    queryKey: ['transactions', page, filterType],
     queryFn: async () => {
-      const response: any = await walletApi.getTransactions({ page, limit: 20 });
+      const params: any = { page, limit: 20 };
+      if (filterType) params.type = filterType;
+      const response: any = await walletApi.getTransactions(params);
       return response.data;
     },
   });
@@ -37,23 +44,50 @@ export default function WalletPage() {
       setShowRequestForm(false);
       setAmount('');
       setNotes('');
+      setPaymentProofFile(null);
+      setPaymentProofPreview(null);
       queryClient.invalidateQueries({ queryKey: ['wallet'] });
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Failed to submit fund request');
+      toast.error(error.response?.data?.error || error.response?.data?.message || 'Failed to submit fund request');
     },
   });
 
-  const handleSubmitRequest = (e: React.FormEvent) => {
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('File size must be less than 5MB');
+        return;
+      }
+      setPaymentProofFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPaymentProofPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSubmitRequest = async (e: React.FormEvent) => {
     e.preventDefault();
     if (parseFloat(amount) < 100) {
       toast.error('Minimum fund request amount is $100');
       return;
     }
+
+    let paymentProofUrl = '';
+    
+    // If there's a payment proof file, convert to base64 for submission
+    if (paymentProofFile) {
+      paymentProofUrl = paymentProofPreview || '';
+    }
+
     requestFundMutation.mutate({
       amount: parseFloat(amount),
       paymentMethod,
       notes,
+      paymentProofUrl,
     });
   };
 
@@ -158,6 +192,50 @@ export default function WalletPage() {
               />
             </div>
 
+            {/* Payment Proof Upload */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Payment Proof (Optional)
+              </label>
+              <div className="flex items-center gap-3">
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileSelect}
+                  accept="image/*,.pdf"
+                  className="hidden"
+                />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="btn btn-secondary flex items-center gap-2"
+                >
+                  <Upload className="h-4 w-4" />
+                  {paymentProofFile ? 'Change File' : 'Upload Proof'}
+                </button>
+                {paymentProofFile && (
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <span className="truncate max-w-[200px]">{paymentProofFile.name}</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPaymentProofFile(null);
+                        setPaymentProofPreview(null);
+                        if (fileInputRef.current) fileInputRef.current.value = '';
+                      }}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                )}
+              </div>
+              {paymentProofPreview && paymentProofFile?.type.startsWith('image/') && (
+                <img src={paymentProofPreview} alt="Payment proof" className="mt-2 max-h-40 rounded-lg border" />
+              )}
+              <p className="mt-1 text-xs text-gray-500">Upload bank transfer receipt or payment screenshot (max 5MB)</p>
+            </div>
+
             <div className="flex space-x-3">
               <button
                 type="submit"
@@ -180,7 +258,30 @@ export default function WalletPage() {
 
       {/* Transaction History */}
       <div className="card">
-        <h2 className="text-2xl font-bold mb-6">Transaction History</h2>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold">Transaction History</h2>
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className={`btn btn-secondary flex items-center gap-2 ${showFilters ? 'bg-gray-200' : ''}`}
+          >
+            <Filter className="h-4 w-4" />
+            Filters
+          </button>
+        </div>
+
+        {showFilters && (
+          <div className="flex flex-wrap gap-3 mb-4 p-3 bg-gray-50 rounded-lg">
+            <select
+              value={filterType}
+              onChange={(e) => { setFilterType(e.target.value); setPage(1); }}
+              className="input w-auto"
+            >
+              <option value="">All Transactions</option>
+              <option value="CREDIT">Credits Only</option>
+              <option value="DEBIT">Debits Only</option>
+            </select>
+          </div>
+        )>
 
         {transactionsData?.transactions && transactionsData.transactions.length > 0 ? (
           <>

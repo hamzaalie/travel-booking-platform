@@ -130,6 +130,7 @@ router.post(
     { name: 'panCard', maxCount: 1 },
     { name: 'companyRegistration', maxCount: 1 },
     { name: 'vatCertificate', maxCount: 1 },
+    { name: 'tourismCertificate', maxCount: 1 },
     { name: 'profilePhoto', maxCount: 1 },
     { name: 'signature', maxCount: 1 },
     { name: 'passport', maxCount: 1 },

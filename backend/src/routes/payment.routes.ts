@@ -1,15 +1,22 @@
-import { Router } from 'express';
+import { Router, raw } from 'express';
 import { asyncHandler } from '../middleware/error.middleware';
+import { authenticate, AuthRequest } from '../middleware/auth.middleware';
 import { paymentService } from '../services/payment.service';
 import { bookingService } from '../services/booking.service';
+import { prisma } from '../config/database';
 import { logger } from '../config/logger';
 
 const router = Router();
 
+// ============================================================================
+// STRIPE ROUTES
+// ============================================================================
+
 // POST /api/payments/stripe/create
 router.post(
   '/stripe/create',
-  asyncHandler(async (req, res) => {
+  authenticate,
+  asyncHandler(async (req: AuthRequest, res) => {
     const payment = await paymentService.createStripePayment(req.body);
 
     res.json({
@@ -22,7 +29,8 @@ router.post(
 // POST /api/payments/stripe/checkout
 router.post(
   '/stripe/checkout',
-  asyncHandler(async (req, res) => {
+  authenticate,
+  asyncHandler(async (req: AuthRequest, res) => {
     const session = await paymentService.createStripeCheckoutSession(req.body);
 
     res.json({
@@ -32,22 +40,34 @@ router.post(
   })
 );
 
-// POST /api/payments/stripe/webhook
+// POST /api/payments/stripe/webhook - NO auth (Stripe sends this directly)
+// Uses raw body for signature verification
 router.post(
   '/stripe/webhook',
+  raw({ type: 'application/json' }),
   asyncHandler(async (req, res) => {
     const signature = req.headers['stripe-signature'] as string;
 
     const event = paymentService.verifyStripeWebhook(req.body, signature);
 
-    // Handle the event
+    // Handle the event with idempotency check
     if (event.type === 'payment_intent.succeeded') {
       const paymentIntent = event.data.object as any;
       const bookingId = paymentIntent.metadata.bookingId;
 
       if (bookingId) {
-        await bookingService.confirmBooking(bookingId, paymentIntent);
-        logger.info(`Stripe payment succeeded for booking: ${bookingId}`);
+        // Idempotency: check if booking is already confirmed
+        const booking = await prisma.booking.findUnique({
+          where: { id: bookingId },
+          select: { status: true },
+        });
+
+        if (booking && booking.status !== 'CONFIRMED') {
+          await bookingService.confirmBooking(bookingId, paymentIntent);
+          logger.info(`Stripe payment succeeded for booking: ${bookingId}`);
+        } else {
+          logger.info(`Stripe webhook: booking ${bookingId} already confirmed, skipping`);
+        }
       }
     }
 
@@ -55,10 +75,15 @@ router.post(
   })
 );
 
+// ============================================================================
+// KHALTI ROUTES
+// ============================================================================
+
 // POST /api/payments/khalti/initiate
 router.post(
   '/khalti/initiate',
-  asyncHandler(async (req, res) => {
+  authenticate,
+  asyncHandler(async (req: AuthRequest, res) => {
     const payment = await paymentService.initiateKhaltiPayment(req.body);
 
     res.json({
@@ -71,21 +96,50 @@ router.post(
 // POST /api/payments/khalti/verify
 router.post(
   '/khalti/verify',
-  asyncHandler(async (req, res) => {
+  authenticate,
+  asyncHandler(async (req: AuthRequest, res) => {
     const { pidx, bookingId } = req.body;
+
+    if (!pidx || !bookingId) {
+      res.status(400).json({
+        success: false,
+        error: 'pidx and bookingId are required',
+      });
+      return;
+    }
 
     const result = await paymentService.verifyKhaltiPayment(pidx);
 
     if (result.isVerified && bookingId) {
-      await bookingService.confirmBooking(bookingId, {
-        pidx,
-        transactionId: result.transactionId,
-        status: result.status,
+      // Idempotency: check if booking is already confirmed
+      const booking = await prisma.booking.findUnique({
+        where: { id: bookingId },
+        select: { status: true },
       });
+
+      if (booking && booking.status !== 'CONFIRMED') {
+        await bookingService.confirmBooking(bookingId, {
+          pidx,
+          transactionId: result.transactionId,
+          status: result.status,
+        });
+      } else {
+        logger.info(`Khalti verify: booking ${bookingId} already confirmed, skipping`);
+      }
+    }
+
+    if (!result.isVerified) {
+      res.status(400).json({
+        success: false,
+        status: result.status,
+        error: 'Payment verification failed',
+        data: result.data,
+      });
+      return;
     }
 
     res.json({
-      success: result.isVerified,
+      success: true,
       status: result.status,
       transactionId: result.transactionId,
       data: result.data,
@@ -93,10 +147,15 @@ router.post(
   })
 );
 
+// ============================================================================
+// ESEWA ROUTES
+// ============================================================================
+
 // POST /api/payments/esewa/initiate
 router.post(
   '/esewa/initiate',
-  asyncHandler(async (req, res) => {
+  authenticate,
+  asyncHandler(async (req: AuthRequest, res) => {
     const payment = await paymentService.initiateEsewaPayment(req.body);
 
     res.json({
@@ -109,22 +168,108 @@ router.post(
 // POST /api/payments/esewa/verify
 router.post(
   '/esewa/verify',
-  asyncHandler(async (req, res) => {
+  authenticate,
+  asyncHandler(async (req: AuthRequest, res) => {
     const { transactionUuid, totalAmount, encodedResponse, bookingId } = req.body;
+
+    if (!transactionUuid || !bookingId) {
+      res.status(400).json({
+        success: false,
+        error: 'transactionUuid and bookingId are required',
+      });
+      return;
+    }
 
     const result = await paymentService.verifyEsewaPayment(transactionUuid, totalAmount, encodedResponse);
 
     if (result.isVerified) {
-      await bookingService.confirmBooking(bookingId, { 
-        transactionUuid, 
-        transactionCode: result.transactionCode,
-        status: result.status 
+      // Idempotency: check if booking is already confirmed
+      const booking = await prisma.booking.findUnique({
+        where: { id: bookingId },
+        select: { status: true },
       });
+
+      if (booking && booking.status !== 'CONFIRMED') {
+        await bookingService.confirmBooking(bookingId, { 
+          transactionUuid, 
+          transactionCode: result.transactionCode,
+          status: result.status 
+        });
+      } else {
+        logger.info(`eSewa verify: booking ${bookingId} already confirmed, skipping`);
+      }
+    }
+
+    if (!result.isVerified) {
+      res.status(400).json({
+        success: false,
+        error: 'eSewa payment verification failed',
+        data: result,
+      });
+      return;
     }
 
     res.json({
-      success: result.isVerified,
+      success: true,
       data: result,
+    });
+  })
+);
+
+// ============================================================================
+// PAYPAL ROUTES
+// ============================================================================
+
+// POST /api/payments/paypal/create
+router.post(
+  '/paypal/create',
+  authenticate,
+  asyncHandler(async (req: AuthRequest, res) => {
+    const order = await paymentService.createPayPalOrder(req.body);
+
+    res.json({
+      success: true,
+      data: order,
+    });
+  })
+);
+
+// POST /api/payments/paypal/capture
+router.post(
+  '/paypal/capture',
+  authenticate,
+  asyncHandler(async (req: AuthRequest, res) => {
+    const { orderId, bookingId } = req.body;
+
+    if (!orderId) {
+      res.status(400).json({
+        success: false,
+        error: 'orderId is required',
+      });
+      return;
+    }
+
+    const captureResult = await paymentService.capturePayPalPayment(orderId);
+
+    if (captureResult.status === 'COMPLETED' && bookingId) {
+      // Idempotency: check if booking is already confirmed
+      const booking = await prisma.booking.findUnique({
+        where: { id: bookingId },
+        select: { status: true },
+      });
+
+      if (booking && booking.status !== 'CONFIRMED') {
+        await bookingService.confirmBooking(bookingId, {
+          paypalOrderId: orderId,
+          captureId: captureResult.purchase_units?.[0]?.payments?.captures?.[0]?.id,
+          status: captureResult.status,
+        });
+      }
+    }
+
+    res.json({
+      success: true,
+      data: captureResult,
     });
   })
 );

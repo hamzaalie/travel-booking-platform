@@ -61,6 +61,7 @@ export default function Sidebar() {
         { path: '/agent/bookings', icon: Plane, label: 'My Bookings' },
         { path: '/agent/wallet', icon: Wallet, label: 'Wallet' },
         { path: '/agent/markups', icon: Settings, label: 'My Markups' },
+        { path: '/agent/documents', icon: FileText, label: 'Documents' },
       ];
     }
     

@@ -175,6 +175,20 @@ export const agentApi = {
   
   createMarkup: (data: any) =>
     api.post('/agent/markups', data),
+
+  getProfile: () =>
+    api.get('/agent/profile'),
+
+  getDocuments: () =>
+    api.get('/agent/documents'),
+
+  uploadDocuments: (formData: FormData) =>
+    api.post('/agent/documents', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }),
+
+  deleteDocument: (id: string) =>
+    api.delete(`/agent/documents/${id}`),
 };
 
 // Admin API
@@ -278,6 +292,12 @@ export const paymentApi = {
   
   verifyEsewa: (data: any) =>
     api.post('/payments/esewa/verify', data),
+  
+  createPayPalOrder: (data: any) =>
+    api.post('/payments/paypal/create', data),
+  
+  capturePayPalPayment: (orderId: string, bookingId: string) =>
+    api.post('/payments/paypal/capture', { orderId, bookingId }),
 };
 
 // Hotel API

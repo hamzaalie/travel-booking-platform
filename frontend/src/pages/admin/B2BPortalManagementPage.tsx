@@ -116,11 +116,16 @@ export default function B2BPortalManagementPage() {
     mutationFn: (userId: string) =>
       adminApi.loginAsUser(userId),
     onSuccess: (data: any) => {
-      // Store the admin's token temporarily
+      // Store the admin's token and user data temporarily
       const adminToken = localStorage.getItem('accessToken');
+      const adminUser = localStorage.getItem('user');
       localStorage.setItem('adminReturnToken', adminToken || '');
-      // Set agent's token
+      localStorage.setItem('adminReturnUser', adminUser || '');
+      // Set agent's token and user data
       localStorage.setItem('accessToken', data.data?.accessToken || '');
+      if (data.data?.user) {
+        localStorage.setItem('user', JSON.stringify(data.data.user));
+      }
       toast.success('Logged in as agent - you can switch back from the header');
       window.location.href = '/agent';
     },

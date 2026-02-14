@@ -149,6 +149,7 @@ enum DocumentType {
   PAN_CARD
   COMPANY_REGISTRATION
   VAT_CERTIFICATE
+  TOURISM_CERTIFICATE
   TAX_CLEARANCE
   BANK_STATEMENT
   PROFILE_PHOTO
@@ -241,6 +242,7 @@ model FundRequest {
   amount           Decimal           @db.Decimal(15, 2)
   paymentProofUrl  String?
   paymentMethod    String?
+  notes            String?           @db.Text
   status           FundRequestStatus @default(PENDING)
   requestedAt      DateTime          @default(now())
   processedBy      String?

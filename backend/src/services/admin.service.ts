@@ -432,15 +432,33 @@ export class AdminService {
    * Get dashboard statistics
    */
   async getDashboardStats() {
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const weekStart = new Date(todayStart);
+    weekStart.setDate(weekStart.getDate() - 7);
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
     const [
       totalBookings,
+      confirmedBookings,
+      pendingBookings,
+      cancelledBookings,
       totalAgents,
       pendingAgents,
       activeAgents,
       totalRevenue,
+      todayRevenue,
+      weekRevenue,
+      monthRevenue,
       pendingFundRequests,
+      totalCustomers,
+      recentBookings,
+      recentAuditLogs,
     ] = await Promise.all([
       prisma.booking.count(),
+      prisma.booking.count({ where: { status: { in: ['CONFIRMED', 'TICKETED'] } } }),
+      prisma.booking.count({ where: { status: 'PENDING' } }),
+      prisma.booking.count({ where: { status: 'CANCELLED' } }),
       prisma.agent.count(),
       prisma.agent.count({ where: { status: 'PENDING' } }),
       prisma.agent.count({ where: { status: 'APPROVED' } }),
@@ -448,24 +466,89 @@ export class AdminService {
         _sum: { totalAmount: true },
         where: { status: { in: ['CONFIRMED', 'TICKETED'] } },
       }),
+      prisma.booking.aggregate({
+        _sum: { totalAmount: true },
+        where: {
+          status: { in: ['CONFIRMED', 'TICKETED'] },
+          createdAt: { gte: todayStart },
+        },
+      }),
+      prisma.booking.aggregate({
+        _sum: { totalAmount: true },
+        where: {
+          status: { in: ['CONFIRMED', 'TICKETED'] },
+          createdAt: { gte: weekStart },
+        },
+      }),
+      prisma.booking.aggregate({
+        _sum: { totalAmount: true },
+        where: {
+          status: { in: ['CONFIRMED', 'TICKETED'] },
+          createdAt: { gte: monthStart },
+        },
+      }),
       prisma.fundRequest.count({ where: { status: 'PENDING' } }),
+      prisma.user.count({ where: { role: 'B2C_CUSTOMER' } }),
+      prisma.booking.findMany({
+        take: 5,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          user: {
+            select: { firstName: true, lastName: true, email: true },
+          },
+        },
+      }),
+      prisma.auditLog.findMany({
+        take: 10,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          user: {
+            select: { firstName: true, lastName: true, email: true },
+          },
+        },
+      }),
     ]);
 
     return {
       bookings: {
         total: totalBookings,
+        confirmed: confirmedBookings,
+        pending: pendingBookings,
+        cancelled: cancelledBookings,
       },
       agents: {
         total: totalAgents,
         pending: pendingAgents,
         active: activeAgents,
       },
+      customers: {
+        total: totalCustomers,
+      },
       revenue: {
         total: totalRevenue._sum.totalAmount?.toNumber() || 0,
+        today: todayRevenue._sum.totalAmount?.toNumber() || 0,
+        week: weekRevenue._sum.totalAmount?.toNumber() || 0,
+        month: monthRevenue._sum.totalAmount?.toNumber() || 0,
       },
       fundRequests: {
         pending: pendingFundRequests,
       },
+      recentBookings: recentBookings.map((b: any) => ({
+        id: b.id,
+        bookingReference: b.bookingReference,
+        type: b.bookingType,
+        status: b.status,
+        amount: b.totalAmount?.toNumber() || 0,
+        userName: `${b.user.firstName} ${b.user.lastName}`,
+        createdAt: b.createdAt,
+      })),
+      recentActivity: recentAuditLogs.map((log: any) => ({
+        id: log.id,
+        action: log.action,
+        entity: log.entity,
+        userName: log.user ? `${log.user.firstName} ${log.user.lastName}` : 'System',
+        createdAt: log.createdAt,
+      })),
     };
   }
 

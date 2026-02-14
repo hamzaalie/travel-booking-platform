@@ -599,12 +599,13 @@ router.post(
       // Generate a temporary token for the admin to act as this user
       const accessToken = jwt.sign(
         {
-          userId: user.id,
+          id: user.id,
+          email: user.email,
           role: user.role,
           impersonatedBy: (req as AuthRequest).user?.id,
         },
         process.env.JWT_SECRET || 'fallback-secret',
-        { expiresIn: '1h' }
+        { expiresIn: '2h' }
       );
 
       // Audit log

@@ -438,7 +438,7 @@ export class PaymentService {
       ).toString('base64');
 
       const response = await axios.post(
-        `https://api-m.${config.paypal.mode}.paypal.com/v2/checkout/orders`,
+        `${this.paypalBaseUrl}/v2/checkout/orders`,
         {
           intent: 'CAPTURE',
           purchase_units: [
@@ -485,7 +485,7 @@ export class PaymentService {
       ).toString('base64');
 
       const response = await axios.post(
-        `https://api-m.${config.paypal.mode}.paypal.com/v2/checkout/orders/${orderId}/capture`,
+        `${this.paypalBaseUrl}/v2/checkout/orders/${orderId}/capture`,
         {},
         {
           headers: {
