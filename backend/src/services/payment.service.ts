@@ -10,6 +10,7 @@ interface PaymentIntentData {
   bookingId: string;
   customerEmail: string;
   customerName: string;
+  customerPhone?: string;
   metadata?: Record<string, string>;
 }
 
@@ -327,32 +328,41 @@ export class PaymentService {
    */
   async initiateKhaltiPayment(data: PaymentIntentData) {
     try {
-      // Ensure amount is at least 1000 paisa (Rs. 10)
+      // Khalti only supports NPR — amount is in paisa (1 NPR = 100 paisa)
+      // Minimum amount is 1000 paisa (Rs. 10), maximum is 100000000 paisa (Rs. 1,000,000)
       const amountInPaisa = Math.max(Math.round(data.amount * 100), 1000);
       
+      if (amountInPaisa > 100000000) {
+        throw new AppError('Amount exceeds Khalti maximum limit of NPR 1,000,000', 400);
+      }
+
+      const frontendUrl = config.frontendUrl || 'http://localhost:3000';
+      
       const payload = {
-        return_url: `${config.frontendUrl}/payment/khalti/callback`,
-        website_url: config.frontendUrl || 'http://localhost:3000',
+        return_url: `${frontendUrl}/payment/khalti/callback`,
+        website_url: frontendUrl,
         amount: amountInPaisa,
         purchase_order_id: data.bookingId,
-        purchase_order_name: `Flight Booking - ${data.bookingId}`,
+        purchase_order_name: `Booking - ${data.bookingId}`,
         customer_info: {
           name: data.customerName || 'Customer',
           email: data.customerEmail || '',
-          phone: '9800000000', // Default phone for testing
+          phone: data.customerPhone || '9800000000',
         },
       };
 
-      logger.info(`Khalti payment request:`, { url: `${config.khalti.url}/epayment/initiate/`, payload });
+      const khaltiUrl = `${config.khalti.url}/epayment/initiate/`;
+      logger.info(`Khalti payment request:`, { url: khaltiUrl, payload });
 
       const response = await axios.post(
-        `${config.khalti.url}/epayment/initiate/`,
+        khaltiUrl,
         payload,
         {
           headers: {
             'Authorization': `Key ${config.khalti.secretKey}`,
             'Content-Type': 'application/json',
           },
+          timeout: 30000,
         }
       );
 
@@ -366,16 +376,35 @@ export class PaymentService {
         bookingId: data.bookingId,
       };
     } catch (error: any) {
+      if (error instanceof AppError) throw error;
+      
       logger.error('Khalti payment initiation error:', {
         status: error.response?.status,
         data: error.response?.data,
         message: error.message,
+        khaltiUrl: config.khalti.url,
       });
-      
-      const errorMessage = error.response?.data?.detail || 
-                          error.response?.data?.error_key ||
-                          JSON.stringify(error.response?.data) ||
-                          'Failed to initiate Khalti payment';
+
+      // Parse Khalti's various error response formats
+      let errorMessage = 'Failed to initiate Khalti payment';
+      const respData = error.response?.data;
+      if (respData) {
+        if (typeof respData === 'string') {
+          errorMessage = respData;
+        } else if (respData.detail) {
+          errorMessage = respData.detail;
+        } else if (respData.error_key) {
+          errorMessage = respData.error_key;
+        } else if (respData.message) {
+          errorMessage = respData.message;
+        }
+      }
+
+      // Provide user-friendly messages for common errors
+      if (errorMessage.toLowerCase().includes('invalid token') || errorMessage.toLowerCase().includes('invalid key')) {
+        errorMessage = 'Khalti payment gateway configuration error. Please contact support.';
+        logger.error('Khalti secret key is invalid. Please update KHALTI_SECRET_KEY in environment variables.');
+      }
       
       throw new AppError(errorMessage, error.response?.status || 500);
     }

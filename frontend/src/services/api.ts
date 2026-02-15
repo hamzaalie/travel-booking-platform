@@ -48,8 +48,13 @@ class ApiService {
       async (error: AxiosError) => {
         const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
 
-        // Handle 401 - Token expired
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        // Handle 401 - Token expired (skip for login/register/refresh endpoints)
+        const requestUrl = originalRequest.url || '';
+        const isAuthEndpoint = requestUrl.includes('/auth/login') || 
+                               requestUrl.includes('/auth/register') || 
+                               requestUrl.includes('/auth/refresh');
+        
+        if (error.response?.status === 401 && !originalRequest._retry && !isAuthEndpoint) {
           originalRequest._retry = true;
 
           try {
@@ -71,6 +76,7 @@ class ApiService {
             // Refresh failed - logout
             localStorage.removeItem('accessToken');
             localStorage.removeItem('refreshToken');
+            localStorage.removeItem('user');
             window.location.href = '/login';
             return Promise.reject(refreshError);
           }

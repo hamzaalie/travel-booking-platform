@@ -297,12 +297,15 @@ export default function PaymentPage() {
       }) as any;
 
       // Redirect to Khalti 
-      if (response.data.paymentUrl) {
+      if (response.data?.paymentUrl) {
         window.location.href = response.data.paymentUrl;
+      } else {
+        toast.error('No payment URL received from Khalti');
+        setIsProcessing(false);
       }
     } catch (error: any) {
       console.error('Khalti payment error:', error);
-      toast.error(error.response?.data?.message || 'Failed to initialize Khalti payment');
+      // Toast is already shown by the API interceptor
       setIsProcessing(false);
     }
   };

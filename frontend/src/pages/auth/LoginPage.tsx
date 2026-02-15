@@ -3,11 +3,13 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { login } from '@/store/slices/authSlice';
 import { AppDispatch } from '@/store';
+import toast from 'react-hot-toast';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
@@ -15,6 +17,7 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setError(null);
 
     try {
       const result = await dispatch(login({ email, password })).unwrap();
@@ -27,8 +30,10 @@ export default function LoginPage() {
       } else {
         navigate('/customer');
       }
-    } catch (error) {
-      console.error('Login failed:', error);
+    } catch (err: any) {
+      const errorMessage = typeof err === 'string' ? err : err?.message || 'Invalid email or password';
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -51,6 +56,11 @@ export default function LoginPage() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                {error}
+              </div>
+            )}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                 Email Address
