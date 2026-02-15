@@ -6,6 +6,7 @@ import { Permission } from '../middleware/permissions';
 import { adminService } from '../services/admin.service';
 import { walletService } from '../services/wallet.service';
 import { pricingService } from '../services/pricing.service';
+import { logger } from '../config/logger';
 
 const router = Router();
 
@@ -120,12 +121,20 @@ router.get(
   '/fund-requests',
   authorizePermission(Permission.APPROVE_FUND_REQUESTS, Permission.VIEW_FINANCIAL_REPORTS),
   asyncHandler(async (req, res) => {
-    const requests = await adminService.getFundRequests(req.query.status as string | undefined);
+    try {
+      const requests = await adminService.getFundRequests(req.query.status as string | undefined);
 
-    res.json({
-      success: true,
-      data: requests,
-    });
+      res.json({
+        success: true,
+        data: requests,
+      });
+    } catch (error: any) {
+      logger.error('Fund requests fetch failed:', { message: error.message, stack: error.stack });
+      res.status(500).json({
+        success: false,
+        error: `Failed to fetch fund requests: ${error.message}`,
+      });
+    }
   })
 );
 
