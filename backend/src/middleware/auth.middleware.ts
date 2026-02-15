@@ -82,11 +82,22 @@ export const authenticate = async (
       };
 
       next();
-    } catch (jwtError) {
-      logger.error('JWT verification failed:', jwtError);
+    } catch (jwtError: any) {
+      const errorType = jwtError.name || 'UnknownError';
+      const errorMsg = jwtError.message || 'Unknown JWT error';
+      logger.error(`JWT verification failed [${errorType}]: ${errorMsg}`);
+      
+      // Provide specific error message based on JWT error type
+      let clientError = 'Invalid or expired token';
+      if (jwtError.name === 'TokenExpiredError') {
+        clientError = 'Token expired';
+      } else if (jwtError.name === 'JsonWebTokenError') {
+        clientError = 'Invalid token format';
+      }
+      
       res.status(401).json({
         success: false,
-        error: 'Invalid or expired token',
+        error: clientError,
       });
       return;
     }

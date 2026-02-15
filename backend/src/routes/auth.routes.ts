@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { asyncHandler } from '../middleware/error.middleware';
 import { validate } from '../middleware/validation.middleware';
+import { authenticate, AuthRequest } from '../middleware/auth.middleware';
 import { authService } from '../services/auth.service';
 import { uploadAgentDocuments } from '../config/upload';
 import Joi from 'joi';
@@ -117,6 +118,18 @@ router.post(
     res.json({
       success: true,
       data: result,
+    });
+  })
+);
+
+// GET /api/auth/me - Get current authenticated user (token verification)
+router.get(
+  '/me',
+  authenticate,
+  asyncHandler(async (req: AuthRequest, res) => {
+    res.json({
+      success: true,
+      data: req.user,
     });
   })
 );

@@ -37,6 +37,11 @@ class ApiService {
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
+        // Debug: log outgoing requests
+        console.debug(`[API] ${config.method?.toUpperCase()} ${config.url}`, {
+          hasToken: !!token,
+          tokenLength: token?.length || 0,
+        });
         return config;
       },
       (error) => Promise.reject(error)
@@ -48,8 +53,14 @@ class ApiService {
       async (error: AxiosError) => {
         const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
 
+        // Debug: log error responses
+        console.debug(`[API] Error ${error.response?.status} on ${originalRequest?.url}`, {
+          errorData: error.response?.data,
+          isRetry: originalRequest?._retry,
+        });
+
         // Handle 401 - Token expired (skip for login/register/refresh endpoints)
-        const requestUrl = originalRequest.url || '';
+        const requestUrl = originalRequest?.url || '';
         const isAuthEndpoint = requestUrl.includes('/auth/login') || 
                                requestUrl.includes('/auth/register') || 
                                requestUrl.includes('/auth/refresh');
@@ -59,16 +70,30 @@ class ApiService {
 
           try {
             const refreshToken = localStorage.getItem('refreshToken');
-            if (!refreshToken) throw new Error('No refresh token');
+            if (!refreshToken) {
+              console.debug('[API] No refresh token in localStorage');
+              throw new Error('No refresh token');
+            }
 
+            console.debug('[API] Attempting token refresh...');
             const response = await axios.post(`${API_URL}/auth/refresh`, {
               refreshToken,
             });
 
             const newAccessToken = response.data?.data?.accessToken;
-            if (!newAccessToken) throw new Error('No access token in refresh response');
+            if (!newAccessToken) {
+              console.debug('[API] Refresh response missing accessToken:', response.data);
+              throw new Error('No access token in refresh response');
+            }
 
+            console.debug('[API] Token refresh successful, retrying request');
             localStorage.setItem('accessToken', newAccessToken);
+
+            // If there's a new refresh token, update it too
+            const newRefreshToken = response.data?.data?.refreshToken;
+            if (newRefreshToken) {
+              localStorage.setItem('refreshToken', newRefreshToken);
+            }
 
             // Use a fresh config for retry to avoid header conflicts
             const retryConfig = {
@@ -80,7 +105,8 @@ class ApiService {
             };
 
             return this.client(retryConfig);
-          } catch (refreshError) {
+          } catch (refreshError: any) {
+            console.debug('[API] Token refresh failed:', refreshError.message);
             // Refresh failed - clear session and redirect to login
             localStorage.removeItem('accessToken');
             localStorage.removeItem('refreshToken');
@@ -92,9 +118,10 @@ class ApiService {
         }
 
         // Already retried and still 401 — don't loop, just show error
-        if (error.response?.status === 401 && originalRequest._retry) {
-          const errorMessage = (error.response?.data as any)?.error || 'Authentication failed';
-          toast.error(errorMessage);
+        if (error.response?.status === 401 && originalRequest?._retry) {
+          const backendError = (error.response?.data as any)?.error || 'Authentication failed';
+          console.debug('[API] Retry also failed with 401:', backendError);
+          toast.error(backendError);
           return Promise.reject(error);
         }
 

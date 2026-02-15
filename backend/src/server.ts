@@ -48,6 +48,7 @@ app.use(
           // Railway app URLs
           'https://web-production-6d65d.up.railway.app',
           'https://web-production-b72c0.up.railway.app',
+          'https://web-production-b13e2.up.railway.app',
           /\.railway\.app$/, 
           /\.up\.railway\.app$/,
           // Vercel
