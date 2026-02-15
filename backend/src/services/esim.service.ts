@@ -43,12 +43,37 @@ interface EsimOrderResult {
   status: string;
 }
 
+// Country name to ISO code mapping for search
+const countryNameToCode: Record<string, string> = {
+  'nepal': 'NP', 'india': 'IN', 'thailand': 'TH', 'japan': 'JP',
+  'usa': 'US', 'united states': 'US', 'uk': 'GB', 'united kingdom': 'GB',
+  'uae': 'AE', 'united arab emirates': 'AE', 'australia': 'AU',
+  'singapore': 'SG', 'south korea': 'KR', 'korea': 'KR',
+  'france': 'FR', 'germany': 'DE', 'italy': 'IT', 'spain': 'ES',
+  'turkey': 'TR', 'malaysia': 'MY', 'indonesia': 'ID', 'vietnam': 'VN',
+  'china': 'CN', 'canada': 'CA', 'brazil': 'BR', 'mexico': 'MX',
+  'philippines': 'PH', 'egypt': 'EG', 'saudi arabia': 'SA',
+  'switzerland': 'CH', 'netherlands': 'NL', 'portugal': 'PT',
+  'greece': 'GR', 'ireland': 'IE', 'sweden': 'SE', 'norway': 'NO',
+  'denmark': 'DK', 'finland': 'FI', 'austria': 'AT', 'belgium': 'BE',
+  'czech republic': 'CZ', 'poland': 'PL', 'hungary': 'HU',
+  'romania': 'RO', 'croatia': 'HR', 'sri lanka': 'LK',
+  'bangladesh': 'BD', 'pakistan': 'PK', 'myanmar': 'MM',
+  'cambodia': 'KH', 'laos': 'LA', 'hong kong': 'HK', 'taiwan': 'TW',
+  'new zealand': 'NZ', 'argentina': 'AR', 'colombia': 'CO',
+  'peru': 'PE', 'chile': 'CL', 'south africa': 'ZA',
+  'kenya': 'KE', 'nigeria': 'NG', 'morocco': 'MA', 'tanzania': 'TZ',
+  'qatar': 'QA', 'bahrain': 'BH', 'kuwait': 'KW', 'oman': 'OM',
+  'jordan': 'JO', 'israel': 'IL', 'russia': 'RU', 'ukraine': 'UA',
+  'maldives': 'MV', 'fiji': 'FJ',
+};
+
 // Default eSIM configuration
 const defaultConfig: EsimConfig = {
   provider: 'airalo',
   apiKey: process.env.ESIM_API_KEY || '',
   apiSecret: process.env.ESIM_API_SECRET || '',
-  baseUrl: process.env.ESIM_API_URL || 'https://sandbox-partners-api.airalo.com/v2',
+  baseUrl: process.env.ESIM_API_URL || 'https://partners-api.airalo.com/v2',
   sandboxMode: process.env.ESIM_SANDBOX !== undefined
     ? process.env.ESIM_SANDBOX === 'true'
     : process.env.NODE_ENV !== 'production',
@@ -140,7 +165,17 @@ export class EsimService {
 
       // Build Airalo query params
       const queryParams: any = {};
-      if (params?.country) queryParams['filter[country]'] = params.country;
+      if (params?.country) {
+        // Convert country name to ISO code if needed (Airalo expects codes like NP, US, etc.)
+        const search = params.country.trim().toLowerCase();
+        const code = countryNameToCode[search] || (search.length === 2 ? search.toUpperCase() : null);
+        if (code) {
+          queryParams['filter[country]'] = code;
+        } else {
+          // Try as-is (might be a slug like 'nepal')
+          queryParams['filter[country]'] = params.country;
+        }
+      }
       if (params?.region === 'Global' || params?.region === 'global') queryParams['filter[type]'] = 'global';
       if (params?.limit) queryParams.limit = params.limit;
       if (params?.page) queryParams.page = params.page;
