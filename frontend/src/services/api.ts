@@ -2,8 +2,8 @@ import axios, { AxiosInstance, AxiosRequestConfig, AxiosError } from 'axios';
 import toast from 'react-hot-toast';
 
 // IMPORTANT: API Base URL - Railway backend with /api prefix
-// Last updated: 2026-01-28 - Updated to correct Railway backend URL
-const RAILWAY_BACKEND = 'https://web-production-b72c0.up.railway.app';
+// Last updated: 2026-02-15 - Updated to correct Railway backend URL
+const RAILWAY_BACKEND = 'https://web-production-b13e2.up.railway.app';
 
 // Ensure API URL always ends with /api
 const getApiUrl = (): string => {
