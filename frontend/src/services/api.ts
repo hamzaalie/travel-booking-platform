@@ -70,13 +70,18 @@ class ApiService {
 
             localStorage.setItem('accessToken', newAccessToken);
 
-            if (originalRequest.headers) {
-              originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-            }
+            // Use a fresh config for retry to avoid header conflicts
+            const retryConfig = {
+              ...originalRequest,
+              headers: {
+                ...originalRequest.headers,
+                Authorization: `Bearer ${newAccessToken}`,
+              },
+            };
 
-            return this.client(originalRequest);
+            return this.client(retryConfig);
           } catch (refreshError) {
-            // Refresh failed - force logout
+            // Refresh failed - clear session and redirect to login
             localStorage.removeItem('accessToken');
             localStorage.removeItem('refreshToken');
             localStorage.removeItem('user');
@@ -86,13 +91,10 @@ class ApiService {
           }
         }
 
-        // If retry also got 401, force logout instead of looping
+        // Already retried and still 401 — don't loop, just show error
         if (error.response?.status === 401 && originalRequest._retry) {
-          localStorage.removeItem('accessToken');
-          localStorage.removeItem('refreshToken');
-          localStorage.removeItem('user');
-          toast.error('Session expired. Please log in again.');
-          window.location.href = '/login';
+          const errorMessage = (error.response?.data as any)?.error || 'Authentication failed';
+          toast.error(errorMessage);
           return Promise.reject(error);
         }
 
