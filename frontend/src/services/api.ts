@@ -517,7 +517,7 @@ export const contentApi = {
 
 // eSIM API
 export const esimApi = {
-  getProducts: (params?: { country?: string; limit?: number; page?: number }) =>
+  getProducts: (params?: { country?: string; region?: string; limit?: number; page?: number }) =>
     api.get('/esim/products', { params }),
   
   getProduct: (id: string) =>
