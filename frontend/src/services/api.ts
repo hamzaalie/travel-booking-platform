@@ -61,25 +61,39 @@ class ApiService {
             const refreshToken = localStorage.getItem('refreshToken');
             if (!refreshToken) throw new Error('No refresh token');
 
-            const { data } = await axios.post(`${API_URL}/auth/refresh`, {
+            const response = await axios.post(`${API_URL}/auth/refresh`, {
               refreshToken,
             });
 
-            localStorage.setItem('accessToken', data.data.accessToken);
+            const newAccessToken = response.data?.data?.accessToken;
+            if (!newAccessToken) throw new Error('No access token in refresh response');
+
+            localStorage.setItem('accessToken', newAccessToken);
 
             if (originalRequest.headers) {
-              originalRequest.headers.Authorization = `Bearer ${data.data.accessToken}`;
+              originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
             }
 
             return this.client(originalRequest);
           } catch (refreshError) {
-            // Refresh failed - logout
+            // Refresh failed - force logout
             localStorage.removeItem('accessToken');
             localStorage.removeItem('refreshToken');
             localStorage.removeItem('user');
+            toast.error('Session expired. Please log in again.');
             window.location.href = '/login';
             return Promise.reject(refreshError);
           }
+        }
+
+        // If retry also got 401, force logout instead of looping
+        if (error.response?.status === 401 && originalRequest._retry) {
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
+          localStorage.removeItem('user');
+          toast.error('Session expired. Please log in again.');
+          window.location.href = '/login';
+          return Promise.reject(error);
         }
 
         // Handle other errors
