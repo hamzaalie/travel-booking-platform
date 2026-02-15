@@ -269,6 +269,63 @@ export default function PaymentPage() {
     setIsProcessing(true);
 
     try {
+      // Pre-flight: verify token exists and is not expired
+      const token = localStorage.getItem('accessToken');
+      if (!token) {
+        toast.error('You are not logged in. Please log in first.');
+        navigate('/login');
+        setIsProcessing(false);
+        return;
+      }
+
+      // Decode JWT to check expiry before making the call
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        const expiresAt = new Date(payload.exp * 1000);
+        const now = new Date();
+        console.log('[Khalti] Token check:', { 
+          userId: payload.id, 
+          email: payload.email,
+          expires: expiresAt.toISOString(), 
+          now: now.toISOString(),
+          isExpired: expiresAt <= now,
+          minutesLeft: Math.round((expiresAt.getTime() - now.getTime()) / 60000),
+        });
+
+        if (expiresAt <= now) {
+          // Token expired — try to refresh before proceeding
+          console.log('[Khalti] Token expired, attempting refresh...');
+          const refreshToken = localStorage.getItem('refreshToken');
+          if (!refreshToken) {
+            toast.error('Session expired. Please log in again.');
+            navigate('/login');
+            setIsProcessing(false);
+            return;
+          }
+          try {
+            const refreshResp = await fetch(`${import.meta.env.VITE_API_URL || 'https://web-production-b13e2.up.railway.app/api'}/auth/refresh`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ refreshToken }),
+            });
+            const refreshData = await refreshResp.json();
+            if (refreshData?.data?.accessToken) {
+              localStorage.setItem('accessToken', refreshData.data.accessToken);
+              console.log('[Khalti] Token refreshed successfully');
+            } else {
+              throw new Error('Refresh failed');
+            }
+          } catch {
+            toast.error('Session expired. Please log in again.');
+            navigate('/login');
+            setIsProcessing(false);
+            return;
+          }
+        }
+      } catch (decodeErr) {
+        console.warn('[Khalti] Could not decode token:', decodeErr);
+      }
+
       const total = calculateTotal();
       let customerEmail = '';
       let customerName = '';
@@ -305,7 +362,9 @@ export default function PaymentPage() {
       }
     } catch (error: any) {
       console.error('Khalti payment error:', error);
-      // Toast is already shown by the API interceptor
+      // Show specific error if available
+      const msg = error.response?.data?.error || error.message || 'Payment initialization failed';
+      toast.error(msg);
       setIsProcessing(false);
     }
   };

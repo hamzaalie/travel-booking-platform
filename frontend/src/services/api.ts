@@ -30,102 +30,94 @@ class ApiService {
       },
     });
 
-    // Request interceptor
+    // Request interceptor - attach auth token to every request
     this.client.interceptors.request.use(
       (config) => {
         const token = localStorage.getItem('accessToken');
         if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
+          // Use .set() for reliable AxiosHeaders v1.x compatibility
+          config.headers.set('Authorization', `Bearer ${token}`);
         }
-        // Debug: log outgoing requests
-        console.debug(`[API] ${config.method?.toUpperCase()} ${config.url}`, {
+        console.debug(`[API] → ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`, {
           hasToken: !!token,
-          tokenLength: token?.length || 0,
+          authHeader: config.headers.get('Authorization') ? 'set' : 'missing',
         });
         return config;
       },
       (error) => Promise.reject(error)
     );
 
-    // Response interceptor
+    // Response interceptor - handle 401 with token refresh
     this.client.interceptors.response.use(
       (response) => response,
       async (error: AxiosError) => {
         const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
+        const status = error.response?.status;
+        const requestUrl = originalRequest?.url || '';
 
-        // Debug: log error responses
-        console.debug(`[API] Error ${error.response?.status} on ${originalRequest?.url}`, {
-          errorData: error.response?.data,
-          isRetry: originalRequest?._retry,
+        console.debug(`[API] ← ${status} on ${requestUrl}`, {
+          error: (error.response?.data as any)?.error,
+          isRetry: !!originalRequest?._retry,
         });
 
-        // Handle 401 - Token expired (skip for login/register/refresh endpoints)
-        const requestUrl = originalRequest?.url || '';
+        // Skip token refresh for auth endpoints — propagate error directly
         const isAuthEndpoint = requestUrl.includes('/auth/login') || 
                                requestUrl.includes('/auth/register') || 
                                requestUrl.includes('/auth/refresh');
+
+        if (isAuthEndpoint) {
+          return Promise.reject(error);
+        }
         
-        if (error.response?.status === 401 && !originalRequest._retry && !isAuthEndpoint) {
+        // Handle 401 — try token refresh (once)
+        if (status === 401 && !originalRequest._retry) {
           originalRequest._retry = true;
 
-          try {
-            const refreshToken = localStorage.getItem('refreshToken');
-            if (!refreshToken) {
-              console.debug('[API] No refresh token in localStorage');
-              throw new Error('No refresh token');
-            }
+          const refreshToken = localStorage.getItem('refreshToken');
+          if (!refreshToken) {
+            console.debug('[API] No refresh token — clearing session');
+            this.clearSessionAndRedirect();
+            return Promise.reject(error);
+          }
 
-            console.debug('[API] Attempting token refresh...');
-            const response = await axios.post(`${API_URL}/auth/refresh`, {
+          try {
+            console.debug('[API] Refreshing access token...');
+            const refreshResponse = await axios.post(`${API_URL}/auth/refresh`, {
               refreshToken,
             });
 
-            const newAccessToken = response.data?.data?.accessToken;
+            const newAccessToken = refreshResponse.data?.data?.accessToken;
             if (!newAccessToken) {
-              console.debug('[API] Refresh response missing accessToken:', response.data);
+              console.debug('[API] Refresh succeeded but no accessToken in response');
               throw new Error('No access token in refresh response');
             }
 
-            console.debug('[API] Token refresh successful, retrying request');
             localStorage.setItem('accessToken', newAccessToken);
+            console.debug('[API] Token refreshed — retrying original request');
 
-            // If there's a new refresh token, update it too
-            const newRefreshToken = response.data?.data?.refreshToken;
-            if (newRefreshToken) {
-              localStorage.setItem('refreshToken', newRefreshToken);
-            }
+            // Retry: make a completely fresh request (avoid AxiosHeaders spread issues)
+            const retryResponse = await this.client.request({
+              method: (originalRequest.method || 'get') as string,
+              url: originalRequest.url,
+              data: originalRequest.data,
+              params: originalRequest.params,
+              _retry: true, // prevent infinite loop
+            } as any);
 
-            // Use a fresh config for retry to avoid header conflicts
-            const retryConfig = {
-              ...originalRequest,
-              headers: {
-                ...originalRequest.headers,
-                Authorization: `Bearer ${newAccessToken}`,
-              },
-            };
-
-            return this.client(retryConfig);
+            return retryResponse;
           } catch (refreshError: any) {
-            console.debug('[API] Token refresh failed:', refreshError.message);
-            // Refresh failed - clear session and redirect to login
-            localStorage.removeItem('accessToken');
-            localStorage.removeItem('refreshToken');
-            localStorage.removeItem('user');
-            toast.error('Session expired. Please log in again.');
-            window.location.href = '/login';
+            console.debug('[API] Refresh/retry failed:', refreshError.message);
+            this.clearSessionAndRedirect();
             return Promise.reject(refreshError);
           }
         }
 
-        // Already retried and still 401 — don't loop, just show error
-        if (error.response?.status === 401 && originalRequest?._retry) {
-          const backendError = (error.response?.data as any)?.error || 'Authentication failed';
-          console.debug('[API] Retry also failed with 401:', backendError);
-          toast.error(backendError);
+        // Already retried and still failing — don't loop
+        if (status === 401 && originalRequest?._retry) {
           return Promise.reject(error);
         }
 
-        // Handle other errors
+        // Handle non-401 errors
         const errorMessage =
           (error.response?.data as any)?.error ||
           error.message ||
@@ -135,6 +127,14 @@ class ApiService {
         return Promise.reject(error);
       }
     );
+  }
+
+  private clearSessionAndRedirect() {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('user');
+    toast.error('Session expired. Please log in again.');
+    window.location.href = '/login';
   }
 
   async get<T>(url: string, config?: AxiosRequestConfig) {
