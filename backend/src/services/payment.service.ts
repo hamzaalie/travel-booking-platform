@@ -395,7 +395,11 @@ export class PaymentService {
       };
 
       const khaltiUrl = `${config.khalti.url}/epayment/initiate/`;
-      logger.info(`Khalti payment request:`, { url: khaltiUrl, payload });
+      logger.info(`[Khalti] Initiating payment...`, { 
+        url: khaltiUrl, 
+        payload,
+        secretKeyPrefix: config.khalti.secretKey?.substring(0, 8) + '...',
+      });
 
       const response = await axios.post(
         khaltiUrl,
@@ -421,11 +425,14 @@ export class PaymentService {
     } catch (error: any) {
       if (error instanceof AppError) throw error;
       
-      logger.error('Khalti payment initiation error:', {
+      logger.error('[Khalti] Payment initiation failed:', {
         status: error.response?.status,
+        statusText: error.response?.statusText,
         data: error.response?.data,
         message: error.message,
-        khaltiUrl: config.khalti.url,
+        khaltiUrl: `${config.khalti.url}/epayment/initiate/`,
+        secretKeyLength: config.khalti.secretKey?.length,
+        secretKeyPrefix: config.khalti.secretKey?.substring(0, 8) + '...',
       });
 
       // Parse Khalti's various error response formats
@@ -449,7 +456,10 @@ export class PaymentService {
         logger.error('Khalti secret key is invalid. Please update KHALTI_SECRET_KEY in environment variables.');
       }
       
-      throw new AppError(errorMessage, error.response?.status || 500);
+      // Return 502 Bad Gateway (not 401!) to avoid confusing with JWT auth errors
+      // 401 should ONLY be used for JWT authentication failures, not third-party API errors
+      const statusCode = error.response?.status === 401 ? 502 : (error.response?.status || 500);
+      throw new AppError(errorMessage, statusCode);
     }
   }
 
