@@ -163,7 +163,6 @@ router.get(
         where: { key: 'payment_gateways' },
       });
       if (setting) {
-        // value is Json type in Prisma — may already be an object
         gateways = typeof setting.value === 'string' ? JSON.parse(setting.value) : setting.value;
       } else {
         gateways = null;
@@ -173,7 +172,34 @@ router.get(
       gateways = null;
     }
 
-    res.json({ success: true, data: { gateways } });
+    // Fetch real payment stats per gateway from the payments table
+    let stats: Record<string, any> = {};
+    try {
+      const gatewayNames = ['ESEWA', 'KHALTI', 'STRIPE', 'PAYPAL', 'WALLET'];
+      for (const gw of gatewayNames) {
+        const [total, completed, failed, volumeResult] = await Promise.all([
+          prisma.payment.count({ where: { gateway: gw as any } }),
+          prisma.payment.count({ where: { gateway: gw as any, status: 'COMPLETED' } }),
+          prisma.payment.count({ where: { gateway: gw as any, status: 'FAILED' } }),
+          prisma.payment.aggregate({
+            where: { gateway: gw as any, status: 'COMPLETED' },
+            _sum: { amount: true },
+          }),
+        ]);
+        const volume = Number(volumeResult._sum.amount || 0);
+        stats[gw.toLowerCase()] = {
+          totalTransactions: total,
+          successfulTransactions: completed,
+          failedTransactions: failed,
+          totalVolume: volume,
+          successRate: total > 0 ? Math.round((completed / total) * 1000) / 10 : 0,
+        };
+      }
+    } catch (err) {
+      logger.warn('Failed to fetch payment stats:', err);
+    }
+
+    res.json({ success: true, data: { gateways, stats } });
   })
 );
 

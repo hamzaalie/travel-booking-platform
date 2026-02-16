@@ -74,8 +74,8 @@ const DEFAULT_GATEWAYS: PaymentGateway[] = [
     minAmount: 10,
     maxAmount: 200000,
     config: { publicKey: '', secretKey: '', merchantId: '', callbackUrl: '/payment/esewa/success' },
-    stats: { totalTransactions: 3400, successfulTransactions: 3360, failedTransactions: 40, totalVolume: 12500000, successRate: 98.8 },
-    lastTransaction: new Date().toISOString(),
+    stats: { totalTransactions: 0, successfulTransactions: 0, failedTransactions: 0, totalVolume: 0, successRate: 0 },
+    lastTransaction: null,
     lastError: null,
   },
   {
@@ -93,8 +93,8 @@ const DEFAULT_GATEWAYS: PaymentGateway[] = [
     minAmount: 10,
     maxAmount: 200000,
     config: { publicKey: '', secretKey: '', callbackUrl: '/payment/khalti/callback' },
-    stats: { totalTransactions: 2100, successfulTransactions: 2080, failedTransactions: 20, totalVolume: 8200000, successRate: 99.0 },
-    lastTransaction: new Date().toISOString(),
+    stats: { totalTransactions: 0, successfulTransactions: 0, failedTransactions: 0, totalVolume: 0, successRate: 0 },
+    lastTransaction: null,
     lastError: null,
   },
   {
@@ -150,8 +150,8 @@ const DEFAULT_GATEWAYS: PaymentGateway[] = [
     minAmount: 0,
     maxAmount: 999999,
     config: {},
-    stats: { totalTransactions: 5600, successfulTransactions: 5590, failedTransactions: 10, totalVolume: 25000000, successRate: 99.8 },
-    lastTransaction: new Date().toISOString(),
+    stats: { totalTransactions: 0, successfulTransactions: 0, failedTransactions: 0, totalVolume: 0, successRate: 0 },
+    lastTransaction: null,
     lastError: null,
   },
 ];
@@ -168,14 +168,26 @@ export default function PaymentGatewayManagementPage() {
     queryFn: async () => {
       try {
         const response: any = await adminPaymentGatewayApi.getGateways();
-        const saved = response.data?.data?.gateways || response.data?.gateways || null;
-        if (!saved || !Array.isArray(saved) || saved.length === 0) {
-          return DEFAULT_GATEWAYS;
-        }
-        // Merge saved settings with defaults so we keep full structure
+        const respData = response.data?.data || response.data || {};
+        const saved = respData.gateways || null;
+        const realStats = respData.stats || {};
+
+        // Merge saved settings + real stats with defaults
         return DEFAULT_GATEWAYS.map((def) => {
-          const override = saved.find((s: any) => s.id === def.id);
-          return override ? { ...def, ...override } : def;
+          const override = saved && Array.isArray(saved) ? saved.find((s: any) => s.id === def.id) : null;
+          const gwStats = realStats[def.id] || null;
+          const merged = override ? { ...def, ...override } : { ...def };
+          if (gwStats) {
+            const total = (gwStats.completed || 0) + (gwStats.failed || 0) + (gwStats.pending || 0) + (gwStats.refunded || 0);
+            merged.stats = {
+              totalTransactions: total,
+              successfulTransactions: gwStats.completed || 0,
+              failedTransactions: gwStats.failed || 0,
+              totalVolume: parseFloat(gwStats.volume || '0'),
+              successRate: total > 0 ? Math.round(((gwStats.completed || 0) / total) * 1000) / 10 : 0,
+            };
+          }
+          return merged;
         });
       } catch {
         return DEFAULT_GATEWAYS;
