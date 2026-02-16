@@ -199,6 +199,56 @@ export class PaymentService {
   }
 
   /**
+   * Get the correct eSewa payment base URL.
+   * Only valid eSewa domains are accepted. Invalid/unknown domains are rejected.
+   * Sandbox (rc-epay.esewa.com.np) is used for test merchant EPAYTEST.
+   * Production (epay.esewa.com.np) is used for real merchant codes.
+   * Reference: https://developer.esewa.com.np/pages/Epay
+   */
+  private getEsewaPaymentUrl(): string {
+    // These are the ONLY valid eSewa payment domains per official docs
+    const SANDBOX_URL = 'https://rc-epay.esewa.com.np';
+    const PRODUCTION_URL = 'https://epay.esewa.com.np';
+    const VALID_HOSTNAMES = ['epay.esewa.com.np', 'rc-epay.esewa.com.np'];
+
+    const configUrl = config.esewa.url;
+
+    // Check if env var has a valid eSewa domain
+    if (configUrl) {
+      try {
+        const parsed = new URL(configUrl);
+        const hostname = parsed.hostname;
+        if (VALID_HOSTNAMES.includes(hostname)) {
+          // Valid domain — strip any trailing path and return
+          return `https://${hostname}`;
+        }
+      } catch (_) {
+        // Malformed URL, ignore
+      }
+      // If we get here, the env var has an INVALID domain (e.g. uat.esewa.com.np)
+      logger.warn(`ESEWA_URL env var has invalid domain: "${configUrl}". Ignoring it and using default.`);
+    }
+
+    // Auto-select based on merchant ID
+    // EPAYTEST = sandbox, anything else = production
+    const isTestMerchant = config.esewa.merchantId === 'EPAYTEST';
+    const baseUrl = isTestMerchant ? SANDBOX_URL : PRODUCTION_URL;
+    logger.info(`Using eSewa ${isTestMerchant ? 'SANDBOX' : 'PRODUCTION'} URL: ${baseUrl}`);
+    return baseUrl;
+  }
+
+  /**
+   * Get the correct eSewa status check base URL.
+   * Sandbox: rc.esewa.com.np | Production: esewa.com.np
+   */
+  private getEsewaStatusUrl(): string {
+    const SANDBOX_STATUS_URL = 'https://rc.esewa.com.np';
+    const PRODUCTION_STATUS_URL = 'https://esewa.com.np';
+    const isTestMerchant = config.esewa.merchantId === 'EPAYTEST';
+    return isTestMerchant ? SANDBOX_STATUS_URL : PRODUCTION_STATUS_URL;
+  }
+
+  /**
    * ESEWA: Initiate payment (New ePay API v2 format)
    * Based on: https://developer.esewa.com.np/pages/Epay
    */
@@ -230,17 +280,13 @@ export class PaymentService {
         signature: signature,
       };
 
-      logger.info(`eSewa payment initiated: ${data.bookingId}, transaction_uuid: ${transactionUuid}`);
+      const esewaBaseUrl = this.getEsewaPaymentUrl();
+      const paymentUrl = `${esewaBaseUrl}/api/epay/main/v2/form`;
 
-      // Clean the eSewa URL - ensure we use the correct base URL
-      // Production: https://epay.esewa.com.np
-      // Sandbox: https://rc-epay.esewa.com.np
-      let esewaBaseUrl = config.esewa.url || 'https://epay.esewa.com.np';
-      // Remove any trailing paths if someone set the full URL
-      esewaBaseUrl = esewaBaseUrl.replace(/\/api\/epay.*$/, '').replace(/\/epay.*$/, '').replace(/\/$/, '');
-      
+      logger.info(`eSewa payment initiated: ${data.bookingId}, uuid: ${transactionUuid}, url: ${paymentUrl}`);
+
       return {
-        paymentUrl: `${esewaBaseUrl}/api/epay/main/v2/form`,
+        paymentUrl,
         paymentData,
         transactionUuid,
         bookingId: data.bookingId,
@@ -289,10 +335,7 @@ export class PaymentService {
       // Use Status Check API for verification
       // Sandbox: https://rc.esewa.com.np/api/epay/transaction/status/
       // Production: https://esewa.com.np/api/epay/transaction/status/
-      let esewaStatusBaseUrl = config.esewa.url || 'https://rc-epay.esewa.com.np';
-      esewaStatusBaseUrl = esewaStatusBaseUrl.replace(/\/api\/epay.*$/, '').replace(/\/epay.*$/, '').replace(/\/$/, '');
-      // For status check, use rc.esewa.com.np (not rc-epay.esewa.com.np)
-      esewaStatusBaseUrl = esewaStatusBaseUrl.replace('rc-epay.esewa.com.np', 'rc.esewa.com.np').replace('epay.esewa.com.np', 'esewa.com.np');
+      const esewaStatusBaseUrl = this.getEsewaStatusUrl();
       
       const statusUrl = `${esewaStatusBaseUrl}/api/epay/transaction/status/?product_code=${config.esewa.merchantId}&total_amount=${totalAmount}&transaction_uuid=${transactionUuid}`;
       

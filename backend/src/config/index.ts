@@ -36,7 +36,7 @@ export const config = {
   esewa: {
     merchantId: process.env.ESEWA_MERCHANT_ID || 'EPAYTEST',
     secretKey: process.env.ESEWA_SECRET_KEY || '8gBm/:&EnhH.1/q',
-    url: process.env.ESEWA_URL || 'https://epay.esewa.com.np',
+    url: process.env.ESEWA_URL || 'https://rc-epay.esewa.com.np',
   },
 
   khalti: {

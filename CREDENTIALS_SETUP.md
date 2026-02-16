@@ -195,10 +195,14 @@ AMADEUS_API_KEY="your-api-key"
 AMADEUS_API_SECRET="your-api-secret"
 AMADEUS_BASE_URL="https://test.api.amadeus.com"
 
-# Esewa (Test Mode)
+# Esewa (Test Mode) — URL auto-selected: EPAYTEST → sandbox, real ID → production
 ESEWA_MERCHANT_ID="EPAYTEST"
 ESEWA_SECRET_KEY="8gBm/:&EnhH.1/q"
-ESEWA_URL="https://epay.esewa.com.np"
+ESEWA_URL="https://rc-epay.esewa.com.np"
+# IMPORTANT: Only these domains are valid:
+#   Sandbox: https://rc-epay.esewa.com.np  (use with EPAYTEST)
+#   Production: https://epay.esewa.com.np  (use with real merchant ID)
+#   NEVER use uat.esewa.com.np — that domain does NOT exist
 
 # Khalti (Get from Khalti Dashboard)
 KHALTI_SECRET_KEY="test_secret_key_xxxxx"
