@@ -75,7 +75,8 @@ AMADEUS_BASE_URL="https://test.api.amadeus.com"
 ```env
 ESEWA_MERCHANT_ID="EPAYTEST"
 ESEWA_SECRET_KEY="8gBm/:&EnhH.1/q"
-ESEWA_URL="https://uat.esewa.com.np/epay/main"
+ESEWA_URL="https://rc-epay.esewa.com.np"
+# Production: https://epay.esewa.com.np
 ```
 
 #### **B. Khalti (Nepal) - Already Configured**
@@ -197,7 +198,7 @@ AMADEUS_BASE_URL="https://test.api.amadeus.com"
 # Esewa (Test Mode)
 ESEWA_MERCHANT_ID="EPAYTEST"
 ESEWA_SECRET_KEY="8gBm/:&EnhH.1/q"
-ESEWA_URL="https://uat.esewa.com.np/epay/main"
+ESEWA_URL="https://epay.esewa.com.np"
 
 # Khalti (Get from Khalti Dashboard)
 KHALTI_SECRET_KEY="test_secret_key_xxxxx"
