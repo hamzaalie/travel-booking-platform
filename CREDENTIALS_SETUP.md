@@ -80,14 +80,17 @@ ESEWA_URL="https://rc-epay.esewa.com.np"
 ```
 
 #### **B. Khalti (Nepal) - Already Configured**
-- **Docs:** https://docs.khalti.com/
-- **Test credentials:** https://docs.khalti.com/getting-started/test-payments/
+- **Docs:** https://docs.khalti.com/khalti-epayment/
+- **Sandbox Admin:** https://test-admin.khalti.com
+- **Production Admin:** https://admin.khalti.com
 
-**Test Credentials Available:**
+**Sandbox Credentials (from Khalti docs):**
 ```env
-KHALTI_SECRET_KEY="test_secret_key_xxxxx"
-KHALTI_PUBLIC_KEY="test_public_key_xxxxx"
-KHALTI_URL="https://khalti.com/api/v2"
+KHALTI_SECRET_KEY="05bf95cc57244045b8df5fad06748dab"
+KHALTI_PUBLIC_KEY=""  # Not needed for ePayment v2
+KHALTI_URL="https://dev.khalti.com/api/v2"
+# Production URL: https://khalti.com/api/v2
+# Test Khalti ID: 9800000001 | MPIN: 1111 | OTP: 987654
 ```
 
 #### **C. Stripe - Already Configured**
@@ -204,10 +207,12 @@ ESEWA_URL="https://rc-epay.esewa.com.np"
 #   Production: https://epay.esewa.com.np  (use with real merchant ID)
 #   NEVER use uat.esewa.com.np — that domain does NOT exist
 
-# Khalti (Get from Khalti Dashboard)
-KHALTI_SECRET_KEY="test_secret_key_xxxxx"
-KHALTI_PUBLIC_KEY="test_public_key_xxxxx"
-KHALTI_URL="https://khalti.com/api/v2"
+# Khalti — Sandbox: dev.khalti.com | Production: khalti.com
+# Get sandbox key from: https://test-admin.khalti.com
+KHALTI_SECRET_KEY="05bf95cc57244045b8df5fad06748dab"
+KHALTI_PUBLIC_KEY=""
+KHALTI_URL="https://dev.khalti.com/api/v2"
+# Test Khalti ID: 9800000001 | MPIN: 1111 | OTP: 987654
 
 # Stripe (Get from Stripe Dashboard)
 STRIPE_SECRET_KEY="sk_test_your-key"

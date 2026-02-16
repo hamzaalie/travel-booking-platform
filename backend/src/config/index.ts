@@ -40,9 +40,10 @@ export const config = {
   },
 
   khalti: {
-    secretKey: process.env.KHALTI_SECRET_KEY || 'live_secret_key_68791341fdd94846a146f0457ff7b455',
-    publicKey: process.env.KHALTI_PUBLIC_KEY || 'live_public_key_979320ce2acf47ecbcb4e51bbe26fb82',
-    url: process.env.KHALTI_URL || 'https://a.khalti.com/api/v2',
+    secretKey: process.env.KHALTI_SECRET_KEY || '05bf95cc57244045b8df5fad06748dab',
+    publicKey: process.env.KHALTI_PUBLIC_KEY || '',
+    // Sandbox: https://dev.khalti.com/api/v2 | Production: https://khalti.com/api/v2
+    url: process.env.KHALTI_URL || 'https://dev.khalti.com/api/v2',
   },
 
   stripe: {
