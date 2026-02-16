@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import { convertPrice } from '@/store/slices/currencySlice';
 import { useNavigate } from 'react-router-dom';
-import { Smartphone, Globe, Wifi, Clock, Search, Check, ShoppingCart } from 'lucide-react';
+import { Smartphone, Globe, Wifi, Clock, Search, Check, ShoppingBag } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 interface EsimProduct {
@@ -247,7 +247,7 @@ export default function EsimPage() {
                     onClick={() => handlePurchase(product)}
                     className="btn btn-primary"
                   >
-                    <ShoppingCart className="h-4 w-4 mr-1" />
+                    <ShoppingBag className="h-4 w-4 mr-1" />
                     Buy Now
                   </button>
                 </div>
