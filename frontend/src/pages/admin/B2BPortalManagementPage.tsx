@@ -76,7 +76,8 @@ export default function B2BPortalManagementPage() {
       if (searchTerm) params.search = searchTerm;
       if (statusFilter !== 'all') params.status = statusFilter;
       const response: any = await adminExtendedApi.getB2BUsers(params);
-      return response.data;
+      // response.data = { success, data: { agents, total, page, totalPages } }
+      return response.data?.data || response.data || {};
     },
   });
 
@@ -132,13 +133,13 @@ export default function B2BPortalManagementPage() {
     onError: () => toast.error('Failed to login as agent'),
   });
 
-  const agents = data?.users || [];
-  const total = data?.total || 0;
+  const agents = data?.agents || data?.users || [];
+  const total = data?.total || agents.length;
 
   const stats = {
     total: total,
-    approved: agents.filter((a: any) => a.status === 'APPROVED' || a.isActive).length,
-    pending: agents.filter((a: any) => a.status === 'PENDING' || !a.isActive).length,
+    approved: agents.filter((a: any) => a.status === 'APPROVED').length,
+    pending: agents.filter((a: any) => a.status === 'PENDING').length,
     suspended: agents.filter((a: any) => a.status === 'SUSPENDED').length,
   };
 
@@ -248,11 +249,25 @@ export default function B2BPortalManagementPage() {
 
       {/* Agent List */}
       <div className="space-y-4">
+        {agents.length === 0 && !isLoading && (
+          <div className="text-center py-12 text-gray-500">
+            <Building2 className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+            <p className="text-lg font-medium">No agents found</p>
+            <p className="text-sm">Try adjusting your search or filter</p>
+          </div>
+        )}
         {agents.map((agent: any) => {
           const isExpanded = expandedAgent === agent.id;
-          const agentStatus = agent.status || (agent.isActive ? 'APPROVED' : 'PENDING');
+          const agentStatus = agent.status || (agent.user?.isActive ? 'APPROVED' : 'PENDING');
           const statusStyle = STATUS_STYLES[agentStatus] || STATUS_STYLES.PENDING;
           const StatusIcon = statusStyle.icon;
+          // Agent data may have user nested or flattened depending on source
+          const firstName = agent.user?.firstName || agent.firstName || '';
+          const lastName = agent.user?.lastName || agent.lastName || '';
+          const email = agent.user?.email || agent.email || '';
+          const phone = agent.user?.phone || agent.phone || '';
+          const userId = agent.user?.id || agent.userId || agent.id;
+          const companyName = agent.agencyName || agent.companyName || '';
 
           return (
             <div key={agent.id} className="card border-2 hover:shadow-md transition-shadow">
@@ -264,12 +279,12 @@ export default function B2BPortalManagementPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg">
-                      {agent.firstName} {agent.lastName}
-                      {agent.companyName && <span className="text-gray-500 text-sm font-normal ml-2">({agent.companyName})</span>}
+                      {firstName} {lastName}
+                      {companyName && <span className="text-gray-500 text-sm font-normal ml-2">({companyName})</span>}
                     </h3>
                     <div className="flex items-center gap-3 text-sm text-gray-500">
-                      <span className="flex items-center gap-1"><Mail className="h-3 w-3" />{agent.email}</span>
-                      {agent.phone && <span className="flex items-center gap-1"><Phone className="h-3 w-3" />{agent.phone}</span>}
+                      <span className="flex items-center gap-1"><Mail className="h-3 w-3" />{email}</span>
+                      {phone && <span className="flex items-center gap-1"><Phone className="h-3 w-3" />{phone}</span>}
                     </div>
                   </div>
                 </div>
@@ -305,8 +320,8 @@ export default function B2BPortalManagementPage() {
                 </button>
                 <button
                   onClick={() => {
-                    if (confirm(`Login as ${agent.firstName} ${agent.lastName}? You'll be redirected to their portal.`)) {
-                      loginAsAgentMutation.mutate(agent.userId || agent.id);
+                    if (confirm(`Login as ${firstName} ${lastName}? You'll be redirected to their portal.`)) {
+                      loginAsAgentMutation.mutate(userId);
                     }
                   }}
                   className="btn btn-outline text-sm flex items-center gap-1 text-accent-600 border-accent-200 hover:bg-accent-50"
@@ -360,7 +375,7 @@ export default function B2BPortalManagementPage() {
                           <Building2 className="h-4 w-4" /> Business Details
                         </h4>
                         <div className="space-y-2 text-sm">
-                          <div><span className="text-gray-500">Company:</span> <span className="font-medium">{agent.companyName || 'N/A'}</span></div>
+                          <div><span className="text-gray-500">Company:</span> <span className="font-medium">{companyName || 'N/A'}</span></div>
                           <div><span className="text-gray-500">Registration #:</span> <span className="font-medium">{agent.registrationNumber || agent.panNumber || 'N/A'}</span></div>
                           <div><span className="text-gray-500">PAN/VAT:</span> <span className="font-medium">{agent.panVatNumber || agent.panNumber || 'N/A'}</span></div>
                         </div>
@@ -370,8 +385,8 @@ export default function B2BPortalManagementPage() {
                           <MapPin className="h-4 w-4" /> Contact & Location
                         </h4>
                         <div className="space-y-2 text-sm">
-                          <div><span className="text-gray-500">Email:</span> <span className="font-medium">{agent.email}</span></div>
-                          <div><span className="text-gray-500">Phone:</span> <span className="font-medium">{agent.phone || 'N/A'}</span></div>
+                          <div><span className="text-gray-500">Email:</span> <span className="font-medium">{email}</span></div>
+                          <div><span className="text-gray-500">Phone:</span> <span className="font-medium">{phone || 'N/A'}</span></div>
                           <div><span className="text-gray-500">Address:</span> <span className="font-medium">{agent.companyAddress || agent.officeAddress || 'N/A'}</span></div>
                         </div>
                       </div>
