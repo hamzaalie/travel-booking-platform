@@ -235,7 +235,7 @@ export class PaymentService {
       // Clean the eSewa URL - ensure we use the correct base URL
       // Production: https://epay.esewa.com.np
       // Sandbox: https://rc-epay.esewa.com.np
-      let esewaBaseUrl = config.esewa.url || 'https://rc-epay.esewa.com.np';
+      let esewaBaseUrl = config.esewa.url || 'https://epay.esewa.com.np';
       // Remove any trailing paths if someone set the full URL
       esewaBaseUrl = esewaBaseUrl.replace(/\/api\/epay.*$/, '').replace(/\/epay.*$/, '').replace(/\/$/, '');
       
