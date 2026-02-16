@@ -5,8 +5,22 @@ import { paymentService } from '../services/payment.service';
 import { bookingService } from '../services/booking.service';
 import { prisma } from '../config/database';
 import { logger } from '../config/logger';
+import { config } from '../config';
 
 const router = Router();
+
+// GET /api/payments/debug/config — temporary debug endpoint
+router.get('/debug/config', (_req, res) => {
+  res.json({
+    khalti: {
+      url: config.khalti.url,
+      secretKeyPrefix: config.khalti.secretKey?.substring(0, 16) + '...',
+      secretKeyLength: config.khalti.secretKey?.length,
+      publicKeyPrefix: config.khalti.publicKey?.substring(0, 16) + '...',
+    },
+    frontendUrl: config.frontendUrl,
+  });
+});
 
 // ============================================================================
 // STRIPE ROUTES
