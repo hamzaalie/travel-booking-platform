@@ -245,9 +245,9 @@ export default function EsimPage() {
                   </div>
                   <button
                     onClick={() => handlePurchase(product)}
-                    className="btn btn-primary"
+                    className="btn btn-primary flex items-center gap-2"
                   >
-                    <ShoppingBag className="h-4 w-4 mr-1" />
+                    <ShoppingBag className="h-4 w-4" />
                     Buy Now
                   </button>
                 </div>
