@@ -168,7 +168,15 @@ export default function PaymentGatewayManagementPage() {
     queryFn: async () => {
       try {
         const response: any = await adminPaymentGatewayApi.getGateways();
-        return response.data?.gateways || DEFAULT_GATEWAYS;
+        const saved = response.data?.data?.gateways || response.data?.gateways || null;
+        if (!saved || !Array.isArray(saved) || saved.length === 0) {
+          return DEFAULT_GATEWAYS;
+        }
+        // Merge saved settings with defaults so we keep full structure
+        return DEFAULT_GATEWAYS.map((def) => {
+          const override = saved.find((s: any) => s.id === def.id);
+          return override ? { ...def, ...override } : def;
+        });
       } catch {
         return DEFAULT_GATEWAYS;
       }

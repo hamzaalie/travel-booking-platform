@@ -162,8 +162,14 @@ router.get(
       const setting = await prisma.siteSetting.findUnique({
         where: { key: 'payment_gateways' },
       });
-      gateways = setting ? JSON.parse(String(setting.value)) : null;
-    } catch {
+      if (setting) {
+        // value is Json type in Prisma — may already be an object
+        gateways = typeof setting.value === 'string' ? JSON.parse(setting.value) : setting.value;
+      } else {
+        gateways = null;
+      }
+    } catch (err) {
+      logger.warn('Failed to read payment gateways setting:', err);
       gateways = null;
     }
 
@@ -179,25 +185,35 @@ router.put(
     const { isEnabled } = req.body;
 
     try {
+      // Read existing or start fresh
       const setting = await prisma.siteSetting.findUnique({
         where: { key: 'payment_gateways' },
       });
+      let gateways: any[] = [];
       if (setting) {
-        const gateways = JSON.parse(String(setting.value));
-        const idx = gateways.findIndex((g: any) => g.id === id);
-        if (idx >= 0) {
-          gateways[idx].isEnabled = isEnabled;
-          await prisma.siteSetting.update({
-            where: { key: 'payment_gateways' },
-            data: { value: JSON.stringify(gateways) },
-          });
-        }
+        gateways = typeof setting.value === 'string' ? JSON.parse(setting.value) : (setting.value as any[]);
       }
-    } catch (err) {
-      logger.warn('Failed to toggle payment gateway');
-    }
 
-    res.json({ success: true, message: 'Payment gateway toggled' });
+      const idx = gateways.findIndex((g: any) => g.id === id);
+      if (idx >= 0) {
+        gateways[idx].isEnabled = isEnabled;
+        gateways[idx].status = isEnabled ? 'ACTIVE' : 'INACTIVE';
+      } else {
+        // Gateway not saved yet — create a stub entry
+        gateways.push({ id, isEnabled, status: isEnabled ? 'ACTIVE' : 'INACTIVE' });
+      }
+
+      await prisma.siteSetting.upsert({
+        where: { key: 'payment_gateways' },
+        update: { value: gateways },
+        create: { key: 'payment_gateways', value: gateways as any, category: 'payment' },
+      });
+
+      res.json({ success: true, message: 'Payment gateway toggled', data: { gateways } });
+    } catch (err) {
+      logger.warn('Failed to toggle payment gateway:', err);
+      res.status(500).json({ success: false, error: 'Failed to toggle payment gateway' });
+    }
   })
 );
 
@@ -227,25 +243,34 @@ router.put(
     const config = req.body;
 
     try {
+      // Read existing or start fresh
       const setting = await prisma.siteSetting.findUnique({
         where: { key: 'payment_gateways' },
       });
+      let gateways: any[] = [];
       if (setting) {
-        const gateways = JSON.parse(String(setting.value));
-        const idx = gateways.findIndex((g: any) => g.id === id);
-        if (idx >= 0) {
-          gateways[idx] = { ...gateways[idx], ...config };
-          await prisma.siteSetting.update({
-            where: { key: 'payment_gateways' },
-            data: { value: JSON.stringify(gateways) },
-          });
-        }
+        gateways = typeof setting.value === 'string' ? JSON.parse(setting.value) : (setting.value as any[]);
       }
-    } catch (err) {
-      logger.warn('Failed to update payment gateway config');
-    }
 
-    res.json({ success: true, message: 'Payment gateway configuration updated' });
+      const idx = gateways.findIndex((g: any) => g.id === id);
+      if (idx >= 0) {
+        gateways[idx] = { ...gateways[idx], ...config };
+      } else {
+        // Gateway not saved yet — create entry with config
+        gateways.push({ id, ...config });
+      }
+
+      await prisma.siteSetting.upsert({
+        where: { key: 'payment_gateways' },
+        update: { value: gateways },
+        create: { key: 'payment_gateways', value: gateways as any, category: 'payment' },
+      });
+
+      res.json({ success: true, message: 'Payment gateway configuration updated', data: { gateways } });
+    } catch (err) {
+      logger.warn('Failed to update payment gateway config:', err);
+      res.status(500).json({ success: false, error: 'Failed to update payment gateway config' });
+    }
   })
 );
 
