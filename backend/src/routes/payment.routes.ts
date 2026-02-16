@@ -172,31 +172,35 @@ router.post(
   asyncHandler(async (req: AuthRequest, res) => {
     const { transactionUuid, totalAmount, encodedResponse, bookingId } = req.body;
 
-    if (!transactionUuid || !bookingId) {
+    if (!transactionUuid) {
       res.status(400).json({
         success: false,
-        error: 'transactionUuid and bookingId are required',
+        error: 'transactionUuid is required',
       });
       return;
     }
 
     const result = await paymentService.verifyEsewaPayment(transactionUuid, totalAmount, encodedResponse);
 
-    if (result.isVerified) {
-      // Idempotency: check if booking is already confirmed
-      const booking = await prisma.booking.findUnique({
-        where: { id: bookingId },
-        select: { status: true },
-      });
-
-      if (booking && booking.status !== 'CONFIRMED') {
-        await bookingService.confirmBooking(bookingId, { 
-          transactionUuid, 
-          transactionCode: result.transactionCode,
-          status: result.status 
+    if (result.isVerified && bookingId && !bookingId.startsWith('TEMP-')) {
+      // Only confirm booking if a real bookingId is provided (not a temp one)
+      try {
+        const booking = await prisma.booking.findUnique({
+          where: { id: bookingId },
+          select: { status: true },
         });
-      } else {
-        logger.info(`eSewa verify: booking ${bookingId} already confirmed, skipping`);
+
+        if (booking && booking.status !== 'CONFIRMED') {
+          await bookingService.confirmBooking(bookingId, { 
+            transactionUuid, 
+            transactionCode: result.transactionCode,
+            status: result.status 
+          });
+        } else if (booking) {
+          logger.info(`eSewa verify: booking ${bookingId} already confirmed, skipping`);
+        }
+      } catch (err) {
+        logger.warn(`eSewa verify: could not find/confirm booking ${bookingId}, payment still verified`);
       }
     }
 

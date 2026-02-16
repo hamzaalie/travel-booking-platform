@@ -53,7 +53,7 @@ export default function EsewaCallbackPage() {
           transactionUuid: transactionUuid,
           totalAmount: totalAmount,
           encodedResponse: encodedData,
-          bookingId: bookingData.bookingId,
+          bookingId: bookingData.tempBookingId || bookingData.bookingId || `TEMP-${Date.now()}`,
         }) as any;
 
         if (!verifyResponse.data.success) {

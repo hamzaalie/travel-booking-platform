@@ -233,12 +233,13 @@ export default function PaymentPage() {
       }
 
       // Store booking data for after payment callback
-      sessionStorage.setItem('pendingBooking', JSON.stringify(bookingData));
+      const tempBookingId = `TEMP-${Date.now()}`;
+      sessionStorage.setItem('pendingBooking', JSON.stringify({ ...bookingData, tempBookingId }));
 
       // Initiate eSewa payment
       const response = await paymentApi.initiateEsewa({
         amount: total,
-        bookingId: `TEMP-${Date.now()}`,
+        bookingId: tempBookingId,
         customerEmail,
         customerName,
       }) as any;

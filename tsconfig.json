@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "skipLibCheck": true
+  },
+  "references": [
+    { "path": "./frontend" },
+    { "path": "./backend" }
+  ],
+  "files": []
+}
