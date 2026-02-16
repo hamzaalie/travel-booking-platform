@@ -202,10 +202,12 @@ export default function PaymentPage() {
       }
     } catch (error: any) {
       console.error('Stripe payment error:', error);
-      const errorMsg = error.response?.data?.error || 
-                      error.response?.data?.message || 
-                      'Failed to create Stripe payment';
-      toast.error(errorMsg);
+      if (error.response?.status !== 401) {
+        const errorMsg = error.response?.data?.error || 
+                        error.response?.data?.message || 
+                        'Failed to create Stripe payment';
+        toast.error(errorMsg);
+      }
       setIsProcessing(false);
     }
   };
@@ -260,7 +262,9 @@ export default function PaymentPage() {
       }
     } catch (error: any) {
       console.error('eSewa payment error:', error);
-      toast.error(error.response?.data?.message || 'Failed to initialize eSewa payment');
+      if (error.response?.status !== 401) {
+        toast.error(error.response?.data?.message || 'Failed to initialize eSewa payment');
+      }
       setIsProcessing(false);
     }
   };
@@ -269,7 +273,7 @@ export default function PaymentPage() {
     setIsProcessing(true);
 
     try {
-      // Pre-flight: verify token exists and is not expired
+      // Quick check: is user logged in at all?
       const token = localStorage.getItem('accessToken');
       if (!token) {
         toast.error('You are not logged in. Please log in first.');
@@ -278,53 +282,8 @@ export default function PaymentPage() {
         return;
       }
 
-      // Decode JWT to check expiry before making the call
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        const expiresAt = new Date(payload.exp * 1000);
-        const now = new Date();
-        console.log('[Khalti] Token check:', { 
-          userId: payload.id, 
-          email: payload.email,
-          expires: expiresAt.toISOString(), 
-          now: now.toISOString(),
-          isExpired: expiresAt <= now,
-          minutesLeft: Math.round((expiresAt.getTime() - now.getTime()) / 60000),
-        });
-
-        if (expiresAt <= now) {
-          // Token expired — try to refresh before proceeding
-          console.log('[Khalti] Token expired, attempting refresh...');
-          const refreshToken = localStorage.getItem('refreshToken');
-          if (!refreshToken) {
-            toast.error('Session expired. Please log in again.');
-            navigate('/login');
-            setIsProcessing(false);
-            return;
-          }
-          try {
-            const refreshResp = await fetch(`${import.meta.env.VITE_API_URL || 'https://web-production-b13e2.up.railway.app/api'}/auth/refresh`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ refreshToken }),
-            });
-            const refreshData = await refreshResp.json();
-            if (refreshData?.data?.accessToken) {
-              localStorage.setItem('accessToken', refreshData.data.accessToken);
-              console.log('[Khalti] Token refreshed successfully');
-            } else {
-              throw new Error('Refresh failed');
-            }
-          } catch {
-            toast.error('Session expired. Please log in again.');
-            navigate('/login');
-            setIsProcessing(false);
-            return;
-          }
-        }
-      } catch (decodeErr) {
-        console.warn('[Khalti] Could not decode token:', decodeErr);
-      }
+      // Note: if the JWT is expired, the axios interceptor will automatically
+      // refresh it and retry the request. No manual refresh needed here.
 
       const total = calculateTotal();
       let customerEmail = '';
@@ -362,9 +321,12 @@ export default function PaymentPage() {
       }
     } catch (error: any) {
       console.error('Khalti payment error:', error);
-      // Show specific error if available
-      const msg = error.response?.data?.error || error.message || 'Payment initialization failed';
-      toast.error(msg);
+      // Don't show toast if it's a 401 (session expired) — axios interceptor handles that
+      const status = error.response?.status;
+      if (status !== 401) {
+        const msg = error.response?.data?.error || error.message || 'Payment initialization failed';
+        toast.error(msg);
+      }
       setIsProcessing(false);
     }
   };
