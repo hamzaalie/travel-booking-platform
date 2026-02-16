@@ -62,6 +62,20 @@ export default function HotelBookingPage() {
 
     setHotelData(stateData.hotel);
     setOfferData(stateData.offer);
+
+    // Restore previously filled form data if returning from failed payment
+    const savedBooking = sessionStorage.getItem('bookingData');
+    if (savedBooking) {
+      try {
+        const prev = JSON.parse(savedBooking);
+        if (prev.type === 'HOTEL' && prev.guestInfo) {
+          setGuestInfo(prev.guestInfo);
+          if (prev.contactInfo) setContactInfo(prev.contactInfo);
+          if (prev.specialRequests) setSpecialRequests(prev.specialRequests);
+          if (prev.paymentMethod) setPaymentMethod(prev.paymentMethod);
+        }
+      } catch (e) { /* ignore */ }
+    }
   }, [location, navigate]);
 
   const validateForm = () => {

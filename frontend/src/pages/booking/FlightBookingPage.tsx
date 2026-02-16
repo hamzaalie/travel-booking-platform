@@ -64,6 +64,26 @@ export default function FlightBookingPage() {
     setFlightData(flight);
     setSearchData(search);
 
+    // Restore previously filled form data if returning from failed payment
+    const savedBooking = sessionStorage.getItem('bookingData');
+    if (savedBooking) {
+      try {
+        const prev = JSON.parse(savedBooking);
+        if (prev.passengers && prev.passengers.length > 0) {
+          setPassengers(prev.passengers);
+          if (prev.contactInfo) {
+            setContactInfo(prev.contactInfo);
+          }
+          if (prev.paymentMethod) {
+            setPaymentMethod(prev.paymentMethod);
+          }
+          return; // Skip re-initializing empty passengers
+        }
+      } catch (e) {
+        // ignore parse errors, initialize fresh
+      }
+    }
+
     // Initialize passenger forms
     const initialPassengers: PassengerForm[] = [];
 

@@ -70,6 +70,19 @@ export default function CarBookingPage() {
 
     setCarData(stateData.car);
     setSearchParams(stateData.searchParams);
+
+    // Restore previously filled form data if returning from failed payment
+    const savedBooking = sessionStorage.getItem('bookingData');
+    if (savedBooking) {
+      try {
+        const prev = JSON.parse(savedBooking);
+        if (prev.type === 'CAR' && prev.driverInfo) {
+          setDriverInfo(prev.driverInfo);
+          if (prev.additionalInfo) setAdditionalInfo(prev.additionalInfo);
+          if (prev.paymentMethod) setPaymentMethod(prev.paymentMethod);
+        }
+      } catch (e) { /* ignore */ }
+    }
   }, [location, navigate]);
 
   const validateForm = () => {

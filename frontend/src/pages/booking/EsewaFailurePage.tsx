@@ -15,7 +15,15 @@ export default function EsewaFailurePage() {
           </p>
           <div className="space-y-3">
             <button
-              onClick={() => navigate(-2)}
+              onClick={() => {
+                // bookingData is still in sessionStorage, go straight to payment
+                const hasBookingData = sessionStorage.getItem('bookingData');
+                if (hasBookingData) {
+                  navigate('/payment');
+                } else {
+                  navigate('/search');
+                }
+              }}
               className="btn btn-primary w-full"
             >
               Try Again
