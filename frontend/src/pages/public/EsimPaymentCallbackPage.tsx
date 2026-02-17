@@ -46,11 +46,11 @@ export default function EsimPaymentCallbackPage() {
             bookingId: purchaseData.tempBookingId,
           }) as any;
 
-          paymentVerified = verifyResponse.data?.success && verifyResponse.data?.data?.isVerified;
+          paymentVerified = verifyResponse?.success && verifyResponse?.data?.isVerified;
         } else if (pidx) {
           // Khalti callback
           const verifyResponse = await paymentApi.verifyKhalti(pidx, purchaseData.tempBookingId) as any;
-          paymentVerified = verifyResponse.data?.success;
+          paymentVerified = verifyResponse?.success;
         } else if (sessionId) {
           // Stripe - session completed means payment is done
           paymentVerified = true;

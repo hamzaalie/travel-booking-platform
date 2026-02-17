@@ -67,7 +67,7 @@ export default function EsewaCallbackPage() {
           bookingId: resolvedBookingId,
         }) as any;
 
-        if (!verifyResponse.data.success) {
+        if (!verifyResponse?.success) {
           throw new Error('Payment verification failed');
         }
 

@@ -50,10 +50,10 @@ export default function KhaltiCallbackPage() {
         // Verify payment with Khalti Lookup API
         const verifyResponse = await paymentApi.verifyKhalti(pidx, orderId) as any;
 
-        if (import.meta.env.DEV) console.log('Khalti verify response:', verifyResponse.data);
+        if (import.meta.env.DEV) console.log('Khalti verify response:', verifyResponse);
 
-        if (!verifyResponse.data.success) {
-          throw new Error(`Payment verification failed: ${verifyResponse.data.status || 'Unknown error'}`);
+        if (!verifyResponse?.success) {
+          throw new Error(`Payment verification failed: ${verifyResponse?.status || 'Unknown error'}`);
         }
 
         // Now create the actual booking
