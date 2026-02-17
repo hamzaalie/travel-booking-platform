@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { esimApi } from '@/services/api';
+import { useQuery } from '@tanstack/react-query';
+import { esimApi, paymentApi } from '@/services/api';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import { convertPrice } from '@/store/slices/currencySlice';
 import { useNavigate } from 'react-router-dom';
-import { Smartphone, Globe, Wifi, Clock, Search, Check, ShoppingBag } from 'lucide-react';
+import { Smartphone, Globe, Wifi, Clock, Search, Check, ShoppingBag, CreditCard, Wallet } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 interface EsimProduct {
@@ -22,15 +22,20 @@ interface EsimProduct {
   features: string[];
 }
 
+type PaymentMethod = 'ESEWA' | 'KHALTI' | 'STRIPE';
+
 export default function EsimPage() {
   const navigate = useNavigate();
-  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
   const { currentCurrency, currencies, exchangeRates } = useSelector(
     (state: RootState) => state.currency
   );
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRegion, setSelectedRegion] = useState<string>('all');
   const [selectedProduct, setSelectedProduct] = useState<EsimProduct | null>(null);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentMethod | null>(null);
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const [step, setStep] = useState<'details' | 'payment'>('details');
 
   // Currency formatting helper - converts from source currency to user's selected currency
   const formatPrice = (amount: number, sourceCurrency: string = 'USD') => {
@@ -71,17 +76,16 @@ export default function EsimPage() {
     },
   });
 
-  const purchaseMutation = useMutation({
-    mutationFn: (productId: string) => esimApi.purchase(productId),
-    onSuccess: () => {
-      toast.success('eSIM purchased successfully! Check your email for activation instructions.');
-      // Navigate to customer dashboard/bookings since eSIM orders are handled there
-      navigate('/customer/bookings');
-    },
-    onError: () => {
-      toast.error('Failed to purchase eSIM');
-    },
-  });
+  // Convert amount from source currency to NPR for local gateways
+  const convertToNPR = (amount: number, sourceCurrency: string): number => {
+    if (sourceCurrency === 'NPR') return amount;
+    const fallbackRates: Record<string, number> = {
+      NPR: 1, USD: 0.0075, EUR: 0.0069, GBP: 0.0059, INR: 0.63,
+    };
+    const rates = Object.keys(exchangeRates).length > 0 ? exchangeRates : fallbackRates;
+    const sourceRate = rates[sourceCurrency] || 1;
+    return Math.round(amount / sourceRate);
+  };
 
   const handlePurchase = (product: EsimProduct) => {
     if (!isAuthenticated) {
@@ -90,12 +94,123 @@ export default function EsimPage() {
       return;
     }
     setSelectedProduct(product);
+    setStep('details');
+    setSelectedPaymentMethod(null);
   };
 
-  const confirmPurchase = () => {
-    if (selectedProduct) {
-      purchaseMutation.mutate(selectedProduct.id);
+  const handleProceedToPayment = () => {
+    setStep('payment');
+  };
+
+  const handleConfirmPayment = async () => {
+    if (!selectedProduct || !selectedPaymentMethod) return;
+    setIsProcessingPayment(true);
+
+    try {
+      // Store eSIM product data for after payment callback
+      const esimPurchaseData = {
+        productId: selectedProduct.id,
+        productName: selectedProduct.name,
+        productCountry: selectedProduct.country,
+        productData: selectedProduct.dataAmount,
+        productValidity: selectedProduct.validity,
+        price: selectedProduct.price,
+        currency: selectedProduct.currency,
+        paymentMethod: selectedPaymentMethod,
+        type: 'ESIM',
+      };
+      sessionStorage.setItem('pendingEsimPurchase', JSON.stringify(esimPurchaseData));
+
+      const tempId = `ESIM-${Date.now()}`;
+      const customerEmail = user?.email || '';
+      const customerName = user?.firstName ? `${user.firstName} ${user.lastName || ''}` : 'Customer';
+
+      if (selectedPaymentMethod === 'ESEWA') {
+        const amountInNPR = convertToNPR(selectedProduct.price, selectedProduct.currency);
+        const response = await paymentApi.initiateEsewa({
+          amount: amountInNPR,
+          bookingId: tempId,
+          customerEmail,
+          customerName,
+          successUrl: `${window.location.origin}/esim/payment/success`,
+          failureUrl: `${window.location.origin}/esim`,
+        }) as any;
+
+        if (response.data.paymentData) {
+          sessionStorage.setItem('pendingEsimPurchase', JSON.stringify({
+            ...esimPurchaseData,
+            tempBookingId: tempId,
+            transactionUuid: response.data.transactionUuid,
+          }));
+
+          const form = document.createElement('form');
+          form.method = 'POST';
+          form.action = response.data.paymentUrl;
+          Object.keys(response.data.paymentData).forEach(key => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = key;
+            input.value = response.data.paymentData[key];
+            form.appendChild(input);
+          });
+          document.body.appendChild(form);
+          form.submit();
+          return;
+        }
+      } else if (selectedPaymentMethod === 'KHALTI') {
+        const amountInNPR = convertToNPR(selectedProduct.price, selectedProduct.currency);
+        const response = await paymentApi.initiateKhalti({
+          amount: amountInNPR,
+          bookingId: tempId,
+          customerEmail,
+          customerName,
+          successUrl: `${window.location.origin}/esim/payment/callback`,
+        }) as any;
+
+        if (response.data?.paymentUrl) {
+          sessionStorage.setItem('pendingEsimPurchase', JSON.stringify({
+            ...esimPurchaseData,
+            tempBookingId: tempId,
+          }));
+          window.location.href = response.data.paymentUrl;
+          return;
+        }
+      } else if (selectedPaymentMethod === 'STRIPE') {
+        const response = await paymentApi.createStripeCheckout({
+          amount: selectedProduct.price,
+          currency: selectedProduct.currency,
+          bookingId: tempId,
+          customerEmail,
+          customerName,
+          bookingType: 'eSIM',
+          successUrl: `${window.location.origin}/esim/payment/success?session_id={CHECKOUT_SESSION_ID}`,
+          cancelUrl: `${window.location.origin}/esim`,
+        }) as any;
+
+        if (response.data.url) {
+          sessionStorage.setItem('pendingEsimPurchase', JSON.stringify({
+            ...esimPurchaseData,
+            tempBookingId: tempId,
+          }));
+          window.location.href = response.data.url;
+          return;
+        }
+      }
+
+      toast.error('Failed to initiate payment');
+    } catch (error: any) {
+      console.error('eSIM payment error:', error);
+      toast.error(error.response?.data?.message || 'Payment initialization failed');
+    } finally {
+      setIsProcessingPayment(false);
     }
+  };
+
+  const closeModal = () => {
+    setSelectedProduct(null);
+    setStep('details');
+    setSelectedPaymentMethod(null);
+    setIsProcessingPayment(false);
   };
 
   const regions = ['all', 'Asia', 'Europe', 'North America', 'South America', 'Africa', 'Oceania', 'Global'];
@@ -278,53 +393,155 @@ export default function EsimPage() {
         </div>
       </div>
 
-      {/* Purchase Confirmation Modal */}
+      {/* Purchase & Payment Modal */}
       {selectedProduct && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl w-full max-w-md mx-4 shadow-xl">
             <div className="p-6 border-b">
-              <h3 className="text-xl font-bold">Confirm Purchase</h3>
+              <h3 className="text-xl font-bold">
+                {step === 'details' ? 'Confirm Purchase' : 'Select Payment Method'}
+              </h3>
+              {step === 'payment' && (
+                <p className="text-sm text-gray-500 mt-1">Choose how you want to pay</p>
+              )}
             </div>
-            <div className="p-6 space-y-4">
-              <div className="flex justify-between">
-                <span className="text-gray-500">Product</span>
-                <span className="font-medium">{selectedProduct.name}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Country</span>
-                <span className="font-medium">{selectedProduct.country}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Data</span>
-                <span className="font-medium">{selectedProduct.dataAmount}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Validity</span>
-                <span className="font-medium">{selectedProduct.validity} days</span>
-              </div>
-              <div className="flex justify-between pt-4 border-t">
-                <span className="text-gray-900 font-semibold">Total</span>
-                <span className="text-xl font-bold text-primary-950">
-                  {formatPrice(selectedProduct.price, selectedProduct.currency)}
-                </span>
-              </div>
-            </div>
-            <div className="p-4 border-t bg-gray-50 flex gap-3 rounded-b-xl">
-              <button
-                onClick={() => setSelectedProduct(null)}
-                className="btn btn-secondary flex-1"
-                disabled={purchaseMutation.isPending}
-              >
-                Cancel
-              </button>
-              <button
-                onClick={confirmPurchase}
-                className="btn btn-primary flex-1"
-                disabled={purchaseMutation.isPending}
-              >
-                {purchaseMutation.isPending ? 'Processing...' : 'Confirm Purchase'}
-              </button>
-            </div>
+
+            {step === 'details' && (
+              <>
+                <div className="p-6 space-y-4">
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Product</span>
+                    <span className="font-medium">{selectedProduct.name}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Country</span>
+                    <span className="font-medium">{selectedProduct.country}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Data</span>
+                    <span className="font-medium">{selectedProduct.dataAmount}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Validity</span>
+                    <span className="font-medium">{selectedProduct.validity} days</span>
+                  </div>
+                  <div className="flex justify-between pt-4 border-t">
+                    <span className="text-gray-900 font-semibold">Total</span>
+                    <span className="text-xl font-bold text-primary-950">
+                      {formatPrice(selectedProduct.price, selectedProduct.currency)}
+                    </span>
+                  </div>
+                </div>
+                <div className="p-4 border-t bg-gray-50 flex gap-3 rounded-b-xl">
+                  <button
+                    onClick={closeModal}
+                    className="btn btn-secondary flex-1"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleProceedToPayment}
+                    className="btn btn-primary flex-1"
+                  >
+                    Proceed to Payment
+                  </button>
+                </div>
+              </>
+            )}
+
+            {step === 'payment' && (
+              <>
+                <div className="p-6 space-y-3">
+                  {/* Order summary mini */}
+                  <div className="bg-gray-50 rounded-lg p-3 mb-4">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">{selectedProduct.name}</span>
+                      <span className="font-semibold">
+                        {formatPrice(selectedProduct.price, selectedProduct.currency)}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Payment Methods */}
+                  <button
+                    onClick={() => setSelectedPaymentMethod('ESEWA')}
+                    className={`w-full flex items-center gap-3 p-4 rounded-lg border-2 transition-all ${
+                      selectedPaymentMethod === 'ESEWA'
+                        ? 'border-green-500 bg-green-50'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                      <Wallet className="h-5 w-5 text-green-600" />
+                    </div>
+                    <div className="text-left flex-1">
+                      <p className="font-semibold text-gray-900">eSewa</p>
+                      <p className="text-xs text-gray-500">Pay with eSewa wallet</p>
+                    </div>
+                    {selectedPaymentMethod === 'ESEWA' && (
+                      <Check className="h-5 w-5 text-green-500" />
+                    )}
+                  </button>
+
+                  <button
+                    onClick={() => setSelectedPaymentMethod('KHALTI')}
+                    className={`w-full flex items-center gap-3 p-4 rounded-lg border-2 transition-all ${
+                      selectedPaymentMethod === 'KHALTI'
+                        ? 'border-purple-500 bg-purple-50'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                      <Wallet className="h-5 w-5 text-purple-600" />
+                    </div>
+                    <div className="text-left flex-1">
+                      <p className="font-semibold text-gray-900">Khalti</p>
+                      <p className="text-xs text-gray-500">Pay with Khalti wallet</p>
+                    </div>
+                    {selectedPaymentMethod === 'KHALTI' && (
+                      <Check className="h-5 w-5 text-purple-500" />
+                    )}
+                  </button>
+
+                  <button
+                    onClick={() => setSelectedPaymentMethod('STRIPE')}
+                    className={`w-full flex items-center gap-3 p-4 rounded-lg border-2 transition-all ${
+                      selectedPaymentMethod === 'STRIPE'
+                        ? 'border-blue-500 bg-blue-50'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                      <CreditCard className="h-5 w-5 text-blue-600" />
+                    </div>
+                    <div className="text-left flex-1">
+                      <p className="font-semibold text-gray-900">Credit/Debit Card</p>
+                      <p className="text-xs text-gray-500">Pay with Visa, Mastercard via Stripe</p>
+                    </div>
+                    {selectedPaymentMethod === 'STRIPE' && (
+                      <Check className="h-5 w-5 text-blue-500" />
+                    )}
+                  </button>
+                </div>
+
+                <div className="p-4 border-t bg-gray-50 flex gap-3 rounded-b-xl">
+                  <button
+                    onClick={() => setStep('details')}
+                    className="btn btn-secondary flex-1"
+                    disabled={isProcessingPayment}
+                  >
+                    Back
+                  </button>
+                  <button
+                    onClick={handleConfirmPayment}
+                    className="btn btn-primary flex-1"
+                    disabled={!selectedPaymentMethod || isProcessingPayment}
+                  >
+                    {isProcessingPayment ? 'Processing...' : `Pay ${formatPrice(selectedProduct.price, selectedProduct.currency)}`}
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}

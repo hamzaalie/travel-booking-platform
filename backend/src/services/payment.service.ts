@@ -12,6 +12,8 @@ interface PaymentIntentData {
   customerName: string;
   customerPhone?: string;
   metadata?: Record<string, string>;
+  successUrl?: string;
+  failureUrl?: string;
 }
 
 /**
@@ -274,8 +276,8 @@ export class PaymentService {
         product_code: config.esewa.merchantId,
         product_service_charge: '0',
         product_delivery_charge: '0',
-        success_url: `${config.frontendUrl}/payment/esewa/success`,
-        failure_url: `${config.frontendUrl}/payment/esewa/failure`,
+        success_url: data.successUrl || `${config.frontendUrl}/payment/esewa/success`,
+        failure_url: data.failureUrl || `${config.frontendUrl}/payment/esewa/failure`,
         signed_field_names: 'total_amount,transaction_uuid,product_code',
         signature: signature,
       };
@@ -411,7 +413,7 @@ export class PaymentService {
       const frontendUrl = config.frontendUrl || 'http://localhost:3000';
       
       const payload = {
-        return_url: `${frontendUrl}/payment/khalti/callback`,
+        return_url: data.successUrl || `${frontendUrl}/payment/khalti/callback`,
         website_url: frontendUrl,
         amount: amountInPaisa,
         purchase_order_id: data.bookingId,
