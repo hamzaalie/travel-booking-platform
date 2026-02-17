@@ -137,6 +137,7 @@ function App() {
         }
       >
         <Route index element={<CustomerDashboard />} />
+        <Route path="dashboard" element={<CustomerDashboard />} />
         <Route path="bookings" element={<MyBookingsPage />} />
         <Route path="bookings/:id/cancel" element={<CancellationRequestPage />} />
         <Route path="bookings/:id" element={<BookingDetailsPage />} />
@@ -152,6 +153,7 @@ function App() {
         }
       >
         <Route index element={<AgentDashboard />} />
+        <Route path="dashboard" element={<AgentDashboard />} />
         <Route path="bookings" element={<AgentBookingsPage />} />
         <Route path="wallet" element={<WalletPage />} />
         <Route path="markups" element={<AgentMarkupsPage />} />
@@ -168,6 +170,7 @@ function App() {
         }
       >
         <Route index element={<AdminDashboard />} />
+        <Route path="dashboard" element={<AdminDashboard />} />
         <Route path="agents" element={<AgentApprovalPage />} />
         <Route path="agents/markup" element={<AgentMarkupManagementPage />} />
         <Route path="agents/:agentId/documents" element={<AgentDocumentsPage />} />
