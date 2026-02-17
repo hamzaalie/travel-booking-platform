@@ -28,14 +28,20 @@ export default function EsewaCallbackPage() {
         
         try {
           decodedData = JSON.parse(atob(encodedData));
-          console.log('eSewa decoded response:', decodedData);
+          if (import.meta.env.DEV) console.log('eSewa decoded response:', decodedData);
           
           if (decodedData.status !== 'COMPLETE') {
             throw new Error(`Payment status: ${decodedData.status}`);
           }
           
           transactionUuid = decodedData.transaction_uuid;
+          if (!transactionUuid) {
+            throw new Error('Missing transaction_uuid in eSewa response');
+          }
           totalAmount = parseFloat(decodedData.total_amount);
+          if (!Number.isFinite(totalAmount)) {
+            throw new Error('Invalid total_amount in eSewa response');
+          }
         } catch (e: any) {
           throw new Error('Invalid eSewa response data: ' + e.message);
         }
@@ -48,12 +54,17 @@ export default function EsewaCallbackPage() {
 
         const bookingData = JSON.parse(pendingBookingStr);
 
+        const resolvedBookingId = bookingData.tempBookingId || bookingData.bookingId;
+        if (!resolvedBookingId) {
+          throw new Error('Invalid pending booking: missing booking identifier');
+        }
+
         // Verify payment with backend
         const verifyResponse = await paymentApi.verifyEsewa({
           transactionUuid: transactionUuid,
           totalAmount: totalAmount,
           encodedResponse: encodedData,
-          bookingId: bookingData.tempBookingId || bookingData.bookingId || `TEMP-${Date.now()}`,
+          bookingId: resolvedBookingId,
         }) as any;
 
         if (!verifyResponse.data.success) {

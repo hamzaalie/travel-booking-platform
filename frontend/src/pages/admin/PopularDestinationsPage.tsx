@@ -283,7 +283,7 @@ export default function PopularDestinationsPage() {
 
             <div className="flex justify-between items-center text-sm mb-4">
               <span className="text-gray-500">Starting from</span>
-              <span className="font-bold text-primary-900">NPR {dest.startingPrice.toLocaleString()}</span>
+              <span className="font-bold text-primary-900">{dest.currency || 'NPR'} {dest.startingPrice.toLocaleString()}</span>
             </div>
 
             <div className="flex justify-between items-center text-sm text-gray-500 mb-4">
@@ -371,7 +371,7 @@ export default function PopularDestinationsPage() {
                   <input
                     type="number"
                     value={formData.sortOrder}
-                    onChange={(e) => setFormData({ ...formData, sortOrder: parseInt(e.target.value) })}
+                    onChange={(e) => setFormData({ ...formData, sortOrder: parseInt(e.target.value) || 0 })}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2"
                   />
                 </div>
@@ -405,7 +405,7 @@ export default function PopularDestinationsPage() {
                   <input
                     type="number"
                     value={formData.startingPrice}
-                    onChange={(e) => setFormData({ ...formData, startingPrice: parseInt(e.target.value) })}
+                    onChange={(e) => setFormData({ ...formData, startingPrice: parseInt(e.target.value) || 0 })}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2"
                   />
                 </div>

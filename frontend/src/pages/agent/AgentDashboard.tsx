@@ -125,7 +125,7 @@ export default function AgentDashboard() {
         <div className="card">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
             <h2 className="text-lg sm:text-xl font-bold text-gray-900">Recent Transactions</h2>
-            <Link to="/agent/wallet" className="text-primary-950 hover:text-primary-900 font-medium text-sm">
+            <Link to="/agent/wallet" className="text-primary-900 hover:text-primary-950 font-medium text-sm">
               View All →
             </Link>
           </div>

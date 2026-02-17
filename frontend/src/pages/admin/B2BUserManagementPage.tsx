@@ -262,8 +262,12 @@ export default function B2BUserManagementPage() {
 
       {/* Edit Modal */}
       {isEditModalOpen && selectedUser && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 w-full max-w-md mx-4 shadow-xl">
+        <div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+          onKeyDown={(e) => { if (e.key === 'Escape') setIsEditModalOpen(false); }}
+          onClick={(e) => { if (e.target === e.currentTarget) setIsEditModalOpen(false); }}
+        >
+          <div role="dialog" aria-modal="true" aria-label="Edit B2B User" className="bg-white rounded-xl p-6 w-full max-w-md mx-4 shadow-xl">
             <h3 className="text-xl font-bold mb-4">Edit B2B User</h3>
             
             <div className="mb-4">
@@ -310,6 +314,9 @@ export default function B2BUserManagementPage() {
                 <button
                   type="button"
                   onClick={() => setEditForm({ ...editForm, isActive: !editForm.isActive })}
+                  role="switch"
+                  aria-checked={editForm.isActive}
+                  aria-label="Toggle active status"
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors
                     ${editForm.isActive ? 'bg-green-500' : 'bg-gray-300'}`}
                 >

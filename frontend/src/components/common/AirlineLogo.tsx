@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Plane } from 'lucide-react';
 import { getAirlineLogo, getAirlineName } from '@/utils/airlines';
 
@@ -36,12 +36,17 @@ export default function AirlineLogo({
   const airlineName = getAirlineName(code);
   const logoUrl = getAirlineLogo(code, size);
   
+  useEffect(() => {
+    setImageLoaded(false);
+    setImageError(false);
+  }, [code]);
+  
   const displayFlightNumber = flightNumber || (code && code !== airlineName ? `${code}` : '');
 
   return (
     <div className={`flex items-center gap-3 ${className}`}>
       {/* Logo Container */}
-      <div className={`${sizeClasses[size]} bg-primary-50 border border-accent-100 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0 shadow-sm`}>
+      <div className={`${sizeClasses[size]} bg-primary-50 border border-accent-100 rounded-xl flex items-center justify-center overflow-hidden flex-shrink-0 shadow-sm relative`}>
         {!imageError && code && code !== 'Unknown' ? (
           <>
             <img

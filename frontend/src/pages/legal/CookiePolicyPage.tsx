@@ -133,7 +133,7 @@ export default function CookiePolicyPage() {
                 <li>Access information about our cookie practices</li>
               </ul>
               <p className="text-gray-600 mt-4">
-                For questions about our cookie practices, contact us at privacy@Peakpass Travel.com
+                For questions about our cookie practices, contact us at privacy@peakpasstravel.com
               </p>
             </div>
           </section>

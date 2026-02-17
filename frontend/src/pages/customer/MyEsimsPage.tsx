@@ -32,6 +32,8 @@ export default function MyEsimsPage() {
   const [searchTerm, setSearchTerm] = useState('');
 
   const formatPrice = (amount: number, sourceCurrency: string = 'USD') => {
+    const num = Number(amount);
+    if (isNaN(num)) return '—';
     if (currentCurrency === sourceCurrency) {
       const info = currencies.find(c => c.code === sourceCurrency);
       const symbol = info?.symbol || sourceCurrency;
@@ -183,6 +185,10 @@ export default function MyEsimsPage() {
               <div
                 key={order.id}
                 onClick={() => navigate(`/customer/esim/${order.id}`)}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigate(`/customer/esim/${order.id}`); } }}
+                role="button"
+                tabIndex={0}
+                aria-label={`View order ${order.product?.name || order.id}`}
                 className="bg-white rounded-lg shadow-sm border p-5 hover:shadow-md transition-shadow cursor-pointer"
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

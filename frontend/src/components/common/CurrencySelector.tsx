@@ -58,6 +58,9 @@ export default function CurrencySelector() {
     <div className="relative inline-flex items-center" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
+        aria-expanded={isOpen}
+        aria-haspopup="listbox"
+        aria-label={`Currency: ${currentCurrency || 'NPR'}`}
         className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white 
                    hover:text-white hover:bg-white/10 rounded-lg transition-colors"
       >
@@ -69,7 +72,7 @@ export default function CurrencySelector() {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-lg shadow-lg 
+        <div role="listbox" aria-label="Currency options" className="absolute right-0 top-full mt-2 w-56 bg-white rounded-lg shadow-lg 
                         border border-gray-200 py-2 z-[9999] max-h-80 overflow-y-auto">
           <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider border-b">
             Select Currency
@@ -78,6 +81,8 @@ export default function CurrencySelector() {
             <button
               key={currency.code}
               onClick={() => handleCurrencyChange(currency.code)}
+              role="option"
+              aria-selected={currentCurrency === currency.code}
               className={`w-full flex items-center justify-between px-4 py-2.5 text-left
                          hover:bg-accent-50 transition-colors
                          ${currentCurrency === currency.code 

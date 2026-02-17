@@ -144,10 +144,10 @@ export default function PopularDestinations({ noBg = false, fullWidth = false }:
   };
 
   const handleDestinationClick = (destination: Destination) => {
-    // Get tomorrow's date for departure
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 7);
-    const departureDate = tomorrow.toISOString().split('T')[0];
+    // Get date 7 days from now for departure
+    const departureDay = new Date();
+    departureDay.setDate(departureDay.getDate() + 7);
+    const departureDate = departureDay.toISOString().split('T')[0];
 
     // Navigate to search results with the destination pre-filled
     const searchParams = new URLSearchParams({
@@ -218,6 +218,10 @@ export default function PopularDestinations({ noBg = false, fullWidth = false }:
               <div
                 key={destination.id}
                 onClick={() => handleDestinationClick(destination)}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleDestinationClick(destination); } }}
+                role="button"
+                tabIndex={0}
+                aria-label={`Search flights to ${destination.name}`}
                 className="flex-shrink-0 w-[280px] cursor-pointer group"
               >
                 <div className="bg-white rounded-2xl overflow-hidden shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] transition-all duration-300 transform hover:-translate-y-2 border border-gray-100">

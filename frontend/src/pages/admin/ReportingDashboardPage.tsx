@@ -223,7 +223,7 @@ export default function ReportingDashboardPage() {
           </div>
         </div>
 
-        <div className="card bg-gradient-to-br from-accent-500 to-accent-500 text-white">
+        <div className="card bg-gradient-to-br from-accent-500 to-accent-600 text-white">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-accent-100 text-sm mb-1">Active Agents</p>

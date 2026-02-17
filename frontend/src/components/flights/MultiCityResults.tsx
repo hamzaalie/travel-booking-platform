@@ -173,7 +173,7 @@ export const MultiCityResults: React.FC<MultiCityResultsProps> = ({
 
                     <button
                       onClick={() => setExpandedOfferId(isExpanded ? null : offer.id)}
-                      className="text-sm text-primary-950 hover:text-primary-950 flex items-center justify-center space-x-1"
+                      className="text-sm text-primary-950 hover:text-primary-800 hover:underline flex items-center justify-center space-x-1"
                     >
                       <span>{isExpanded ? 'Hide' : 'Show'} details</span>
                       {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}

@@ -260,7 +260,7 @@ export default function FlightResultsPage() {
                             <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-primary-950 mb-1">
                               {formatPrice(parseFloat(flight.price?.total || flight.price?.grandTotal || '0'), flight.price?.currency)}
                             </p>
-                            <p className="text-xs text-gray-600 mb-3">/ person</p>
+                            <p className="text-xs text-gray-600 mb-3">for all travelers</p>
                           </div>
                           <button
                             onClick={() => {

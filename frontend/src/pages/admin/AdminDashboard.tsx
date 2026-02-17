@@ -83,19 +83,19 @@ export default function AdminDashboard() {
           <div className="flex items-center justify-between mb-2">
             <div>
               <p className="text-sm text-gray-600">Total Bookings</p>
-              <p className="text-3xl font-bold text-primary-900">{stats?.bookings.total || 0}</p>
+              <p className="text-3xl font-bold text-primary-900">{stats?.bookings?.total ?? 0}</p>
             </div>
             <Plane className="h-12 w-12 text-primary-950" />
           </div>
           <div className="flex gap-3 text-xs mt-2">
             <span className="flex items-center gap-1 text-green-700">
-              <CheckCircle className="h-3 w-3" /> {stats?.bookings.confirmed || 0} confirmed
+              <CheckCircle className="h-3 w-3" /> {stats?.bookings?.confirmed ?? 0} confirmed
             </span>
             <span className="flex items-center gap-1 text-yellow-700">
-              <Clock className="h-3 w-3" /> {stats?.bookings.pending || 0} pending
+              <Clock className="h-3 w-3" /> {stats?.bookings?.pending ?? 0} pending
             </span>
             <span className="flex items-center gap-1 text-red-700">
-              <XCircle className="h-3 w-3" /> {stats?.bookings.cancelled || 0} cancelled
+              <XCircle className="h-3 w-3" /> {stats?.bookings?.cancelled ?? 0} cancelled
             </span>
           </div>
         </div>
@@ -105,12 +105,12 @@ export default function AdminDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Active Agents</p>
-              <p className="text-3xl font-bold text-green-700">{stats?.agents.active || 0}</p>
+              <p className="text-3xl font-bold text-green-700">{stats?.agents?.active ?? 0}</p>
             </div>
             <Users className="h-12 w-12 text-green-600" />
           </div>
           <p className="text-xs text-gray-500 mt-2">
-            {stats?.agents.pending || 0} pending approval | {stats?.agents.total || 0} total
+            {stats?.agents?.pending ?? 0} pending approval | {stats?.agents?.total ?? 0} total
           </p>
         </div>
 
@@ -148,13 +148,13 @@ export default function AdminDashboard() {
             <div>
               <p className="text-sm text-gray-600">Pending Requests</p>
               <p className="text-3xl font-bold text-orange-700">
-                {(stats?.agents.pending || 0) + (stats?.fundRequests.pending || 0)}
+                {(stats?.agents?.pending ?? 0) + (stats?.fundRequests?.pending ?? 0)}
               </p>
             </div>
             <DollarSign className="h-12 w-12 text-orange-600" />
           </div>
           <p className="text-xs text-gray-500 mt-2">
-            <UserCheck className="h-3 w-3 inline" /> {stats?.customers?.total || 0} registered customers
+            <UserCheck className="h-3 w-3 inline" /> {stats?.customers?.total ?? 0} registered customers
           </p>
         </div>
       </div>
@@ -165,7 +165,7 @@ export default function AdminDashboard() {
         <div className="card">
           <h3 className="text-xl font-semibold mb-4">Pending Agent Approvals</h3>
           <p className="text-gray-600 mb-4">
-            {stats?.agents.pending || 0} agents waiting for approval
+            {stats?.agents?.pending ?? 0} agents waiting for approval
           </p>
           <Link to="/admin/agents" className="btn btn-primary">
             Review Agents
@@ -175,7 +175,7 @@ export default function AdminDashboard() {
         <div className="card">
           <h3 className="text-xl font-semibold mb-4">Pending Fund Requests</h3>
           <p className="text-gray-600 mb-4">
-            {stats?.fundRequests.pending || 0} fund requests to process
+            {stats?.fundRequests?.pending ?? 0} fund requests to process
           </p>
           <Link to="/admin/fund-requests" className="btn btn-primary">
             Process Requests
@@ -255,7 +255,7 @@ export default function AdminDashboard() {
                       </span>
                     </td>
                     <td className="py-2 text-right font-medium">
-                      NPR {booking.amount.toLocaleString()}
+                      NPR {(booking.amount ?? 0).toLocaleString()}
                     </td>
                     <td className="py-2 text-gray-500">
                       {new Date(booking.createdAt).toLocaleDateString()}

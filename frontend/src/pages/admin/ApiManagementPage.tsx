@@ -79,7 +79,7 @@ const DEFAULT_PROVIDERS: ApiProvider[] = [
     isEnabled: true,
     isPrimary: true,
     status: 'CONNECTED',
-    lastChecked: new Date().toISOString(),
+    lastChecked: 'N/A',
     lastError: null,
     config: { apiKey: '', apiSecret: '', baseUrl: 'https://api.amadeus.com', environment: 'production' },
     stats: { totalRequests: 15420, successRate: 99.2, avgResponseTime: 340 },
@@ -92,7 +92,7 @@ const DEFAULT_PROVIDERS: ApiProvider[] = [
     isEnabled: true,
     isPrimary: false,
     status: 'CONNECTED',
-    lastChecked: new Date().toISOString(),
+    lastChecked: 'N/A',
     lastError: null,
     config: { apiKey: '', apiSecret: '', baseUrl: 'https://api.sabre.com', environment: 'production' },
     stats: { totalRequests: 8350, successRate: 98.7, avgResponseTime: 420 },
@@ -105,7 +105,7 @@ const DEFAULT_PROVIDERS: ApiProvider[] = [
     isEnabled: true,
     isPrimary: true,
     status: 'CONNECTED',
-    lastChecked: new Date().toISOString(),
+    lastChecked: 'N/A',
     lastError: null,
     config: { apiKey: '', apiSecret: '', baseUrl: 'https://api.hotelbeds.com', environment: 'production' },
     stats: { totalRequests: 5200, successRate: 97.8, avgResponseTime: 520 },
@@ -131,7 +131,7 @@ const DEFAULT_PROVIDERS: ApiProvider[] = [
     isEnabled: true,
     isPrimary: true,
     status: 'CONNECTED',
-    lastChecked: new Date().toISOString(),
+    lastChecked: 'N/A',
     lastError: null,
     config: { apiKey: '', apiSecret: '', baseUrl: 'https://api.airalo.com', environment: 'production' },
     stats: { totalRequests: 890, successRate: 99.5, avgResponseTime: 200 },
@@ -144,7 +144,7 @@ const DEFAULT_PROVIDERS: ApiProvider[] = [
     isEnabled: true,
     isPrimary: true,
     status: 'CONNECTED',
-    lastChecked: new Date().toISOString(),
+    lastChecked: 'N/A',
     lastError: null,
     config: { apiKey: '', apiSecret: '', baseUrl: 'https://esewa.com.np', environment: 'production' },
     stats: { totalRequests: 3400, successRate: 98.9, avgResponseTime: 150 },
@@ -157,7 +157,7 @@ const DEFAULT_PROVIDERS: ApiProvider[] = [
     isEnabled: true,
     isPrimary: false,
     status: 'CONNECTED',
-    lastChecked: new Date().toISOString(),
+    lastChecked: 'N/A',
     lastError: null,
     config: { apiKey: '', apiSecret: '', baseUrl: 'https://khalti.com', environment: 'production' },
     stats: { totalRequests: 2100, successRate: 99.1, avgResponseTime: 180 },
@@ -406,6 +406,9 @@ export default function ApiManagementPage() {
                       {/* Toggle Switch */}
                       <button
                         onClick={() => toggleMutation.mutate({ id: provider.id, isEnabled: !provider.isEnabled })}
+                        role="switch"
+                        aria-checked={provider.isEnabled}
+                        aria-label={`Toggle ${provider.name}`}
                         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
                           provider.isEnabled ? 'bg-green-500' : 'bg-gray-300'
                         }`}
@@ -443,7 +446,7 @@ export default function ApiManagementPage() {
                       </span>
                       {provider.lastChecked && (
                         <span className="text-xs text-gray-500">
-                          Checked: {new Date(provider.lastChecked).toLocaleString()}
+                          Checked: {provider.lastChecked && provider.lastChecked !== 'N/A' ? new Date(provider.lastChecked).toLocaleString() : 'Never'}
                         </span>
                       )}
                     </div>
@@ -495,8 +498,12 @@ export default function ApiManagementPage() {
 
       {/* Configuration Modal */}
       {isConfigModalOpen && selectedProvider && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
+        <div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+          onKeyDown={(e) => { if (e.key === 'Escape') { setIsConfigModalOpen(false); setSelectedProvider(null); } }}
+          onClick={(e) => { if (e.target === e.currentTarget) { setIsConfigModalOpen(false); setSelectedProvider(null); } }}
+        >
+          <div role="dialog" aria-modal="true" aria-label={`Configure ${selectedProvider.name}`} className="bg-white rounded-xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b">
               <h2 className="text-xl font-bold">Configure {selectedProvider.name}</h2>
               <p className="text-gray-600 text-sm mt-1">Update API credentials and settings</p>

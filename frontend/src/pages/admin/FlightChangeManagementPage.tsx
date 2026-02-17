@@ -93,7 +93,7 @@ export default function FlightChangeManagementPage() {
     processMutation.mutate({
       status: processForm.status,
       adminNotes: processForm.adminNotes,
-      approvedRefundAmount: processForm.approvedRefundAmount || undefined,
+      approvedRefundAmount: processForm.approvedRefundAmount ?? undefined,
     });
   };
 
@@ -124,7 +124,7 @@ export default function FlightChangeManagementPage() {
         </div>
       </div>
 
-      {/* Filters done with all other things now and aksbjbad jbdasdjb nmjnjkb */}
+      {/* Filters */}
       <div className="card">
         <div className="flex flex-col md:flex-row gap-4">
           <select
@@ -229,7 +229,7 @@ export default function FlightChangeManagementPage() {
                       </span>
                     </td>
                     <td className="px-4 py-3 text-sm">
-                      {request.requestedRefundAmount ? (
+                      {request.requestedRefundAmount != null ? (
                         <span className="font-medium">NPR {request.requestedRefundAmount.toLocaleString()}</span>
                       ) : (
                         '-'
@@ -307,7 +307,7 @@ export default function FlightChangeManagementPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm text-gray-500">Request Type</label>
-                  <p className="font-medium">{REQUEST_TYPES[selectedRequest.type]?.label}</p>
+                  <p className="font-medium">{REQUEST_TYPES[selectedRequest.type]?.label || selectedRequest.type}</p>
                 </div>
                 <div>
                   <label className="text-sm text-gray-500">Current Status</label>
@@ -371,7 +371,7 @@ export default function FlightChangeManagementPage() {
               )}
 
               {/* Refund Amount */}
-              {selectedRequest.requestedRefundAmount && (
+              {selectedRequest.requestedRefundAmount != null && (
                 <div className="bg-yellow-50 p-4 rounded-lg">
                   <label className="text-sm text-yellow-700 font-medium">Requested Refund Amount</label>
                   <p className="text-2xl font-bold text-yellow-800">
@@ -468,7 +468,7 @@ export default function FlightChangeManagementPage() {
                       <p className="mt-1">{selectedRequest.adminNotes}</p>
                     </div>
                   )}
-                  {selectedRequest.approvedRefundAmount && (
+                  {selectedRequest.approvedRefundAmount != null && (
                     <div className="mt-3 p-3 bg-green-50 rounded-lg">
                       <label className="text-sm text-green-700">Approved Refund</label>
                       <p className="text-xl font-bold text-green-800">

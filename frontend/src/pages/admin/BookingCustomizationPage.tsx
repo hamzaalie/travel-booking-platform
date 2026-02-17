@@ -84,7 +84,7 @@ const SEAT_TYPES = [
 ];
 
 const MEAL_OPTIONS = [
-  'Standard', 'Vegetarian', 'Vegan', 'Halal', 'Kosher',
+  'Vegetarian', 'Vegan', 'Halal', 'Kosher',
   'Gluten-Free', 'Child Meal', 'Diabetic', 'Low Salt',
 ];
 
@@ -108,7 +108,7 @@ export default function BookingCustomizationPage() {
   });
 
   // Fetch bookings
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, error: _fetchError } = useQuery({
     queryKey: ['admin-bookings-custom', searchTerm, statusFilter, channelFilter, currentPage],
     queryFn: async () => {
       const params: any = { page: currentPage, limit: 20 };
@@ -237,9 +237,14 @@ export default function BookingCustomizationPage() {
             {bookings.map((booking: any) => {
               const isExpanded = expandedBooking === booking.id;
               const statusStyle = STATUS_STYLES[booking.status] || STATUS_STYLES.PENDING;
-              const flightDetails = typeof booking.flightDetails === 'string' 
-                ? JSON.parse(booking.flightDetails || '{}') 
-                : (booking.flightDetails || {});
+              let flightDetails: any = {};
+              try {
+                flightDetails = typeof booking.flightDetails === 'string' 
+                  ? JSON.parse(booking.flightDetails || '{}') 
+                  : (booking.flightDetails || {});
+              } catch {
+                flightDetails = {};
+              }
 
               return (
                 <div key={booking.id} className="card border-2 hover:shadow-md transition-shadow">
@@ -355,7 +360,9 @@ export default function BookingCustomizationPage() {
                           <Settings className="h-4 w-4" />
                           Customize Booking
                         </button>
-                        <button className="btn btn-outline text-sm flex items-center gap-1">
+                        <button
+                          onClick={() => window.open(`/admin/bookings/${booking.id}`, '_blank')}
+                          className="btn btn-outline text-sm flex items-center gap-1">
                           <Eye className="h-4 w-4" />
                           View Full Details
                         </button>

@@ -72,7 +72,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <p className="font-medium text-gray-900">Working Hours</p>
-                    <p className="text-sm text-gray-600">24/7 — Always available</p>
+                    <p className="text-sm text-gray-600">Sun–Fri, 9 AM – 6 PM (NPT)</p>
                   </div>
                 </div>
               </div>
@@ -82,7 +82,7 @@ export default function ContactPage() {
               <MessageCircle className="h-8 w-8 mb-3 text-accent-400" />
               <h3 className="font-bold text-lg mb-2">Need Quick Help?</h3>
               <p className="text-sm text-white/70 mb-4">
-                Our support team typically responds within 30 minutes during business hours.
+                Our support team typically responds within 24 hours.
               </p>
               <a href="mailto:info@travelbook.com" className="btn bg-accent-500 hover:bg-accent-600 text-white w-full text-center block py-2 rounded-lg font-medium">
                 Email Support
@@ -97,10 +97,11 @@ export default function ContactPage() {
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="contact-name" className="block text-sm font-medium text-gray-700 mb-1">
                       Full Name <span className="text-red-500">*</span>
                     </label>
                     <input
+                      id="contact-name"
                       type="text"
                       value={form.name}
                       onChange={(e) => setForm({ ...form, name: e.target.value })}
@@ -109,10 +110,11 @@ export default function ContactPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="contact-email" className="block text-sm font-medium text-gray-700 mb-1">
                       Email <span className="text-red-500">*</span>
                     </label>
                     <input
+                      id="contact-email"
                       type="email"
                       value={form.email}
                       onChange={(e) => setForm({ ...form, email: e.target.value })}
@@ -122,8 +124,9 @@ export default function ContactPage() {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Subject</label>
+                  <label htmlFor="contact-subject" className="block text-sm font-medium text-gray-700 mb-1">Subject</label>
                   <input
+                    id="contact-subject"
                     type="text"
                     value={form.subject}
                     onChange={(e) => setForm({ ...form, subject: e.target.value })}
@@ -132,10 +135,11 @@ export default function ContactPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="contact-message" className="block text-sm font-medium text-gray-700 mb-1">
                     Message <span className="text-red-500">*</span>
                   </label>
                   <textarea
+                    id="contact-message"
                     rows={6}
                     value={form.message}
                     onChange={(e) => setForm({ ...form, message: e.target.value })}

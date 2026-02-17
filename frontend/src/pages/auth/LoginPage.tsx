@@ -103,9 +103,14 @@ export default function LoginPage() {
                 </label>
               </div>
 
-              <a href="#" className="text-sm text-primary-950 hover:text-primary-900">
+              <button
+                type="button"
+                disabled
+                className="text-sm text-primary-950 hover:text-primary-900 opacity-50 cursor-not-allowed"
+                title="Coming soon"
+              >
                 Forgot password?
-              </a>
+              </button>
             </div>
 
             <button

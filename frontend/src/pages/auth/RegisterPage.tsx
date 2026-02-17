@@ -59,7 +59,7 @@ export default function RegisterPage() {
           <div className="text-center mb-8">
             <div className="flex justify-center mb-4">
               <img 
-                src="/images/Peakpass Travel Brand Kit/Peakpass Logo Full Color.png" 
+                src="/images/Peakpass%20Travel%20Brand%20Kit/Peakpass%20Logo%20Full%20Color.png" 
                 alt="Peakpass Travel" 
                 className="h-16 w-auto" 
               />

@@ -1,3 +1,4 @@
+import { useRef, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 import { esimApi } from '@/services/api';
@@ -29,7 +30,19 @@ export default function EsimOrderDetailsPage() {
     (state: RootState) => state.currency
   );
   const [copied, setCopied] = useState<string | null>(null);
+  const copiedTimerRef = useRef<ReturnType<typeof setTimeout>>();
   const [showInstructions, setShowInstructions] = useState(true);
+
+  const copyToClipboard = useCallback(async (text: string, field: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(field);
+      if (copiedTimerRef.current) clearTimeout(copiedTimerRef.current);
+      copiedTimerRef.current = setTimeout(() => setCopied(null), 2000);
+    } catch {
+      // Clipboard API may not be available
+    }
+  }, []);
 
   const formatPrice = (amount: number, sourceCurrency: string = 'USD') => {
     if (currentCurrency === sourceCurrency) {
@@ -58,12 +71,6 @@ export default function EsimOrderDetailsPage() {
     enabled: !!id && order?.status && ['COMPLETED', 'ACTIVATED'].includes(order.status),
     refetchInterval: 60000, // refresh every minute for active eSIMs
   });
-
-  const copyToClipboard = (text: string, field: string) => {
-    navigator.clipboard.writeText(text);
-    setCopied(field);
-    setTimeout(() => setCopied(null), 2000);
-  };
 
   if (isLoading) {
     return (

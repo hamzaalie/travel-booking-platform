@@ -93,7 +93,7 @@ export default function B2BPortalManagementPage() {
 
   // Reject agent
   const rejectMutation = useMutation({
-    mutationFn: (id: string) => adminApi.rejectAgent(id, 'Rejected by admin'),
+    mutationFn: ({ id, reason }: { id: string; reason: string }) => adminApi.rejectAgent(id, reason),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['b2b-portal'] });
       toast.success('Agent rejected');
@@ -333,13 +333,18 @@ export default function B2BPortalManagementPage() {
                   <>
                     <button
                       onClick={() => approveMutation.mutate(agent.id)}
+                      disabled={approveMutation.isPending}
                       className="btn btn-primary text-sm flex items-center gap-1"
                     >
                       <CheckCircle className="h-4 w-4" />
-                      Approve
+                      {approveMutation.isPending ? 'Approving...' : 'Approve'}
                     </button>
                     <button
-                      onClick={() => rejectMutation.mutate(agent.id)}
+                      onClick={() => {
+                        const reason = prompt('Rejection reason:');
+                        if (reason) rejectMutation.mutate({ id: agent.id, reason });
+                      }}
+                      disabled={rejectMutation.isPending}
                       className="btn btn-outline text-sm flex items-center gap-1 text-red-600 border-red-200 hover:bg-red-50"
                     >
                       <XCircle className="h-4 w-4" />

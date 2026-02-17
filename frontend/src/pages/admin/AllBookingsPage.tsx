@@ -180,7 +180,7 @@ export default function AllBookingsPage() {
                       {new Date(booking.createdAt).toLocaleDateString()}
                     </td>
                     <td className="px-4 py-3">
-                      <div className="font-bold text-gray-900">NPR {booking.totalPrice?.toFixed(2)}</div>
+                      <div className="font-bold text-gray-900">NPR {(booking.totalPrice ?? 0).toFixed(2)}</div>
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center space-x-2">

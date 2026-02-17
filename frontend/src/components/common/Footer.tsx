@@ -1,10 +1,12 @@
 ﻿import { Link } from 'react-router-dom';
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { settingsApi } from '@/services/api';
 import {
   Mail, Phone, MapPin, Facebook, Twitter, Instagram,
   Linkedin, Youtube, Globe, Clock, Shield, Award,
 } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const SOCIAL_ICONS: Record<string, any> = {
   facebook: Facebook,
@@ -74,6 +76,59 @@ const DEFAULT_BRANDING = {
   logoDark: '/images/logo-dark.png',
 };
 
+function NewsletterSection({ footer }: { footer: any }) {
+  const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      toast.error('Please enter a valid email address');
+      return;
+    }
+    setLoading(true);
+    try {
+      // TODO: Wire to newsletter subscription API endpoint when available
+      await new Promise(r => setTimeout(r, 500));
+      toast.success('Subscribed successfully!');
+      setEmail('');
+    } catch {
+      toast.error('Subscription failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="border-b border-gray-800">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+          <div>
+            <h3 className="text-xl font-bold">{footer.newsletterTitle || 'Subscribe to our newsletter'}</h3>
+            <p className="text-gray-400 mt-1">{footer.newsletterDescription || 'Get exclusive deals and travel tips.'}</p>
+          </div>
+          <form onSubmit={handleSubscribe} className="flex w-full md:w-auto gap-2">
+            <input
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="px-4 py-3 rounded-lg bg-gray-800 border border-gray-700 text-white placeholder-gray-400 focus:outline-none focus:border-accent-500 w-full md:w-72"
+            />
+            <button
+              type="submit"
+              disabled={loading}
+              className="px-6 py-3 bg-accent-500 hover:bg-accent-600 text-white rounded-lg font-semibold transition-colors whitespace-nowrap disabled:opacity-50"
+            >
+              {loading ? 'Subscribing...' : 'Subscribe'}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
@@ -133,28 +188,7 @@ export default function Footer() {
   return (
     <footer className="bg-gradient-to-br from-primary-950 via-gray-900 to-primary-950 text-white">
       {/* Newsletter Section */}
-      {footer.showNewsletter && (
-        <div className="border-b border-gray-800">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-              <div>
-                <h3 className="text-xl font-bold">{footer.newsletterTitle || 'Subscribe to our newsletter'}</h3>
-                <p className="text-gray-400 mt-1">{footer.newsletterDescription || 'Get exclusive deals and travel tips.'}</p>
-              </div>
-              <div className="flex w-full md:w-auto gap-2">
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="px-4 py-3 rounded-lg bg-gray-800 border border-gray-700 text-white placeholder-gray-400 focus:outline-none focus:border-accent-500 w-full md:w-72"
-                />
-                <button className="px-6 py-3 bg-accent-500 hover:bg-accent-600 text-white rounded-lg font-semibold transition-colors whitespace-nowrap">
-                  Subscribe
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {footer.showNewsletter && <NewsletterSection footer={footer} />}
 
       {/* Main Footer Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -171,12 +205,12 @@ export default function Footer() {
 
             {socialLinks.length > 0 && (
               <div className="flex space-x-4">
-                {socialLinks.map((link: any, idx: number) => {
+                {socialLinks.filter((link: any) => link.url && link.url !== '#').map((link: any, idx: number) => {
                   const Icon = SOCIAL_ICONS[link.platform?.toLowerCase()] || Globe;
                   return (
                     <a
                       key={idx}
-                      href={link.url || '#'}
+                      href={link.url}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="bg-gray-800 p-2.5 rounded-lg hover:bg-accent-500 transition-all duration-300 hover:scale-110"

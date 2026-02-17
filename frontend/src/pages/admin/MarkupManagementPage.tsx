@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { adminApi, settingsApi } from '@/services/api';
 import { TrendingUp, Plus, Edit, Trash2, Save, X, Percent, ToggleLeft, ToggleRight } from 'lucide-react';
@@ -24,13 +24,14 @@ export default function MarkupManagementPage() {
       const response: any = await settingsApi.getPlatformMarkup();
       return response.data?.data || response.data;
     },
-    onSuccess: (data: any) => {
-      if (data) {
-        setPlatformPercentage(data.percentage?.toString() || '5');
-        setPlatformEnabled(data.enabled ?? true);
-      }
-    },
-  } as any);
+  });
+
+  useEffect(() => {
+    if (_platformMarkup) {
+      setPlatformPercentage(_platformMarkup.percentage?.toString() ?? '5');
+      setPlatformEnabled(_platformMarkup.enabled ?? true);
+    }
+  }, [_platformMarkup]);
 
   const updatePlatformMarkupMutation = useMutation({
     mutationFn: async (data: { percentage: number; enabled: boolean }) => {

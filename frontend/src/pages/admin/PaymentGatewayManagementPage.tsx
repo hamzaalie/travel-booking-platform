@@ -220,6 +220,7 @@ export default function PaymentGatewayManagementPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['payment-gateways'] });
       setIsConfigModalOpen(false);
+      setShowSecrets({});
       toast.success('Gateway configuration updated');
     },
     onError: () => toast.error('Failed to update configuration'),
@@ -455,7 +456,7 @@ export default function PaymentGatewayManagementPage() {
                     type="number"
                     step="0.01"
                     value={configForm.transactionFee}
-                    onChange={(e) => setConfigForm({ ...configForm, transactionFee: parseFloat(e.target.value) })}
+                    onChange={(e) => setConfigForm({ ...configForm, transactionFee: parseFloat(e.target.value) || 0 })}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2"
                   />
                 </div>
@@ -478,7 +479,7 @@ export default function PaymentGatewayManagementPage() {
                   <input
                     type="number"
                     value={configForm.minAmount}
-                    onChange={(e) => setConfigForm({ ...configForm, minAmount: parseInt(e.target.value) })}
+                    onChange={(e) => setConfigForm({ ...configForm, minAmount: parseInt(e.target.value) || 0 })}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2"
                   />
                 </div>
@@ -487,7 +488,7 @@ export default function PaymentGatewayManagementPage() {
                   <input
                     type="number"
                     value={configForm.maxAmount}
-                    onChange={(e) => setConfigForm({ ...configForm, maxAmount: parseInt(e.target.value) })}
+                    onChange={(e) => setConfigForm({ ...configForm, maxAmount: parseInt(e.target.value) || 0 })}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2"
                   />
                 </div>
@@ -566,7 +567,7 @@ export default function PaymentGatewayManagementPage() {
               )}
             </div>
             <div className="p-6 border-t flex justify-end gap-3">
-              <button onClick={() => setIsConfigModalOpen(false)} className="btn btn-outline">Cancel</button>
+              <button onClick={() => { setIsConfigModalOpen(false); setShowSecrets({}); }} className="btn btn-outline">Cancel</button>
               <button
                 onClick={() => {
                   if (selectedGateway) {

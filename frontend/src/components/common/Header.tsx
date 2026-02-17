@@ -1,4 +1,4 @@
-﻿import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { useQuery } from '@tanstack/react-query';
 import { RootState } from '@/store';
@@ -181,11 +181,11 @@ export default function Header() {
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center space-x-1">
-              {navItems.map((item: any, idx: number) => {
+              {navItems.map((item: any) => {
                 const Icon = getNavIcon(item);
                 return (
                   <Link
-                    key={idx}
+                    key={item.href}
                     to={item.href}
                     className="flex items-center space-x-2 px-4 py-2 rounded-lg text-gray-700 hover:text-primary-950 hover:bg-accent-50 transition-all duration-200 font-medium"
                   >
@@ -248,11 +248,11 @@ export default function Header() {
         {mobileMenuOpen && (
           <div className="md:hidden border-t border-gray-200 bg-white shadow-lg">
             <div className="px-4 py-6 space-y-3">
-              {navItems.map((item: any, idx: number) => {
+              {navItems.map((item: any) => {
                 const Icon = getNavIcon(item);
                 return (
                   <Link
-                    key={idx}
+                    key={item.href}
                     to={item.href}
                     onClick={() => setMobileMenuOpen(false)}
                     className="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-accent-50 hover:text-primary-950 transition-all duration-200 font-medium"

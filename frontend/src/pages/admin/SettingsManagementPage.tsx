@@ -42,13 +42,16 @@ export default function SettingsManagementPage() {
   const { data: settings, isLoading } = useQuery({
     queryKey: ['site-settings'],
     queryFn: async () => {
-      const [header, footer, branding, seo, general]: any[] = await Promise.all([
+      const results = await Promise.allSettled([
         settingsApi.getHeader(),
         settingsApi.getFooter(),
         settingsApi.getBranding(),
         settingsApi.getSeo(),
         settingsApi.getGeneral(),
       ]);
+      const [header, footer, branding, seo, general] = results.map(
+        (r) => (r.status === 'fulfilled' ? (r as PromiseFulfilledResult<any>).value : { data: {} })
+      );
       return {
         header: header.data || {},
         footer: footer.data || {},
@@ -246,6 +249,9 @@ function HeaderSettings({ data, onSave, isSaving }: { data: any; onSave: (d: any
           <button
             type="button"
             onClick={() => setFormData({ ...formData, showTopBar: !formData.showTopBar })}
+            role="switch"
+            aria-checked={formData.showTopBar}
+            aria-label="Toggle top bar"
             className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
               formData.showTopBar ? 'bg-primary-950' : 'bg-gray-300'
             }`}
@@ -311,7 +317,7 @@ function HeaderSettings({ data, onSave, isSaving }: { data: any; onSave: (d: any
         </div>
         <div className="space-y-2">
           {formData.navigationItems.map((item: NavItem, index: number) => (
-            <div key={index} className="flex gap-2 items-center bg-gray-50 p-3 rounded-lg">
+            <div key={item.label + item.href} className="flex gap-2 items-center bg-gray-50 p-3 rounded-lg">
               <div className="flex flex-col gap-1">
                 <button
                   onClick={() => moveNavItem(index, 'up')}
@@ -547,6 +553,9 @@ function FooterSettings({ data, onSave, isSaving }: { data: any; onSave: (d: any
           <button
             type="button"
             onClick={() => setFormData({ ...formData, showNewsletter: !formData.showNewsletter })}
+            role="switch"
+            aria-checked={formData.showNewsletter}
+            aria-label="Toggle newsletter signup"
             className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
               formData.showNewsletter ? 'bg-primary-950' : 'bg-gray-300'
             }`}
@@ -1212,6 +1221,9 @@ function GeneralSettings({ data, onSave, isSaving }: { data: any; onSave: (d: an
           <button
             type="button"
             onClick={() => setFormData({ ...formData, maintenanceMode: !formData.maintenanceMode })}
+            role="switch"
+            aria-checked={formData.maintenanceMode}
+            aria-label="Toggle maintenance mode"
             className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
               formData.maintenanceMode ? 'bg-yellow-600' : 'bg-gray-300'
             }`}

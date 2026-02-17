@@ -53,6 +53,7 @@ export default function CustomerManagementPage() {
       adminExtendedApi.updateCustomerStatus(id, isActive),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['customers'] });
+      queryClient.invalidateQueries({ queryKey: ['customerDetails'] });
       toast.success('Customer status updated');
     },
     onError: () => {
@@ -170,7 +171,7 @@ export default function CustomerManagementPage() {
                         </td>
                         <td className="px-4 py-3">
                           <span className="text-sm font-medium text-gray-900">
-                            {customer._count.bookings}
+                            {customer._count?.bookings ?? 0}
                           </span>
                         </td>
                         <td className="px-4 py-3">
@@ -196,6 +197,10 @@ export default function CustomerManagementPage() {
                                 id: customer.id,
                                 isActive: !customer.isActive
                               })}
+                              disabled={toggleStatusMutation.isPending}
+                              role="switch"
+                              aria-checked={customer.isActive}
+                              aria-label={customer.isActive ? 'Deactivate customer' : 'Activate customer'}
                               className={`p-1 ${customer.isActive 
                                 ? 'text-red-400 hover:text-red-600' 
                                 : 'text-green-400 hover:text-green-600'}`}
@@ -278,11 +283,11 @@ export default function CustomerManagementPage() {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500">Total Bookings:</span>
-                    <span className="font-medium">{customerDetails._count.bookings}</span>
+                    <span className="font-medium">{customerDetails._count?.bookings ?? 0}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500">Total Payments:</span>
-                    <span className="font-medium">{customerDetails._count.payments}</span>
+                    <span className="font-medium">{customerDetails._count?.payments ?? 0}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500">Member Since:</span>

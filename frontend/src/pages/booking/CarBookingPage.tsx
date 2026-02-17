@@ -80,6 +80,7 @@ export default function CarBookingPage() {
           setDriverInfo(prev.driverInfo);
           if (prev.additionalInfo) setAdditionalInfo(prev.additionalInfo);
           if (prev.paymentMethod) setPaymentMethod(prev.paymentMethod);
+          sessionStorage.removeItem('bookingData');
         }
       } catch (e) { /* ignore */ }
     }

@@ -327,13 +327,14 @@ export default function PaymentPage() {
       }
 
       // Store booking data for after payment callback
-      sessionStorage.setItem('pendingBooking', JSON.stringify(bookingData));
+      const tempBookingId = `TEMP-${Date.now()}`;
+      sessionStorage.setItem('pendingBooking', JSON.stringify({ ...bookingData, tempBookingId }));
 
       // Initiate Khalti payment — Khalti only accepts NPR
       const amountInNPR = convertToNPR(total);
       const response = await paymentApi.initiateKhalti({
         amount: amountInNPR,
-        bookingId: `TEMP-${Date.now()}`,
+        bookingId: tempBookingId,
         customerEmail,
         customerName,
       }) as any;

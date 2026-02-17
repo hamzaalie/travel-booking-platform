@@ -21,9 +21,18 @@ interface CurrencyState {
   error: string | null;
 }
 
+const getStoredCurrency = (): string => {
+  try {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('preferredCurrency') || 'NPR';
+    }
+  } catch { /* SSR or restricted context */ }
+  return 'NPR';
+};
+
 const initialState: CurrencyState = {
   currencies: [],
-  currentCurrency: localStorage.getItem('preferredCurrency') || 'NPR',
+  currentCurrency: getStoredCurrency(),
   currencyInfo: null,
   exchangeRates: {},
   isLoading: false,
@@ -76,7 +85,11 @@ const currencySlice = createSlice({
   reducers: {
     setCurrency: (state, action: PayloadAction<string>) => {
       state.currentCurrency = action.payload;
-      localStorage.setItem('preferredCurrency', action.payload);
+      try {
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('preferredCurrency', action.payload);
+        }
+      } catch { /* SSR or restricted context */ }
       
       // Find currency info
       const currencyInfo = state.currencies.find(c => c.code === action.payload);
@@ -120,7 +133,12 @@ const currencySlice = createSlice({
       // Detect currency
       .addCase(detectCurrency.fulfilled, (state, action) => {
         // Only set if user hasn't manually chosen a currency
-        const storedCurrency = localStorage.getItem('preferredCurrency');
+        let storedCurrency: string | null = null;
+        try {
+          if (typeof window !== 'undefined') {
+            storedCurrency = localStorage.getItem('preferredCurrency');
+          }
+        } catch { /* ignore */ }
         if (!storedCurrency) {
           state.currentCurrency = action.payload.currencyCode;
           if (action.payload.details) {
@@ -160,8 +178,16 @@ export const convertPrice = (
 
   const rates = Object.keys(exchangeRates).length > 0 ? exchangeRates : fallbackRates;
 
-  const sourceRate = rates[sourceCurrency] || 1;
-  const targetRate = rates[targetCurrency] || 1;
+  const sourceRate = rates[sourceCurrency];
+  const targetRate = rates[targetCurrency];
+
+  if (sourceRate === undefined || targetRate === undefined) {
+    console.warn(`Missing exchange rate for ${sourceRate === undefined ? sourceCurrency : targetCurrency}`);
+    // Fall back to showing the original amount with target symbol
+    const currencyInfo = currencies.find(c => c.code === targetCurrency);
+    const symbol = currencyInfo?.symbol || targetCurrency;
+    return `${symbol} ${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  }
 
   // Cross-rate conversion: source → base (NPR) → target
   const convertedAmount = amount * (targetRate / sourceRate);

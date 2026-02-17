@@ -16,7 +16,8 @@ const getApiUrl = (): string => {
 };
 
 const API_URL = getApiUrl();
-console.log('API URL:', API_URL); // Debug logging
+export const API_BASE_URL = API_URL;
+if (import.meta.env.DEV) console.log('API URL:', API_URL);
 
 class ApiService {
   private client: AxiosInstance;
@@ -232,9 +233,7 @@ export const agentApi = {
     api.get('/agent/documents'),
 
   uploadDocuments: (formData: FormData) =>
-    api.post('/agent/documents', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    }),
+    api.post('/agent/documents', formData),
 
   deleteDocument: (id: string) =>
     api.delete(`/agent/documents/${id}`),

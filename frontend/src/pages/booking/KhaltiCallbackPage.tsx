@@ -19,9 +19,8 @@ export default function KhaltiCallbackPage() {
         const transactionId = searchParams.get('transaction_id') || searchParams.get('tidx');
         const statusParam = searchParams.get('status');
         const purchaseOrderId = searchParams.get('purchase_order_id');
-        const amount = searchParams.get('amount');
 
-        console.log('Khalti callback params:', { pidx, transactionId, statusParam, purchaseOrderId, amount });
+        if (import.meta.env.DEV) console.log('Khalti callback params:', { pidx, transactionId, statusParam, purchaseOrderId });
 
         // Check for cancelled/failed status
         if (statusParam === 'Canceled' || statusParam === 'User canceled' || statusParam === 'Expired') {
@@ -43,10 +42,15 @@ export default function KhaltiCallbackPage() {
 
         const bookingData = JSON.parse(pendingBookingStr);
 
-        // Verify payment with Khalti Lookup API
-        const verifyResponse = await paymentApi.verifyKhalti(pidx, bookingData.tempBookingId || purchaseOrderId || 'TEMP') as any;
+        const orderId = bookingData.tempBookingId || purchaseOrderId;
+        if (!orderId) {
+          throw new Error('Missing order id for Khalti verification');
+        }
 
-        console.log('Khalti verify response:', verifyResponse.data);
+        // Verify payment with Khalti Lookup API
+        const verifyResponse = await paymentApi.verifyKhalti(pidx, orderId) as any;
+
+        if (import.meta.env.DEV) console.log('Khalti verify response:', verifyResponse.data);
 
         if (!verifyResponse.data.success) {
           throw new Error(`Payment verification failed: ${verifyResponse.data.status || 'Unknown error'}`);

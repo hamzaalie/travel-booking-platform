@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CheckCircle, Loader2, XCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -9,6 +9,11 @@ export default function EsimPaymentCallbackPage() {
   const [searchParams] = useSearchParams();
   const [status, setStatus] = useState<'processing' | 'issuing' | 'success' | 'error'>('processing');
   const [errorMessage, setErrorMessage] = useState('');
+  const redirectTimerRef = useRef<ReturnType<typeof setTimeout>>();
+
+  useEffect(() => {
+    return () => { if (redirectTimerRef.current) clearTimeout(redirectTimerRef.current); };
+  }, []);
 
   useEffect(() => {
     const processPayment = async () => {
@@ -68,7 +73,7 @@ export default function EsimPaymentCallbackPage() {
         toast.success('eSIM purchased successfully!');
 
         // Redirect to success page after a moment
-        setTimeout(() => {
+        redirectTimerRef.current = setTimeout(() => {
           navigate('/esim/order/success', {
             state: {
               orderId: esimData.orderId,

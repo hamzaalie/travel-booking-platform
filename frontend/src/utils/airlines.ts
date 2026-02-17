@@ -178,7 +178,10 @@ export const airlineData: Record<string, AirlineInfo> = {
  * Get airline information by code
  */
 export function getAirlineInfo(code: string): AirlineInfo {
-  const upperCode = code?.toUpperCase() || '';
+  if (!code || !code.trim()) {
+    return { code: 'Unknown', name: 'Unknown Airline' };
+  }
+  const upperCode = code.toUpperCase();
   return airlineData[upperCode] || { code: upperCode, name: upperCode };
 }
 
@@ -190,8 +193,7 @@ export function getAirlineName(code: string): string {
 }
 
 /**
- * Get airline logo URL
- * Uses multiple fallback sources for airline logos
+ * Get airline logo URL from pics.avs.io
  */
 export function getAirlineLogo(code: string, size: 'small' | 'medium' | 'large' = 'medium'): string {
   const upperCode = code?.toUpperCase() || '';

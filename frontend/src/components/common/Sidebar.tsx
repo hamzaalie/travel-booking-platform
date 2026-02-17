@@ -89,6 +89,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
           {onClose && (
             <button
               onClick={onClose}
+              aria-label="Close sidebar"
               className="lg:hidden p-1 rounded-md hover:bg-gray-100 text-gray-500"
             >
               <X className="h-5 w-5" />

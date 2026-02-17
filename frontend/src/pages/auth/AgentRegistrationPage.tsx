@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Upload, Building, User, CreditCard, FileText, Globe, X, Check } from 'lucide-react';
 import toast from 'react-hot-toast';

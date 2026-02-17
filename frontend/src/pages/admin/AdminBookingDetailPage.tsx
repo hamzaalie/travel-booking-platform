@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { bookingApi, adminApi } from '@/services/api';
+import { bookingApi, adminApi, API_BASE_URL } from '@/services/api';
 import {
   Plane,
   Calendar,
@@ -271,7 +271,7 @@ export default function AdminBookingDetailPage() {
         {/* Quick Actions */}
         <div className="flex items-center gap-2">
           <button
-            onClick={() => window.open(`/api/bookings/${id}/ticket/download`, '_blank')}
+            onClick={() => window.open(`${API_BASE_URL}/bookings/${id}/ticket/download`, '_blank')}
             className="btn btn-secondary text-sm flex items-center gap-1.5"
             title="Download E-Ticket"
           >
@@ -279,7 +279,7 @@ export default function AdminBookingDetailPage() {
             E-Ticket
           </button>
           <button
-            onClick={() => window.open(`/api/bookings/${id}/invoice/download`, '_blank')}
+            onClick={() => window.open(`${API_BASE_URL}/bookings/${id}/invoice/download`, '_blank')}
             className="btn btn-secondary text-sm flex items-center gap-1.5"
             title="Download Invoice"
           >
@@ -450,7 +450,7 @@ export default function AdminBookingDetailPage() {
                           {pax.gender && (
                             <div>
                               <span className="text-gray-500">Gender</span>
-                              <p className="font-medium">{pax.gender === 'M' ? 'Male' : 'Female'}</p>
+                              <p className="font-medium">{pax.gender === 'M' ? 'Male' : pax.gender === 'F' ? 'Female' : pax.gender}</p>
                             </div>
                           )}
                           {pax.nationality && (
@@ -671,14 +671,14 @@ export default function AdminBookingDetailPage() {
               <p className="text-sm text-gray-500 mb-4">Download e-ticket, invoice, or resend to customer</p>
               <div className="space-y-2">
                 <button
-                  onClick={() => window.open(`/api/bookings/${id}/ticket/download`, '_blank')}
+                  onClick={() => window.open(`${API_BASE_URL}/bookings/${id}/ticket/download`, '_blank')}
                   className="w-full btn btn-secondary text-sm flex items-center justify-center gap-2"
                 >
                   <Download className="h-4 w-4" />
                   Download E-Ticket
                 </button>
                 <button
-                  onClick={() => window.open(`/api/bookings/${id}/invoice/download`, '_blank')}
+                  onClick={() => window.open(`${API_BASE_URL}/bookings/${id}/invoice/download`, '_blank')}
                   className="w-full btn btn-secondary text-sm flex items-center justify-center gap-2"
                 >
                   <Printer className="h-4 w-4" />
@@ -872,7 +872,7 @@ export default function AdminBookingDetailPage() {
                       </span>
                     </div>
                     {req.reason && <p className="text-sm text-gray-600">{req.reason}</p>}
-                    {req.penaltyAmount && (
+                    {req.penaltyAmount != null && Number(req.penaltyAmount) >= 0 && (
                       <p className="text-sm text-red-600 mt-1">Penalty: NPR {Number(req.penaltyAmount).toLocaleString()}</p>
                     )}
                     <p className="text-xs text-gray-400 mt-2">{new Date(req.createdAt).toLocaleString()}</p>

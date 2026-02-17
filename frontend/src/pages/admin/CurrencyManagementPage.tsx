@@ -109,6 +109,10 @@ export default function CurrencyManagementPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formData.exchangeRate || formData.exchangeRate <= 0) {
+      toast.error('Exchange rate must be greater than 0');
+      return;
+    }
     if (selectedCurrency) {
       updateMutation.mutate({ id: selectedCurrency.id, data: formData });
     } else {
@@ -249,6 +253,7 @@ export default function CurrencyManagementPage() {
                           {!currency.isDefault && currency.isActive && (
                             <button
                               onClick={() => setDefaultMutation.mutate(currency.id)}
+                              disabled={setDefaultMutation.isPending}
                               className="p-1 text-gray-400 hover:text-green-600"
                               title="Set as Default"
                             >

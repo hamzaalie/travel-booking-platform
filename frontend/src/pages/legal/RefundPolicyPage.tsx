@@ -153,10 +153,10 @@ export default function RefundPolicyPage() {
               <div className="mt-6 p-4 bg-gray-50 rounded-lg">
                 <p className="text-gray-700">
                   <strong>Need help?</strong> Contact our support team at 
-                  <a href="mailto:support@Peakpass Travel.com" className="text-primary-950 ml-1">
-                    support@Peakpass Travel.com
+                  <a href="mailto:support@peakpasstravel.com" className="text-primary-950 ml-1">
+                    support@peakpasstravel.com
                   </a>
-                  {' '}or call +1 (234) 567-890
+                  {' '}or call +977 1234567890
                 </p>
               </div>
             </div>

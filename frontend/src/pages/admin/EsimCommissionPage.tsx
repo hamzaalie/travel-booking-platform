@@ -364,7 +364,7 @@ export default function EsimCommissionPage() {
                   <input
                     type="number"
                     value={formData.priority}
-                    onChange={(e) => setFormData({ ...formData, priority: parseInt(e.target.value) })}
+                    onChange={(e) => setFormData({ ...formData, priority: parseInt(e.target.value) || 0 })}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2"
                   />
                 </div>
@@ -388,7 +388,7 @@ export default function EsimCommissionPage() {
                     type="number"
                     step="0.01"
                     value={formData.markupValue}
-                    onChange={(e) => setFormData({ ...formData, markupValue: parseFloat(e.target.value) })}
+                    onChange={(e) => setFormData({ ...formData, markupValue: parseFloat(e.target.value) || 0 })}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2"
                   />
                 </div>
@@ -412,7 +412,7 @@ export default function EsimCommissionPage() {
                     type="number"
                     step="0.01"
                     value={formData.commissionValue}
-                    onChange={(e) => setFormData({ ...formData, commissionValue: parseFloat(e.target.value) })}
+                    onChange={(e) => setFormData({ ...formData, commissionValue: parseFloat(e.target.value) || 0 })}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2"
                   />
                 </div>
@@ -442,7 +442,7 @@ export default function EsimCommissionPage() {
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') {
                           e.preventDefault();
-                          if (countryInput.trim()) {
+                          if (countryInput.trim() && !formData.countries.includes(countryInput.trim())) {
                             setFormData({ ...formData, countries: [...formData.countries, countryInput.trim()] });
                             setCountryInput('');
                           }

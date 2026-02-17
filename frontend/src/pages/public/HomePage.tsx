@@ -97,7 +97,7 @@ export default function HomePage() {
             </div>
 
             <div className="card card-hover text-center group">
-              <div className="bg-gradient-to-br from-accent-500 to-accent-500 p-4 rounded-2xl w-20 h-20 mx-auto mb-6 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110">
+              <div className="bg-gradient-to-br from-accent-500 to-accent-600 p-4 rounded-2xl w-20 h-20 mx-auto mb-6 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110">
                 <TrendingUp className="h-10 w-10 text-white" />
               </div>
               <h3 className="text-xl font-display font-bold mb-3">Dynamic Pricing</h3>

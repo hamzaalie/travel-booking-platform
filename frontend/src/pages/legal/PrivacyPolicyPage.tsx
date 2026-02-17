@@ -105,7 +105,7 @@ export default function PrivacyPolicyPage() {
               </p>
               <div className="mt-4 p-4 bg-gray-50 rounded-lg">
                 <p className="text-gray-700 font-medium">Peakpass Travel Privacy Team</p>
-                <p className="text-gray-600">Email: privacy@Peakpass Travel.com</p>
+                <p className="text-gray-600">Email: privacy@peakpasstravel.com</p>
                 <p className="text-gray-600">Address: 123 Travel Street, Suite 100, New York, NY 10001</p>
               </div>
             </div>

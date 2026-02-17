@@ -15,9 +15,10 @@ export default function FlightSearchLoader({
       <div className="relative mb-8">
         <div className="w-28 h-28 rounded-full bg-accent-50 flex items-center justify-center animate-pulse">
           <img
-            src="/images/Peakpass Travel Brand Kit/Peakpass Logo Icon.png"
+            src="/images/Peakpass%20Travel%20Brand%20Kit/Peakpass%20Logo%20Icon.png"
             alt="Peakpass"
             className="w-16 h-16 object-contain"
+            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
           />
         </div>
         {/* Orbiting plane */}

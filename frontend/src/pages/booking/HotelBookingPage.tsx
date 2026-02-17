@@ -72,7 +72,10 @@ export default function HotelBookingPage() {
           setGuestInfo(prev.guestInfo);
           if (prev.contactInfo) setContactInfo(prev.contactInfo);
           if (prev.specialRequests) setSpecialRequests(prev.specialRequests);
-          if (prev.paymentMethod) setPaymentMethod(prev.paymentMethod);
+          const validMethods = ['STRIPE', 'ESEWA', 'KHALTI', 'WALLET'];
+          if (prev.paymentMethod && validMethods.includes(prev.paymentMethod)) {
+            setPaymentMethod(prev.paymentMethod);
+          }
         }
       } catch (e) { /* ignore */ }
     }
@@ -440,7 +443,7 @@ export default function HotelBookingPage() {
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Room Rate</span>
                   <span className="font-medium text-gray-900">
-                    {formatPrice(parseFloat(offerData.price.base || offerData.price.total), offerData.price.currency)}
+                    {formatPrice(parseFloat(offerData.price.base || offerData.price.total || '0'), offerData.price.currency)}
                   </span>
                 </div>
                 {offerData.price.taxes && offerData.price.taxes > 0 && (

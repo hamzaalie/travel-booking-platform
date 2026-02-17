@@ -1,5 +1,7 @@
+import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useParams, Link } from 'react-router-dom';
+import DOMPurify from 'dompurify';
 import { contentApi } from '@/services/api';
 import { ArrowLeft, FileText } from 'lucide-react';
 
@@ -26,6 +28,13 @@ export default function StaticPage() {
     );
   }
 
+  useEffect(() => {
+    if (page?.metaTitle) {
+      document.title = page.metaTitle;
+    }
+    return () => { document.title = 'Peakpass Travel'; };
+  }, [page?.metaTitle]);
+
   if (error || !page) {
     return (
       <div className="container mx-auto px-4 py-12">
@@ -44,10 +53,7 @@ export default function StaticPage() {
 
   return (
     <>
-      {/* Update page title for SEO */}
-      {page.metaTitle && (
-        <title>{page.metaTitle}</title>
-      )}
+      {/* Update page title for SEO via useEffect */}
       
       <div className="container mx-auto px-4 py-8">
         <article className="max-w-4xl mx-auto">
@@ -60,7 +66,7 @@ export default function StaticPage() {
 
           <div 
             className="prose prose-lg max-w-none prose-headings:font-bold prose-headings:text-gray-900 prose-p:text-gray-700 prose-a:text-primary-950 prose-a:hover:text-primary-950"
-            dangerouslySetInnerHTML={{ __html: page.content }}
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(page.content) }}
           />
         </article>
       </div>

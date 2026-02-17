@@ -60,10 +60,21 @@ export default function WalletPage() {
         toast.error('File size must be less than 5MB');
         return;
       }
+      const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'application/pdf'];
+      if (!allowedTypes.includes(file.type)) {
+        toast.error('Only PNG, JPEG, and PDF files are allowed');
+        return;
+      }
       setPaymentProofFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPaymentProofPreview(reader.result as string);
+        if (typeof reader.result === 'string') {
+          setPaymentProofPreview(reader.result);
+        }
+      };
+      reader.onerror = () => {
+        toast.error('Failed to read file');
+        setPaymentProofFile(null);
       };
       reader.readAsDataURL(file);
     }

@@ -1,8 +1,15 @@
-import { useState } from 'react';
+import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
+import DOMPurify from 'dompurify';
 import { contentApi } from '@/services/api';
 import { Calendar, User, Tag, ArrowLeft, Clock } from 'lucide-react';
+
+/** Strip HTML tags and return plain text for safe preview */
+function stripHtml(html: string): string {
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  return doc.body.textContent || '';
+}
 
 interface BlogPost {
   id: string;
@@ -20,7 +27,16 @@ interface BlogPost {
 }
 
 export default function BlogPage() {
-  const [selectedTag, setSelectedTag] = useState<string>('');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const selectedTag = searchParams.get('tag') || '';
+
+  const setSelectedTag = (tag: string) => {
+    if (tag) {
+      setSearchParams({ tag });
+    } else {
+      setSearchParams({});
+    }
+  };
 
   const { data: posts, isLoading } = useQuery({
     queryKey: ['blog-posts', selectedTag],
@@ -33,13 +49,25 @@ export default function BlogPage() {
     },
   });
 
-  // Get unique tags from all posts
-  const allTags = posts?.reduce((tags: string[], post: BlogPost) => {
-    post.tags?.forEach((tag) => {
-      if (!tags.includes(tag)) tags.push(tag);
-    });
-    return tags;
-  }, []) || [];
+  // Fetch ALL posts (unfiltered) to extract the full tag list
+  const { data: allPosts } = useQuery({
+    queryKey: ['blog-posts-all'],
+    queryFn: async () => {
+      const response: any = await contentApi.getBlogPosts({});
+      return response.data || [];
+    },
+    staleTime: 60_000,
+  });
+
+  // Get unique tags from ALL posts, not just filtered ones
+  const allTags = useMemo(() => {
+    return (allPosts || []).reduce((tags: string[], post: BlogPost) => {
+      post.tags?.forEach((tag) => {
+        if (!tags.includes(tag)) tags.push(tag);
+      });
+      return tags;
+    }, []);
+  }, [allPosts]);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -127,7 +155,7 @@ export default function BlogPage() {
                 </h2>
 
                 <p className="text-gray-600 line-clamp-3 mb-4">
-                  {post.excerpt || post.content.slice(0, 150) + '...'}
+                  {post.excerpt || stripHtml(post.content).slice(0, 150) + '...'}
                 </p>
 
                 {post.tags?.length > 0 && (
@@ -244,7 +272,7 @@ export function BlogPostPage() {
 
         <div 
           className="prose prose-lg max-w-none"
-          dangerouslySetInnerHTML={{ __html: post.content }}
+          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) }}
         />
       </article>
     </div>

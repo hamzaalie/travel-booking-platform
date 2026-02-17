@@ -45,7 +45,8 @@ function getStatusBadge(status: string) {
 export default function AgentDocumentsPage() {
   const queryClient = useQueryClient();
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [_uploadField, setUploadField] = useState<string | null>(null);
+  // Upload field tracking for future batch upload UI
+  const [, setUploadField] = useState<string | null>(null);
 
   const { data: documents, isLoading } = useQuery({
     queryKey: ['agentDocuments'],
