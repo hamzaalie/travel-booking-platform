@@ -69,6 +69,29 @@ export default function PaymentPage() {
     }
   };
 
+  // Get the source currency of the booking
+  const getSourceCurrency = () => {
+    if (!bookingData) return 'USD';
+    if (bookingData.type === 'HOTEL') return bookingData.offer?.price?.currency || 'USD';
+    if (bookingData.type === 'CAR') return bookingData.car?.currency || 'USD';
+    return bookingData.flightOffer?.price?.currency || 'USD';
+  };
+
+  // Convert amount from source currency to NPR for local payment gateways (eSewa, Khalti)
+  const convertToNPR = (amount: number): number => {
+    const sourceCurrency = getSourceCurrency();
+    if (sourceCurrency === 'NPR') return amount;
+
+    const fallbackRates: Record<string, number> = {
+      NPR: 1, USD: 0.0075, EUR: 0.0069, GBP: 0.0059, INR: 0.63,
+    };
+    const rates = Object.keys(exchangeRates).length > 0 ? exchangeRates : fallbackRates;
+    const sourceRate = rates[sourceCurrency] || 1;
+    // sourceRate is how much 1 NPR equals in source currency
+    // So amount_in_NPR = amount_in_source / sourceRate
+    return Math.round(amount / sourceRate);
+  };
+
   const handleWalletPayment = async () => {
     setIsProcessing(true);
 
@@ -236,9 +259,10 @@ export default function PaymentPage() {
       const tempBookingId = `TEMP-${Date.now()}`;
       sessionStorage.setItem('pendingBooking', JSON.stringify({ ...bookingData, tempBookingId }));
 
-      // Initiate eSewa payment
+      // Initiate eSewa payment — eSewa only accepts NPR
+      const amountInNPR = convertToNPR(total);
       const response = await paymentApi.initiateEsewa({
-        amount: total,
+        amount: amountInNPR,
         bookingId: tempBookingId,
         customerEmail,
         customerName,
@@ -305,9 +329,10 @@ export default function PaymentPage() {
       // Store booking data for after payment callback
       sessionStorage.setItem('pendingBooking', JSON.stringify(bookingData));
 
-      // Initiate Khalti payment
+      // Initiate Khalti payment — Khalti only accepts NPR
+      const amountInNPR = convertToNPR(total);
       const response = await paymentApi.initiateKhalti({
-        amount: total,
+        amount: amountInNPR,
         bookingId: `TEMP-${Date.now()}`,
         customerEmail,
         customerName,
