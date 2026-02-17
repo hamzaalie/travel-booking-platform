@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
-import { bookingApi } from '@/services/api';
+import { bookingApi, esimApi } from '@/services/api';
 import { Link } from 'react-router-dom';
-import { Plane, Clock, CheckCircle, XCircle, Search } from 'lucide-react';
+import { Plane, Clock, CheckCircle, XCircle, Search, Smartphone } from 'lucide-react';
 
 export default function CustomerDashboard() {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -13,6 +13,14 @@ export default function CustomerDashboard() {
     queryFn: async () => {
       const response: any = await bookingApi.getMyBookings();
       return response.data;
+    },
+  });
+
+  const { data: esimOrders } = useQuery({
+    queryKey: ['customerEsimOrders'],
+    queryFn: async () => {
+      const response: any = await esimApi.getOrders();
+      return response.data?.data || response.data || [];
     },
   });
 
@@ -78,12 +86,17 @@ export default function CustomerDashboard() {
           </div>
         </Link>
 
-        <div className="card bg-gradient-to-br from-primary-500 to-primary-950 text-white">
-          <h3 className="font-semibold text-lg mb-2">Total Spent</h3>
-          <p className="text-2xl md:text-3xl font-bold">
-            ${bookings?.reduce((sum: number, b: any) => sum + parseFloat(b.totalAmount || 0), 0).toFixed(2) || '0.00'}
-          </p>
-        </div>
+        <Link to="/customer/esim" className="card hover:shadow-lg transition-shadow cursor-pointer">
+          <div className="flex items-center">
+            <div className="bg-green-100 p-3 rounded-full mr-4">
+              <Smartphone className="h-6 w-6 text-green-700" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900">My eSIMs</h3>
+              <p className="text-sm text-gray-600">{esimOrders?.length || 0} orders</p>
+            </div>
+          </div>
+        </Link>
       </div>
 
       {/* Recent Bookings */}

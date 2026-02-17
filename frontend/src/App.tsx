@@ -42,6 +42,8 @@ import RefundPolicyPage from './pages/legal/RefundPolicyPage';
 import CustomerDashboard from './pages/customer/CustomerDashboard';
 import MyBookingsPage from './pages/customer/MyBookingsPage';
 import BookingDetailsPage from './pages/customer/BookingDetailsPage';
+import MyEsimsPage from './pages/customer/MyEsimsPage';
+import EsimOrderDetailsPage from './pages/customer/EsimOrderDetailsPage';
 import CancellationRequestPage from './pages/shared/CancellationRequestPage';
 
 // Agent Pages
@@ -146,6 +148,8 @@ function App() {
         <Route path="bookings" element={<MyBookingsPage />} />
         <Route path="bookings/:id/cancel" element={<CancellationRequestPage />} />
         <Route path="bookings/:id" element={<BookingDetailsPage />} />
+        <Route path="esim" element={<MyEsimsPage />} />
+        <Route path="esim/:id" element={<EsimOrderDetailsPage />} />
       </Route>
 
       {/* Agent Routes */}

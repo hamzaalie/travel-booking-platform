@@ -73,6 +73,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
     return [
       { path: '/customer', icon: LayoutDashboard, label: 'Dashboard' },
       { path: '/customer/bookings', icon: Plane, label: 'My Bookings' },
+      { path: '/customer/esim', icon: Smartphone, label: 'My eSIMs' },
     ];
   };
 
