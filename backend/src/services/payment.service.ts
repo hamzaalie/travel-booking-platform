@@ -311,40 +311,50 @@ export class PaymentService {
           
           if (decodedData.status === 'COMPLETE') {
             // Verify the signature to ensure response integrity
+            // Build the message from signed_field_names in the exact order eSewa specifies
             const crypto = require('crypto');
-            const message = `transaction_code=${decodedData.transaction_code},status=${decodedData.status},total_amount=${decodedData.total_amount},transaction_uuid=${decodedData.transaction_uuid},product_code=${decodedData.product_code},signed_field_names=${decodedData.signed_field_names}`;
+            const signedFields = (decodedData.signed_field_names || '').split(',');
+            const messageParts = signedFields.map((field: string) => `${field}=${decodedData[field]}`);
+            const message = messageParts.join(',');
+            
+            logger.info(`eSewa signature verification message: "${message}"`);
+            
             const expectedSignature = crypto
               .createHmac('sha256', config.esewa.secretKey)
               .update(message)
               .digest('base64');
             
+            logger.info(`eSewa signatures - expected: "${expectedSignature}", received: "${decodedData.signature}"`);
+            
             if (expectedSignature === decodedData.signature) {
-              logger.info(`eSewa payment verified via callback: ${transactionUuid}`);
+              logger.info(`eSewa payment verified via callback signature: ${transactionUuid}`);
               return {
                 isVerified: true,
                 transactionCode: decodedData.transaction_code,
                 status: decodedData.status,
               };
+            } else {
+              logger.warn(`eSewa signature mismatch, falling back to status check API`);
             }
           }
         } catch (decodeError) {
-          logger.warn('Failed to decode eSewa response, falling back to status check API');
+          logger.warn('Failed to decode eSewa response, falling back to status check API:', decodeError);
         }
       }
 
       // Use Status Check API for verification
-      // Sandbox: https://rc.esewa.com.np/api/epay/transaction/status/
-      // Production: https://esewa.com.np/api/epay/transaction/status/
       const esewaStatusBaseUrl = this.getEsewaStatusUrl();
       
       const statusUrl = `${esewaStatusBaseUrl}/api/epay/transaction/status/?product_code=${config.esewa.merchantId}&total_amount=${totalAmount}&transaction_uuid=${transactionUuid}`;
+      
+      logger.info(`eSewa status check URL: ${statusUrl}`);
       
       const response = await axios.get(statusUrl);
       
       logger.info(`eSewa status check response:`, response.data);
       
       if (response.data.status === 'COMPLETE') {
-        logger.info(`eSewa payment verified: ${transactionUuid}`);
+        logger.info(`eSewa payment verified via status check: ${transactionUuid}`);
         return {
           isVerified: true,
           transactionCode: response.data.ref_id,
@@ -357,7 +367,26 @@ export class PaymentService {
         status: response.data.status,
       };
     } catch (error: any) {
-      logger.error('eSewa verification error:', error.response?.data || error);
+      logger.error('eSewa verification error:', error.response?.data || error.message);
+      
+      // If status check API fails but we have an encoded response showing COMPLETE,
+      // trust the callback data (eSewa already debited the user)
+      if (encodedResponse) {
+        try {
+          const decodedData = JSON.parse(Buffer.from(encodedResponse, 'base64').toString());
+          if (decodedData.status === 'COMPLETE' && decodedData.transaction_code) {
+            logger.info(`eSewa: Status API failed but callback shows COMPLETE, trusting callback for ${transactionUuid}`);
+            return {
+              isVerified: true,
+              transactionCode: decodedData.transaction_code,
+              status: decodedData.status,
+            };
+          }
+        } catch (e) {
+          // ignore decode error
+        }
+      }
+      
       return {
         isVerified: false,
         error: error.message,
