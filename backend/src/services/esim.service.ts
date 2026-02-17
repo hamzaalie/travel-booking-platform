@@ -374,7 +374,7 @@ export class EsimService {
           totalAmount: product.price * quantity,
           currency: product.currency,
           status: 'PROCESSING',
-          externalOrderId: orderData.id,
+          externalOrderId: String(orderData.id),
           iccid: orderData.sims?.[0]?.iccid,
           qrCode: orderData.sims?.[0]?.qrcode || orderData.sims?.[0]?.qrcode_url,
           activationCode: orderData.sims?.[0]?.lpa,
