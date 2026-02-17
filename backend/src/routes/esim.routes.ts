@@ -3,6 +3,7 @@ import { asyncHandler } from '../middleware/error.middleware';
 import { authenticate, AuthRequest } from '../middleware/auth.middleware';
 import { authorizeAdmin } from '../middleware/authorization.middleware';
 import { esimService } from '../services/esim.service';
+import { logger } from '../config/logger';
 
 const router = Router();
 
@@ -81,17 +82,26 @@ router.post(
       });
     }
 
-    const result = await esimService.purchaseEsim(
-      req.user!.id,
-      productId,
-      quantity || 1
-    );
+    try {
+      const result = await esimService.purchaseEsim(
+        req.user!.id,
+        productId,
+        quantity || 1
+      );
 
-    res.json({
-      success: true,
-      message: 'eSIM purchased successfully',
-      data: result,
-    });
+      res.json({
+        success: true,
+        message: 'eSIM purchased successfully',
+        data: result,
+      });
+    } catch (error: any) {
+      const statusCode = error.statusCode || 500;
+      logger.error(`eSIM purchase route error: ${error.message}`, { statusCode, productId });
+      res.status(statusCode).json({
+        success: false,
+        error: error.message || 'Failed to purchase eSIM',
+      });
+    }
   })
 );
 

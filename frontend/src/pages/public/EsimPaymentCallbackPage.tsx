@@ -93,7 +93,10 @@ export default function EsimPaymentCallbackPage() {
       } catch (error: any) {
         console.error('eSIM payment callback error:', error);
         setStatus('error');
-        setErrorMessage(error.response?.data?.message || error.message || 'Payment or eSIM issuance failed');
+        // Extract the most useful error message from axios or generic errors
+        const backendMsg = error.response?.data?.error || error.response?.data?.message;
+        const displayMsg = backendMsg || error.message || 'Payment or eSIM issuance failed';
+        setErrorMessage(displayMsg);
         toast.error('eSIM purchase failed');
       }
     };

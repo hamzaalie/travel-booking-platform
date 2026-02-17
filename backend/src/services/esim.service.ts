@@ -319,19 +319,30 @@ export class EsimService {
     productId: string,
     quantity: number = 1
   ): Promise<EsimOrderResult> {
+    // Validate credentials are configured
+    if (!this.config.apiKey || !this.config.apiSecret) {
+      logger.error('eSIM purchase failed: ESIM_API_KEY or ESIM_API_SECRET not configured');
+      throw new AppError('eSIM service is not configured. Please contact support.', 503);
+    }
+
     try {
+      logger.info(`eSIM purchase started: userId=${userId}, productId=${productId}, qty=${quantity}`);
       await this.ensureAuthenticated();
+      logger.info(`eSIM auth OK, token present: ${!!this.accessToken}`);
 
       // Get product details
       const product = await this.getProductById(productId);
       if (!product) {
         throw new AppError('eSIM product not found', 404);
       }
+      logger.info(`eSIM product found: ${product.name} (${product.price} ${product.currency})`);
 
       // Place order with Airalo
       const orderFormData = new FormData();
       orderFormData.append('package_id', productId);
       orderFormData.append('quantity', String(quantity));
+
+      logger.info(`Placing Airalo order: package_id=${productId}, baseUrl=${this.config.baseUrl}`);
 
       const response = await axios.post(
         `${this.config.baseUrl}/orders`,
@@ -346,7 +357,15 @@ export class EsimService {
         }
       );
 
+      logger.info(`Airalo order response status: ${response.status}`);
       const orderData = response.data.data;
+
+      if (!orderData) {
+        logger.error('Airalo order response missing data:', JSON.stringify(response.data));
+        throw new AppError('Invalid response from eSIM provider', 502);
+      }
+
+      logger.info(`Airalo order created: id=${orderData.id}, sims=${JSON.stringify(orderData.sims?.length || 0)}`);
 
       // Create order in database
       const dbProduct = await prisma.esimProduct.upsert({
@@ -393,8 +412,28 @@ export class EsimService {
         status: 'PROCESSING',
       };
     } catch (error: any) {
-      logger.error('Failed to purchase eSIM:', error.message);
-      throw new AppError(error.message || 'Failed to purchase eSIM', 500);
+      // Extract detailed error info from Airalo API responses
+      const airaloError = error.response?.data;
+      const statusCode = error.response?.status;
+      const errorDetail = airaloError?.message || airaloError?.error || error.message;
+
+      logger.error('Failed to purchase eSIM:', {
+        message: error.message,
+        statusCode,
+        airaloResponse: airaloError ? JSON.stringify(airaloError) : 'N/A',
+        productId,
+        userId,
+      });
+
+      // Re-throw AppErrors as-is (e.g. 404 product not found)
+      if (error instanceof AppError) {
+        throw error;
+      }
+
+      throw new AppError(
+        `eSIM purchase failed: ${errorDetail || 'Unknown error'}`,
+        statusCode === 401 ? 401 : statusCode === 422 ? 422 : 500
+      );
     }
   }
 
