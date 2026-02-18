@@ -247,13 +247,18 @@ export class EsimService {
    */
   async getProductById(productId: string): Promise<EsimProduct | null> {
     try {
-      // Airalo doesn't have a single-package endpoint; search in full list
-      // First try from database cache
+      // Always fetch fresh price from Airalo API
+      const { products } = await this.getProducts({ limit: 500 });
+      const liveProduct = products.find(p => p.id === productId);
+      if (liveProduct) return liveProduct;
+
+      // If not found in live API, try database cache as last resort
       const cached = await prisma.esimProduct.findUnique({
         where: { externalId: productId },
       });
 
       if (cached) {
+        logger.warn(`Product ${productId} not found in live API, using DB cache`);
         return {
           id: cached.externalId,
           name: cached.name,
@@ -267,9 +272,7 @@ export class EsimService {
         };
       }
 
-      // Fallback: fetch all products and find by ID
-      const { products } = await this.getProducts({ limit: 500 });
-      return products.find(p => p.id === productId) || null;
+      return null;
     } catch (error: any) {
       logger.error('Failed to fetch eSIM product:', error.message);
       return null;
@@ -370,7 +373,16 @@ export class EsimService {
       // Create order in database
       const dbProduct = await prisma.esimProduct.upsert({
         where: { externalId: productId },
-        update: {},
+        update: {
+          name: product.name,
+          description: product.description,
+          countries: product.countries,
+          regions: product.regions,
+          dataAmount: product.dataAmount,
+          validityDays: product.validityDays,
+          price: product.price,
+          currency: product.currency,
+        },
         create: {
           externalId: productId,
           name: product.name,
