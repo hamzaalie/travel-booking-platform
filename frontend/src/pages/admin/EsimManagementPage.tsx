@@ -374,14 +374,6 @@ export default function EsimManagementPage() {
                 </div>
               )}
 
-              {/* Expiry */}
-              {selectedOrder.expiresAt && (
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Expires</span>
-                  <span>{new Date(selectedOrder.expiresAt).toLocaleString()}</span>
-                </div>
-              )}
-
               {/* Status Update Actions */}
               {(selectedOrder.status === 'PENDING' || selectedOrder.status === 'PROCESSING') && (
                 <div className="border-t pt-4">
