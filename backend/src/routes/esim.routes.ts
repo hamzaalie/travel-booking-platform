@@ -157,10 +157,11 @@ router.get(
   authenticate,
   authorizeAdmin(),
   asyncHandler(async (req: AuthRequest, res) => {
-    const { status, page, limit } = req.query;
+    const { status, page, limit, search } = req.query;
 
     const result = await esimService.getAllOrders({
       status: status as string,
+      search: search as string,
       page: page ? parseInt(page as string) : undefined,
       limit: limit ? parseInt(limit as string) : undefined,
     });

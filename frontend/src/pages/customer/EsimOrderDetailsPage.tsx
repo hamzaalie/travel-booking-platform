@@ -95,7 +95,7 @@ export default function EsimOrderDetailsPage() {
   }
 
   const cfg = statusConfig[order.status] || statusConfig.PENDING;
-  const isActive = ['COMPLETED', 'ACTIVATED'].includes(order.status);
+  const isActive = ['PROCESSING', 'COMPLETED', 'ACTIVATED'].includes(order.status);
 
   return (
     <div className="space-y-6">

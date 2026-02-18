@@ -88,13 +88,14 @@ export default function PaymentSuccessPage() {
         sessionStorage.removeItem('selectedFlight');
         sessionStorage.removeItem('searchData');
 
-        setBookingId(bookingResponse.data.id || bookingResponse.data.hotelBooking?.id);
+        const newBookingId = bookingResponse.data?.id || bookingResponse.data?.booking?.id || bookingResponse.data?.hotelBooking?.id;
+        setBookingId(newBookingId);
         setStatus('success');
         toast.success('Payment successful! Your booking is confirmed.');
 
         // Redirect after 3 seconds
         setTimeout(() => {
-          navigate(`/customer/bookings/${bookingResponse.data.id || bookingResponse.data.hotelBooking?.id}`);
+          navigate(`/customer/bookings/${newBookingId}`);
         }, 3000);
 
       } catch (error: any) {

@@ -7,17 +7,23 @@ import toast from 'react-hot-toast';
 interface EsimOrder {
   id: string;
   productId: string;
-  productName: string;
-  country: string;
-  dataAmount: string;
-  validity: number;
-  price: number;
+  totalAmount: number;
   currency: string;
   status: string;
   activationCode: string | null;
   qrCode: string | null;
-  expiresAt: string | null;
+  iccid: string | null;
+  externalOrderId: string | null;
   createdAt: string;
+  updatedAt: string;
+  product: {
+    name: string;
+    countries: string[];
+    dataAmount: string;
+    validityDays: number;
+    price: number;
+    currency: string;
+  };
   user: {
     firstName: string;
     lastName: string;
@@ -48,8 +54,8 @@ export default function EsimManagementPage() {
       if (statusFilter !== 'all') params.status = statusFilter;
       if (searchTerm) params.search = searchTerm;
       
-      const response: any = await esimApi.getOrders(params);
-      return response.data;
+      const response: any = await esimApi.getAdminOrders(params);
+      return response.data?.data || response.data;
     },
   });
 
@@ -71,7 +77,7 @@ export default function EsimManagementPage() {
     activated: data?.orders?.filter((o: EsimOrder) => o.status === 'ACTIVATED').length || 0,
     pending: data?.orders?.filter((o: EsimOrder) => o.status === 'PENDING').length || 0,
     revenue: data?.orders?.reduce((sum: number, o: EsimOrder) => 
-      o.status === 'ACTIVATED' ? sum + o.price : sum, 0) || 0,
+      o.status === 'ACTIVATED' ? sum + Number(o.totalAmount) : sum, 0) || 0,
   };
 
   return (
@@ -228,20 +234,20 @@ export default function EsimManagementPage() {
                     </td>
                     <td className="px-4 py-3">
                       <div className="text-sm">
-                        <div className="font-medium text-gray-900">{order.productName}</div>
+                        <div className="font-medium text-gray-900">{order.product?.name}</div>
                         <div className="text-gray-500">
-                          {order.dataAmount} • {order.validity} days
+                          {order.product?.dataAmount} • {order.product?.validityDays} days
                         </div>
                       </div>
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-1 text-sm">
                         <Globe className="h-4 w-4 text-gray-400" />
-                        {order.country}
+                        {(order.product?.countries || []).join(', ')}
                       </div>
                     </td>
                     <td className="px-4 py-3 text-sm font-medium">
-                      {order.currency} {order.price.toLocaleString()}
+                      {order.currency} {Number(order.totalAmount).toLocaleString()}
                     </td>
                     <td className="px-4 py-3">
                       <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${STATUS_COLORS[order.status] || 'bg-gray-100'}`}>
@@ -319,9 +325,9 @@ export default function EsimManagementPage() {
               <div className="flex justify-between">
                 <span className="text-gray-500">Product</span>
                 <div className="text-right">
-                  <div className="font-medium">{selectedOrder.productName}</div>
+                  <div className="font-medium">{selectedOrder.product?.name}</div>
                   <div className="text-sm text-gray-500">
-                    {selectedOrder.dataAmount} • {selectedOrder.validity} days
+                    {selectedOrder.product?.dataAmount} • {selectedOrder.product?.validityDays} days
                   </div>
                 </div>
               </div>
@@ -329,14 +335,14 @@ export default function EsimManagementPage() {
               {/* Country */}
               <div className="flex justify-between">
                 <span className="text-gray-500">Country</span>
-                <span className="font-medium">{selectedOrder.country}</span>
+                <span className="font-medium">{(selectedOrder.product?.countries || []).join(', ')}</span>
               </div>
 
               {/* Price */}
               <div className="flex justify-between">
                 <span className="text-gray-500">Price</span>
                 <span className="font-medium">
-                  {selectedOrder.currency} {selectedOrder.price.toLocaleString()}
+                  {selectedOrder.currency} {Number(selectedOrder.totalAmount).toLocaleString()}
                 </span>
               </div>
 

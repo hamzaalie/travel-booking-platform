@@ -35,6 +35,7 @@ model User {
   createdTransactions WalletTransaction[] @relation("TransactionCreator")
   processedFundRequests FundRequest[] @relation("FundRequestProcessor")
   processedRefunds  Refund[] @relation("RefundProcessor")
+  esimOrders        EsimOrder[]
 
   @@index([email])
   @@index([role])
@@ -670,6 +671,7 @@ model EsimOrder {
 
   // Relations
   product EsimProduct @relation(fields: [productId], references: [id])
+  user    User        @relation(fields: [userId], references: [id])
 
   @@index([userId])
   @@index([productId])

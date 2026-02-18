@@ -392,7 +392,7 @@ export class EsimService {
           quantity,
           totalAmount: product.price * quantity,
           currency: product.currency,
-          status: 'PROCESSING',
+          status: orderData.sims?.[0]?.iccid ? 'COMPLETED' : 'PROCESSING',
           externalOrderId: String(orderData.id),
           iccid: orderData.sims?.[0]?.iccid,
           qrCode: orderData.sims?.[0]?.qrcode || orderData.sims?.[0]?.qrcode_url,
@@ -409,7 +409,7 @@ export class EsimService {
         qrCode: orderData.sims?.[0]?.qrcode || orderData.sims?.[0]?.qrcode_url || '',
         activationCode: orderData.sims?.[0]?.lpa || '',
         instructions: this.getActivationInstructions(),
-        status: 'PROCESSING',
+        status: orderData.sims?.[0]?.iccid ? 'COMPLETED' : 'PROCESSING',
       };
     } catch (error: any) {
       // Extract detailed error info from Airalo API responses
@@ -499,10 +499,19 @@ export class EsimService {
   /**
    * Get all orders (admin)
    */
-  async getAllOrders(params?: { status?: string; page?: number; limit?: number }) {
+  async getAllOrders(params?: { status?: string; search?: string; page?: number; limit?: number }) {
     const where: any = {};
     if (params?.status) {
       where.status = params.status;
+    }
+    if (params?.search) {
+      where.OR = [
+        { id: { contains: params.search, mode: 'insensitive' } },
+        { user: { email: { contains: params.search, mode: 'insensitive' } } },
+        { user: { firstName: { contains: params.search, mode: 'insensitive' } } },
+        { user: { lastName: { contains: params.search, mode: 'insensitive' } } },
+        { iccid: { contains: params.search, mode: 'insensitive' } },
+      ];
     }
 
     const limit = params?.limit || 50;
@@ -511,7 +520,17 @@ export class EsimService {
     const [orders, total] = await Promise.all([
       prisma.esimOrder.findMany({
         where,
-        include: { product: true },
+        include: {
+          product: true,
+          user: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true,
+            },
+          },
+        },
         orderBy: { createdAt: 'desc' },
         take: limit,
         skip: (page - 1) * limit,

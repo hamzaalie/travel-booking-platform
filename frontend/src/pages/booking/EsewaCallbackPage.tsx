@@ -130,14 +130,18 @@ export default function EsewaCallbackPage() {
         sessionStorage.removeItem('selectedFlight');
         sessionStorage.removeItem('searchData');
 
-        const newBookingId = bookingResponse.data.id || bookingResponse.data.hotelBooking?.id;
+        // Extract booking ID from various response shapes
+        // api.post() unwraps response.data, so bookingResponse = { success, data: {...} }
+        const respData = bookingResponse?.data || bookingResponse;
+        const newBookingId = respData?.booking?.id || respData?.id || respData?.hotelBooking?.id;
+        if (import.meta.env.DEV) console.log('Booking response:', bookingResponse, 'Extracted ID:', newBookingId);
         setBookingId(newBookingId);
         setStatus('success');
         toast.success('Payment successful! Your booking is confirmed.');
 
         // Redirect after 3 seconds
         setTimeout(() => {
-          navigate(`/customer/bookings/${newBookingId}`);
+          navigate(newBookingId ? `/customer/bookings/${newBookingId}` : '/customer/bookings');
         }, 3000);
 
       } catch (error: any) {

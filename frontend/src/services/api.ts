@@ -538,6 +538,9 @@ export const esimApi = {
     api.get(`/esim/orders/${orderId}/usage`),
   
   // Admin
+  getAdminOrders: (params?: { status?: string; search?: string; limit?: number; page?: number }) =>
+    api.get('/esim/admin/orders', { params }),
+  
   updateOrderStatus: (orderId: string, status: string) =>
     api.put(`/esim/admin/orders/${orderId}/status`, { status }),
 };

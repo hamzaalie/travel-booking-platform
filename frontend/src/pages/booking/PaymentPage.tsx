@@ -163,8 +163,11 @@ export default function PaymentPage() {
       sessionStorage.removeItem('selectedFlight');
       sessionStorage.removeItem('searchData');
       
-      const newBookingId = response.data.id || response.data.hotelBooking?.id;
-      navigate(`/customer/bookings/${newBookingId}`);
+      // Extract booking ID from various response shapes
+      const respData = response?.data || response;
+      const newBookingId = respData?.booking?.id || respData?.id || respData?.hotelBooking?.id;
+      if (import.meta.env.DEV) console.log('Booking response:', response, 'Extracted ID:', newBookingId);
+      navigate(newBookingId ? `/customer/bookings/${newBookingId}` : '/customer/bookings');
     } catch (error: any) {
       console.error('Wallet payment error:', error);
       toast.error(error.response?.data?.message || 'Payment failed. Please try again.');
