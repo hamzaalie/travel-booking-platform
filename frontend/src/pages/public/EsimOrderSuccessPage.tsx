@@ -1,5 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { CheckCircle, Smartphone, Copy, ArrowLeft, QrCode, Key, BookOpen } from 'lucide-react';
+import EsimQrCode from '@/components/EsimQrCode';
 import toast from 'react-hot-toast';
 
 interface EsimOrderData {
@@ -117,17 +118,7 @@ export default function EsimOrderSuccessPage() {
                 Scan QR Code to Activate
               </h2>
               <div className="bg-white border-2 border-gray-200 rounded-xl p-4 inline-block">
-                {orderData.qrCode.startsWith('http') ? (
-                  <img
-                    src={orderData.qrCode}
-                    alt="eSIM QR Code"
-                    className="w-48 h-48 mx-auto"
-                  />
-                ) : (
-                  <div className="w-48 h-48 flex items-center justify-center bg-gray-100 rounded">
-                    <p className="text-xs text-gray-500 text-center px-2 break-all">{orderData.qrCode}</p>
-                  </div>
-                )}
+                <EsimQrCode value={orderData.qrCode} size={192} />
               </div>
               <p className="text-sm text-gray-500 mt-3">
                 Open your phone&apos;s camera or eSIM settings to scan this QR code

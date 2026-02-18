@@ -10,6 +10,7 @@ import {
   AlertCircle, Loader2, QrCode, Signal, CreditCard,
   ChevronDown, ChevronUp,
 } from 'lucide-react';
+import EsimQrCode from '@/components/EsimQrCode';
 import { useState } from 'react';
 
 const statusConfig: Record<string, { color: string; bg: string; text: string }> = {
@@ -157,17 +158,7 @@ export default function EsimOrderDetailsPage() {
                 Installation QR Code
               </h2>
               <div className="bg-white p-4 rounded-lg border-2 border-gray-200 mb-3">
-                <img
-                  src={
-                    order.qrCode.startsWith('data:')
-                      ? order.qrCode
-                      : order.qrCode.startsWith('http')
-                        ? order.qrCode
-                        : `data:image/png;base64,${order.qrCode}`
-                  }
-                  alt="eSIM QR Code"
-                  className="w-48 h-48 object-contain"
-                />
+                <EsimQrCode value={order.qrCode} size={192} />
               </div>
               <p className="text-sm text-gray-500 text-center">
                 Scan this QR code with your phone's camera to install the eSIM
