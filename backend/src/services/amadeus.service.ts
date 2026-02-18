@@ -336,7 +336,7 @@ export class AmadeusService {
         firstName: passenger.firstName,
         lastName: passenger.lastName,
       },
-      gender: passenger.gender,
+      gender: passenger.gender === 'M' ? 'MALE' : passenger.gender === 'F' ? 'FEMALE' : passenger.gender,
       contact: {
         emailAddress: passenger.email,
         phones: passenger.phone

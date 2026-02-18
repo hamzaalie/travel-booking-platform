@@ -177,6 +177,7 @@ export class BookingService {
           where: { id: bookingId },
           include: {
             payments: true,
+            user: true,
           },
         });
 
@@ -188,30 +189,39 @@ export class BookingService {
           throw new AppError('Booking already processed', 400);
         }
 
-        // Format travelers for Amadeus
-        const travelers = amadeusService.formatTravelerData(
-          booking.passengers as any[]
-        );
+        // Try to create Amadeus flight order (may fail in sandbox)
+        let pnr: string | null = null;
+        let ticketNumbers: string[] = [];
+        let finalStatus = 'CONFIRMED';
 
-        // Create flight order in Amadeus
-        const flightOrder = await amadeusService.createFlightOrder(
-          booking.flightDetails,
-          travelers
-        );
+        try {
+          const travelers = amadeusService.formatTravelerData(
+            booking.passengers as any[]
+          );
 
-        // Extract PNR and ticket numbers
-        const pnr = flightOrder.data.associatedRecords?.[0]?.reference || null;
-        const ticketNumbers = flightOrder.data.travelers?.map(
-          (t: any) => t.documents?.[0]?.number
-        );
+          const flightOrder = await amadeusService.createFlightOrder(
+            booking.flightDetails,
+            travelers
+          );
 
-        // Update booking
+          pnr = flightOrder.data.associatedRecords?.[0]?.reference || null;
+          ticketNumbers = flightOrder.data.travelers?.map(
+            (t: any) => t.documents?.[0]?.number
+          ) || [];
+          finalStatus = 'TICKETED';
+          logger.info(`Amadeus order created for ${booking.bookingReference} | PNR: ${pnr}`);
+        } catch (amadeusError: any) {
+          // Amadeus ticketing failed (sandbox, gender enum, etc.) — still confirm
+          logger.warn(`Amadeus order creation failed for ${booking.bookingReference}, confirming without PNR:`, amadeusError.message || amadeusError);
+        }
+
+        // Update booking status
         const updatedBooking = await tx.booking.update({
           where: { id: bookingId },
           data: {
-            status: 'TICKETED',
+            status: finalStatus,
             pnr,
-            ticketUrls: ticketNumbers || [],
+            ticketUrls: ticketNumbers,
           },
         });
 
@@ -232,32 +242,30 @@ export class BookingService {
             entity: 'Booking',
             entityId: bookingId,
             changes: {
-              status: 'TICKETED',
+              status: finalStatus,
               pnr,
             },
           },
         });
 
-        logger.info(`Booking confirmed: ${booking.bookingReference} | PNR: ${pnr}`);
+        logger.info(`Booking confirmed: ${booking.bookingReference} | Status: ${finalStatus}`);
 
         // Send confirmation emails
-        emailService.sendBookingConfirmation(booking.user.email, updatedBooking).catch(err =>
-          logger.error('Failed to send booking confirmation email:', err)
-        );
-        emailService.sendTicketEmail(booking.user.email, updatedBooking).catch(err =>
-          logger.error('Failed to send ticket email:', err)
-        );
+        if (booking.user?.email) {
+          emailService.sendBookingConfirmation(booking.user.email, updatedBooking).catch(err =>
+            logger.error('Failed to send booking confirmation email:', err)
+          );
+          if (finalStatus === 'TICKETED') {
+            emailService.sendTicketEmail(booking.user.email, updatedBooking).catch(err =>
+              logger.error('Failed to send ticket email:', err)
+            );
+          }
+        }
 
         return updatedBooking;
       });
     } catch (error) {
       logger.error('Booking confirmation error:', error);
-
-      // Mark booking as failed
-      await prisma.booking.update({
-        where: { id: bookingId },
-        data: { status: 'FAILED' },
-      });
 
       if (error instanceof AppError) {
         throw error;
