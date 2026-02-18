@@ -198,6 +198,12 @@ export const bookingApi = {
   
   cancel: (id: string, reason?: string) =>
     api.post(`/bookings/${id}/cancel`, { reason }),
+
+  downloadTicket: (id: string) =>
+    api.get(`/bookings/${id}/ticket/download`, { responseType: 'blob' }),
+
+  downloadInvoice: (id: string) =>
+    api.get(`/bookings/${id}/invoice/download`, { responseType: 'blob' }),
 };
 
 // Wallet API

@@ -31,10 +31,28 @@ export default function BookingConfirmationPage() {
     }
   };
 
-  const handleDownload = () => {
-    // TODO: Implement PDF download
-    toast.success('Downloading ticket...');
-    
+  const handleDownload = async () => {
+    if (!id) return;
+    try {
+      toast.loading('Generating ticket...', { id: 'ticket-download' });
+      const response = await bookingApi.downloadTicket(id) as any;
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `ticket-${booking?.bookingReference || id}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+      toast.success('Ticket downloaded!', { id: 'ticket-download' });
+    } catch (error: any) {
+      console.error('Download failed:', error);
+      const msg = error.response?.status === 400
+        ? 'Ticket available only for confirmed bookings'
+        : 'Failed to download ticket';
+      toast.error(msg, { id: 'ticket-download' });
+    }
   };
 
   const handleEmail = () => {

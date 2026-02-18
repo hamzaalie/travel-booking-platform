@@ -139,35 +139,47 @@ router.get(
       req.user!.role
     );
 
-    if (booking.status !== 'CONFIRMED') {
+    if (!['CONFIRMED', 'TICKETED'].includes(booking.status)) {
       res.status(400).json({
         success: false,
-        message: 'Ticket can only be downloaded for confirmed bookings',
+        message: 'Ticket can only be downloaded for confirmed/ticketed bookings',
       });
       return;
     }
 
-    // Extract flight details
+    // Extract flight details from Amadeus itinerary structure
     const flightDetails = booking.flightDetails as any;
     const passengers = booking.passengers as any;
+    const firstSegment = flightDetails?.itineraries?.[0]?.segments?.[0];
+    const lastSegment = flightDetails?.itineraries?.[0]?.segments?.slice(-1)[0];
 
     // Generate ticket for first passenger (can be extended for all passengers)
     const ticketData = {
       bookingReference: booking.bookingReference,
       pnr: booking.pnr || 'N/A',
       passengerName: `${passengers[0]?.firstName} ${passengers[0]?.lastName}`,
-      departureCity: flightDetails?.origin || 'N/A',
-      arrivalCity: flightDetails?.destination || 'N/A',
-      departureDate: flightDetails?.departureDate || new Date().toISOString(),
-      departureTime: flightDetails?.departureTime || 'N/A',
-      arrivalDate: flightDetails?.arrivalDate || new Date().toISOString(),
-      arrivalTime: flightDetails?.arrivalTime || 'N/A',
-      airline: flightDetails?.airline || 'N/A',
-      flightNumber: flightDetails?.flightNumber || 'N/A',
+      departureCity: firstSegment?.departure?.iataCode || booking.origin || 'N/A',
+      arrivalCity: lastSegment?.arrival?.iataCode || booking.destination || 'N/A',
+      departureDate: firstSegment?.departure?.at
+        ? new Date(firstSegment.departure.at).toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })
+        : (booking.departureDate ? new Date(booking.departureDate).toLocaleDateString() : 'N/A'),
+      departureTime: firstSegment?.departure?.at
+        ? new Date(firstSegment.departure.at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })
+        : 'N/A',
+      arrivalDate: lastSegment?.arrival?.at
+        ? new Date(lastSegment.arrival.at).toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })
+        : 'N/A',
+      arrivalTime: lastSegment?.arrival?.at
+        ? new Date(lastSegment.arrival.at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })
+        : 'N/A',
+      airline: firstSegment?.carrierCode || 'N/A',
+      flightNumber: firstSegment ? `${firstSegment.carrierCode}-${firstSegment.number}` : 'N/A',
       seatNumber: flightDetails?.seatNumber,
-      class: flightDetails?.class || 'Economy',
-      baggage: flightDetails?.baggage || '1 x 23kg',
-      ticketNumber: flightDetails?.ticketNumber,
+      class: flightDetails?.travelerPricings?.[0]?.fareDetailsBySegment?.[0]?.cabin || 'Economy',
+      baggage: flightDetails?.travelerPricings?.[0]?.fareDetailsBySegment?.[0]?.includedCheckedBags?.weight
+        ? `${flightDetails.travelerPricings[0].fareDetailsBySegment[0].includedCheckedBags.weight}kg`
+        : '1 x 23kg',
+      ticketNumber: passengers[0]?.ticketNumber,
       totalPrice: booking.totalAmount?.toNumber() || 0,
       currency: 'USD',
     };
@@ -198,6 +210,8 @@ router.get(
 
     const flightDetails = booking.flightDetails as any;
     const passengers = booking.passengers as any;
+    const firstSeg = flightDetails?.itineraries?.[0]?.segments?.[0];
+    const lastSeg = flightDetails?.itineraries?.[0]?.segments?.slice(-1)[0];
 
     const invoiceData = {
       invoiceNumber: `INV-${booking.bookingReference}`,
@@ -207,7 +221,7 @@ router.get(
       customerEmail: booking.user.email,
       items: [
         {
-          description: `Flight: ${flightDetails?.origin} → ${flightDetails?.destination} (${passengers?.length || 1} passenger${passengers?.length > 1 ? 's' : ''})`,
+          description: `Flight: ${firstSeg?.departure?.iataCode || booking.origin || 'N/A'} → ${lastSeg?.arrival?.iataCode || booking.destination || 'N/A'} (${passengers?.length || 1} passenger${passengers?.length > 1 ? 's' : ''})`,
           quantity: 1,
           unitPrice: booking.baseFare?.toNumber() || 0,
           total: booking.baseFare?.toNumber() || 0,

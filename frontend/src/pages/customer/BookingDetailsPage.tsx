@@ -5,9 +5,13 @@ import {
   ArrowLeft, 
   Plane, 
   Users, 
-  CreditCard
+  CreditCard,
+  Download,
+  FileText,
+  Printer
 } from 'lucide-react';
 import { getAirlineName } from '@/utils/airlines';
+import toast from 'react-hot-toast';
 
 export default function BookingDetailsPage() {
   const { id } = useParams<{ id: string }>();
@@ -43,6 +47,45 @@ export default function BookingDetailsPage() {
       return `${match[1]}h ${match[2]}m`;
     }
     return duration;
+  };
+
+  const triggerBlobDownload = (data: any, filename: string) => {
+    const blob = new Blob([data], { type: 'application/pdf' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+  };
+
+  const handleDownloadTicket = async () => {
+    if (!id) return;
+    try {
+      toast.loading('Generating ticket...', { id: 'ticket-dl' });
+      const response = await bookingApi.downloadTicket(id) as any;
+      triggerBlobDownload(response.data, `ticket-${booking?.bookingReference || id}.pdf`);
+      toast.success('Ticket downloaded!', { id: 'ticket-dl' });
+    } catch (error: any) {
+      const msg = error.response?.status === 400
+        ? 'Ticket available only for confirmed bookings'
+        : 'Failed to download ticket';
+      toast.error(msg, { id: 'ticket-dl' });
+    }
+  };
+
+  const handleDownloadInvoice = async () => {
+    if (!id) return;
+    try {
+      toast.loading('Generating invoice...', { id: 'invoice-dl' });
+      const response = await bookingApi.downloadInvoice(id) as any;
+      triggerBlobDownload(response.data, `invoice-${booking?.bookingReference || id}.pdf`);
+      toast.success('Invoice downloaded!', { id: 'invoice-dl' });
+    } catch {
+      toast.error('Failed to download invoice', { id: 'invoice-dl' });
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -122,6 +165,33 @@ export default function BookingDetailsPage() {
                 ${parseFloat(booking.totalAmount || 0).toFixed(2)}
               </p>
             </div>
+          </div>
+        </div>
+
+        {/* Download Actions */}
+        <div className="card mb-6">
+          <div className="flex flex-wrap gap-3">
+            <button
+              onClick={handleDownloadTicket}
+              className="flex items-center gap-2 px-4 py-2 bg-primary-950 text-white rounded-lg hover:bg-primary-900 transition-colors"
+            >
+              <Download className="h-4 w-4" />
+              Download Ticket
+            </button>
+            <button
+              onClick={handleDownloadInvoice}
+              className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              <FileText className="h-4 w-4" />
+              Download Invoice
+            </button>
+            <button
+              onClick={() => window.print()}
+              className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              <Printer className="h-4 w-4" />
+              Print
+            </button>
           </div>
         </div>
 
