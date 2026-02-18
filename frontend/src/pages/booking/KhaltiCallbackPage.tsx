@@ -119,6 +119,16 @@ export default function KhaltiCallbackPage() {
         const respData = bookingResponse?.data || bookingResponse;
         const newBookingId = respData?.booking?.id || respData?.id || respData?.hotelBooking?.id;
         if (import.meta.env.DEV) console.log('Booking response:', bookingResponse, 'Extracted ID:', newBookingId);
+
+        // Confirm the booking (triggers Amadeus order creation and status → TICKETED)
+        if (newBookingId && bookingData.type !== 'HOTEL' && bookingData.type !== 'CAR') {
+          try {
+            await bookingApi.confirm(newBookingId, { gateway: 'KHALTI', pidx, transactionId });
+          } catch (confirmError) {
+            console.warn('Auto-confirm failed (booking created but not ticketed):', confirmError);
+          }
+        }
+
         setBookingId(newBookingId);
         setStatus('success');
         toast.success('Payment successful! Your booking is confirmed.');

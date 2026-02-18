@@ -67,7 +67,7 @@ export default function BookingDetailsPage() {
     try {
       toast.loading('Generating ticket...', { id: 'ticket-dl' });
       const response = await bookingApi.downloadTicket(id) as any;
-      triggerBlobDownload(response.data, `ticket-${booking?.bookingReference || id}.pdf`);
+      triggerBlobDownload(response, `ticket-${booking?.bookingReference || id}.pdf`);
       toast.success('Ticket downloaded!', { id: 'ticket-dl' });
     } catch (error: any) {
       const msg = error.response?.status === 400
@@ -82,7 +82,7 @@ export default function BookingDetailsPage() {
     try {
       toast.loading('Generating invoice...', { id: 'invoice-dl' });
       const response = await bookingApi.downloadInvoice(id) as any;
-      triggerBlobDownload(response.data, `invoice-${booking?.bookingReference || id}.pdf`);
+      triggerBlobDownload(response, `invoice-${booking?.bookingReference || id}.pdf`);
       toast.success('Invoice downloaded!', { id: 'invoice-dl' });
     } catch {
       toast.error('Failed to download invoice', { id: 'invoice-dl' });

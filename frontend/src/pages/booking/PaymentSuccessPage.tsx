@@ -90,6 +90,16 @@ export default function PaymentSuccessPage() {
 
         const newBookingId = bookingResponse.data?.id || bookingResponse.data?.booking?.id || bookingResponse.data?.hotelBooking?.id;
         setBookingId(newBookingId);
+
+        // Confirm the booking (triggers Amadeus order creation and status → TICKETED)
+        if (newBookingId && bookingData.type !== 'HOTEL' && bookingData.type !== 'CAR') {
+          try {
+            await bookingApi.confirm(newBookingId, { gateway: 'STRIPE', sessionId });
+          } catch (confirmError) {
+            console.warn('Auto-confirm failed (booking created but not ticketed):', confirmError);
+          }
+        }
+
         setStatus('success');
         toast.success('Payment successful! Your booking is confirmed.');
 

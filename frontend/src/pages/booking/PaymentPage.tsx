@@ -166,6 +166,16 @@ export default function PaymentPage() {
       const respData = response?.data || response;
       const newBookingId = respData?.booking?.id || respData?.id || respData?.hotelBooking?.id;
       if (import.meta.env.DEV) console.log('Booking response:', response, 'Extracted ID:', newBookingId);
+
+      // Confirm the booking (triggers Amadeus order creation and status → TICKETED)
+      if (newBookingId && bookingData.type !== 'HOTEL' && bookingData.type !== 'CAR') {
+        try {
+          await bookingApi.confirm(newBookingId, { gateway: 'WALLET' });
+        } catch (confirmError) {
+          console.warn('Auto-confirm failed (booking created but not ticketed):', confirmError);
+        }
+      }
+
       navigate(newBookingId ? `/customer/bookings/${newBookingId}` : '/customer/bookings');
     } catch (error: any) {
       console.error('Wallet payment error:', error);

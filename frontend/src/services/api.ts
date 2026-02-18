@@ -102,6 +102,7 @@ class ApiService {
               url: originalRequest.url,
               data: originalRequest.data,
               params: originalRequest.params,
+              responseType: originalRequest.responseType,
               _retry: true, // prevent infinite loop
             } as any);
 

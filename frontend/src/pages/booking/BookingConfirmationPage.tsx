@@ -37,7 +37,7 @@ export default function BookingConfirmationPage() {
     try {
       toast.loading('Generating ticket...', { id: 'ticket-download' });
       const response = await bookingApi.downloadTicket(id) as any;
-      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const blob = new Blob([response], { type: 'application/pdf' });
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
