@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { adminBookingCustomizationApi, adminApi } from '@/services/api';
+import { formatAmount, getBookingCurrency } from '@/utils/currency';
 import {
   Plane,
   Search,
@@ -273,7 +274,7 @@ export default function BookingCustomizationPage() {
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="text-right">
-                        <p className="font-bold text-primary-900">NPR {(booking.totalAmount || 0).toLocaleString()}</p>
+                        <p className="font-bold text-primary-900">{formatAmount(booking.totalAmount || 0, getBookingCurrency(booking))}</p>
                         <span className={`text-xs px-2 py-0.5 rounded-full ${statusStyle.bg} ${statusStyle.text}`}>
                           {booking.status}
                         </span>
@@ -303,25 +304,25 @@ export default function BookingCustomizationPage() {
                             </div>
                             <div className="flex justify-between">
                               <span className="text-gray-500">Base Fare:</span>
-                              <span className="font-medium">NPR {(booking.baseFare || 0).toLocaleString()}</span>
+                              <span className="font-medium">{formatAmount(booking.baseFare || 0, getBookingCurrency(booking))}</span>
                             </div>
                             <div className="flex justify-between">
                               <span className="text-gray-500">Taxes:</span>
-                              <span className="font-medium">NPR {(booking.taxes || 0).toLocaleString()}</span>
+                              <span className="font-medium">{formatAmount(booking.taxes || 0, getBookingCurrency(booking))}</span>
                             </div>
                             <div className="flex justify-between">
                               <span className="text-gray-500">Markup:</span>
-                              <span className="font-medium">NPR {(booking.markup || 0).toLocaleString()}</span>
+                              <span className="font-medium">{formatAmount(booking.markup || 0, getBookingCurrency(booking))}</span>
                             </div>
                             {booking.agentMarkup > 0 && (
                               <div className="flex justify-between">
                                 <span className="text-gray-500">Agent Markup:</span>
-                                <span className="font-medium">NPR {booking.agentMarkup.toLocaleString()}</span>
+                                <span className="font-medium">{formatAmount(booking.agentMarkup, getBookingCurrency(booking))}</span>
                               </div>
                             )}
                             <div className="flex justify-between border-t pt-2 font-bold">
                               <span>Total:</span>
-                              <span>NPR {(booking.totalAmount || 0).toLocaleString()}</span>
+                              <span>{formatAmount(booking.totalAmount || 0, getBookingCurrency(booking))}</span>
                             </div>
                           </div>
                         </div>
@@ -444,7 +445,7 @@ export default function BookingCustomizationPage() {
                         {fc.changeFee === 0 ? (
                           <span className="text-green-600 font-medium">Free</span>
                         ) : (
-                          <span>NPR {fc.changeFee.toLocaleString()}</span>
+                          <span>$ {fc.changeFee.toLocaleString()}</span>
                         )}
                       </td>
                       <td className="py-3 text-sm">{fc.baggageIncluded}</td>

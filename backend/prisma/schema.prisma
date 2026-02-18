@@ -288,6 +288,7 @@ model Booking {
   markup            Decimal       @default(0) @db.Decimal(15, 2)
   agentMarkup       Decimal       @default(0) @db.Decimal(15, 2)
   totalAmount       Decimal       @db.Decimal(15, 2)
+  currency          String        @default("USD")
   commissionAmount  Decimal       @default(0) @db.Decimal(15, 2)
   status            BookingStatus @default(PENDING)
   ticketUrls        String[]

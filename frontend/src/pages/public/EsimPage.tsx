@@ -4,6 +4,7 @@ import { esimApi, paymentApi } from '@/services/api';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import { convertPrice } from '@/store/slices/currencySlice';
+import { FALLBACK_EXCHANGE_RATES } from '@/utils/currency';
 import { useNavigate } from 'react-router-dom';
 import { Smartphone, Globe, Wifi, Clock, Search, Check, ShoppingBag, CreditCard, Wallet } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -79,9 +80,7 @@ export default function EsimPage() {
   // Convert amount from source currency to NPR for local gateways
   const convertToNPR = (amount: number, sourceCurrency: string): number => {
     if (sourceCurrency === 'NPR') return amount;
-    const fallbackRates: Record<string, number> = {
-      NPR: 1, USD: 0.0075, EUR: 0.0069, GBP: 0.0059, INR: 0.63,
-    };
+    const fallbackRates = FALLBACK_EXCHANGE_RATES;
     const rates = Object.keys(exchangeRates).length > 0 ? exchangeRates : fallbackRates;
     const sourceRate = rates[sourceCurrency] || 1;
     return Math.round(amount / sourceRate);

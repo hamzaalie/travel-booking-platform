@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import { convertPrice } from '@/store/slices/currencySlice';
+import { FALLBACK_EXCHANGE_RATES } from '@/utils/currency';
 import { bookingApi, paymentApi, hotelApi, walletApi, carRentalApi } from '@/services/api';
 import { Wallet, Loader2, ArrowLeft, Building2, Plane, Car } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -82,9 +83,7 @@ export default function PaymentPage() {
     const sourceCurrency = getSourceCurrency();
     if (sourceCurrency === 'NPR') return amount;
 
-    const fallbackRates: Record<string, number> = {
-      NPR: 1, USD: 0.0075, EUR: 0.0069, GBP: 0.0059, INR: 0.63,
-    };
+    const fallbackRates = FALLBACK_EXCHANGE_RATES;
     const rates = Object.keys(exchangeRates).length > 0 ? exchangeRates : fallbackRates;
     const sourceRate = rates[sourceCurrency] || 1;
     // sourceRate is how much 1 NPR equals in source currency
@@ -515,7 +514,7 @@ export default function PaymentPage() {
                     <span className="font-medium text-primary-950">Wallet Balance</span>
                   </div>
                   <span className="text-lg font-bold text-primary-950">
-                    {formatPrice(walletBalance, 'USD')}
+                    {formatPrice(walletBalance, getSourceCurrency())}
                   </span>
                 </div>
                 {walletBalance < total && (

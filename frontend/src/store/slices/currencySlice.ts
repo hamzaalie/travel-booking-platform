@@ -1,6 +1,8 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { api } from '@/services/api';
 
+import { FALLBACK_EXCHANGE_RATES } from '@/utils/currency';
+
 interface Currency {
   id: string;
   code: string;
@@ -165,18 +167,9 @@ export const convertPrice = (
   targetCurrency: string,
   exchangeRates: Record<string, number>,
   currencies: Currency[],
-  sourceCurrency: string = 'NPR'
+  sourceCurrency: string = 'USD'
 ): string => {
-  // Fallback exchange rates (relative to NPR as base = 1)
-  const fallbackRates: Record<string, number> = {
-    NPR: 1,
-    USD: 0.0075,
-    EUR: 0.0069,
-    GBP: 0.0059,
-    INR: 0.63,
-  };
-
-  const rates = Object.keys(exchangeRates).length > 0 ? exchangeRates : fallbackRates;
+  const rates = Object.keys(exchangeRates).length > 0 ? exchangeRates : FALLBACK_EXCHANGE_RATES;
 
   const sourceRate = rates[sourceCurrency];
   const targetRate = rates[targetCurrency];

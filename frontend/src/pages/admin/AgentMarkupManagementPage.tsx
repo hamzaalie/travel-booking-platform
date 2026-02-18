@@ -218,7 +218,7 @@ export default function AgentMarkupManagementPage() {
 
   const formatCurrency = (value: number | null) => {
     if (value === null) return '-';
-    return `NPR ${value.toLocaleString()}`;
+    return `$ ${value.toLocaleString()}`;
   };
 
   return (
@@ -344,7 +344,7 @@ export default function AgentMarkupManagementPage() {
               {bulkSettings.markupType && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Markup Value {bulkSettings.markupType === 'PERCENTAGE' ? '(%)' : '(NPR)'}
+                    Markup Value {bulkSettings.markupType === 'PERCENTAGE' ? '(%)' : '(USD)'}
                   </label>
                   <input
                     type="number"
@@ -372,7 +372,7 @@ export default function AgentMarkupManagementPage() {
               {bulkSettings.discountType && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Discount Value {bulkSettings.discountType === 'PERCENTAGE' ? '(%)' : '(NPR)'}
+                    Discount Value {bulkSettings.discountType === 'PERCENTAGE' ? '(%)' : '(USD)'}
                   </label>
                   <input
                     type="number"
@@ -546,7 +546,7 @@ export default function AgentMarkupManagementPage() {
                           {agent.markupType ? (
                             <span className="inline-flex items-center text-sm">
                               {agent.markupType === 'FIXED' ? (
-                                <span className="text-xs font-medium mr-1 text-gray-400">NPR</span>
+                                <span className="text-xs font-medium mr-1 text-gray-400">$</span>
                               ) : (
                                 <Percent className="h-3 w-3 mr-1 text-gray-400" />
                               )}
@@ -561,7 +561,7 @@ export default function AgentMarkupManagementPage() {
                           {agent.discountType ? (
                             <span className="inline-flex items-center text-sm text-green-600">
                               {agent.discountType === 'FIXED' ? (
-                                <span className="text-xs font-medium mr-1">NPR</span>
+                                <span className="text-xs font-medium mr-1">$</span>
                               ) : (
                                 <Percent className="h-3 w-3 mr-1" />
                               )}
@@ -576,7 +576,7 @@ export default function AgentMarkupManagementPage() {
                           {agent.commissionType ? (
                             <span className="inline-flex items-center text-sm text-accent-500">
                               {agent.commissionType === 'FIXED' ? (
-                                <span className="text-xs font-medium mr-1">NPR</span>
+                                <span className="text-xs font-medium mr-1">$</span>
                               ) : (
                                 <Percent className="h-3 w-3 mr-1" />
                               )}

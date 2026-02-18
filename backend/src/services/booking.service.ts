@@ -123,6 +123,9 @@ export class BookingService {
           markup: pricing.globalMarkup,
           agentMarkup: pricing.agentMarkup,
           totalAmount: pricing.totalPrice,
+          currency: pricedOffer?.data?.flightOffers?.[0]?.price?.currency
+            || data.flightOffer?.price?.currency
+            || 'USD',
           commissionAmount: pricing.commission,
           status: 'PENDING',
           ticketUrls: [],

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { bookingApi } from '@/services/api';
 import { CheckCircle, Plane, Users, Download, Mail, Printer } from 'lucide-react';
+import { formatAmount, getBookingCurrency } from '@/utils/currency';
 import toast from 'react-hot-toast';
 
 export default function BookingConfirmationPage() {
@@ -193,7 +194,7 @@ export default function BookingConfirmationPage() {
               <div>
                 <p className="text-xs text-gray-500 mb-1">Total Paid</p>
                 <p className="font-semibold text-primary-950 text-lg">
-                  ${booking.totalAmount.toFixed(2)}
+                  {formatAmount(booking.totalAmount, getBookingCurrency(booking))}
                 </p>
               </div>
               <div>

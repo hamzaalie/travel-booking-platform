@@ -139,10 +139,10 @@ router.get(
       req.user!.role
     );
 
-    if (!['CONFIRMED', 'TICKETED'].includes(booking.status)) {
+    if (['CANCELLED', 'REFUNDED'].includes(booking.status)) {
       res.status(400).json({
         success: false,
-        message: 'Ticket can only be downloaded for confirmed/ticketed bookings',
+        message: 'Ticket cannot be downloaded for cancelled/refunded bookings',
       });
       return;
     }
@@ -181,7 +181,7 @@ router.get(
         : '1 x 23kg',
       ticketNumber: passengers[0]?.ticketNumber,
       totalPrice: booking.totalAmount?.toNumber() || 0,
-      currency: 'USD',
+      currency: (booking as any).currency || flightDetails?.price?.currency || 'USD',
     };
 
     const filePath = await pdfService.generateTicket(ticketData);
@@ -236,7 +236,7 @@ router.get(
       subtotal: booking.baseFare?.toNumber() || 0,
       tax: booking.taxes?.toNumber() || 0,
       total: booking.totalAmount?.toNumber() || 0,
-      currency: 'USD',
+      currency: (booking as any).currency || flightDetails?.price?.currency || 'USD',
     };
 
     const filePath = await pdfService.generateInvoice(invoiceData);

@@ -4,6 +4,7 @@ import { bookingApi } from '@/services/api';
 import { Link } from 'react-router-dom';
 import { Plane, Search, Filter, Calendar, Users, CheckCircle, Clock, XCircle, MapPin, ArrowRight, Briefcase } from 'lucide-react';
 import { getAirlineName } from '@/utils/airlines';
+import { formatAmount, getBookingCurrency } from '@/utils/currency';
 
 export default function MyBookingsPage() {
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
@@ -139,7 +140,7 @@ export default function MyBookingsPage() {
                     </div>
                     <div className="text-right">
                       <p className="text-2xl font-bold text-primary-950">
-                        ${parseFloat(booking.totalAmount || 0).toFixed(2)}
+                        {formatAmount(parseFloat(booking.totalAmount || 0), getBookingCurrency(booking))}
                       </p>
                       <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(booking.status)} mt-1`}>
                         {booking.status}

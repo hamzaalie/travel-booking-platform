@@ -22,7 +22,7 @@ export default function FlightResultsPage() {
   );
 
   const formatPrice = (amount: number, sourceCurrency?: string) => {
-    const source = sourceCurrency || 'NPR';
+    const source = sourceCurrency || 'USD';
     if (currentCurrency === source) {
       // Same currency, no conversion needed
       const info = currencies.find(c => c.code === source);

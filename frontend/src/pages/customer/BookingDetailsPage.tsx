@@ -11,6 +11,7 @@ import {
   Printer
 } from 'lucide-react';
 import { getAirlineName } from '@/utils/airlines';
+import { formatAmount, getBookingCurrency } from '@/utils/currency';
 import toast from 'react-hot-toast';
 
 export default function BookingDetailsPage() {
@@ -126,6 +127,7 @@ export default function BookingDetailsPage() {
   }
 
   const flightDetails = booking.flightDetails;
+  const currency = getBookingCurrency(booking);
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -162,7 +164,7 @@ export default function BookingDetailsPage() {
                 {booking.status}
               </span>
               <p className="text-2xl md:text-3xl font-bold text-gray-900 mt-2">
-                ${parseFloat(booking.totalAmount || 0).toFixed(2)}
+                {formatAmount(parseFloat(booking.totalAmount || 0), currency)}
               </p>
             </div>
           </div>
@@ -306,21 +308,21 @@ export default function BookingDetailsPage() {
           <div className="space-y-3">
             <div className="flex justify-between text-gray-700">
               <span>Base Fare</span>
-              <span>${parseFloat(booking.baseFare || 0).toFixed(2)}</span>
+              <span>{formatAmount(parseFloat(booking.baseFare || 0), currency)}</span>
             </div>
             <div className="flex justify-between text-gray-700">
               <span>Taxes & Fees</span>
-              <span>${parseFloat(booking.taxes || 0).toFixed(2)}</span>
+              <span>{formatAmount(parseFloat(booking.taxes || 0), currency)}</span>
             </div>
             {booking.markup > 0 && (
               <div className="flex justify-between text-gray-700">
                 <span>Markup</span>
-                <span>${parseFloat(booking.markup || 0).toFixed(2)}</span>
+                <span>{formatAmount(parseFloat(booking.markup || 0), currency)}</span>
               </div>
             )}
             <div className="border-t pt-3 flex justify-between text-xl font-bold">
               <span>Total Amount</span>
-              <span className="text-primary-950">${parseFloat(booking.totalAmount || 0).toFixed(2)}</span>
+              <span className="text-primary-950">{formatAmount(parseFloat(booking.totalAmount || 0), currency)}</span>
             </div>
           </div>
         </div>
