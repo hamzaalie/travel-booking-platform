@@ -369,7 +369,17 @@ export default function EsimManagementPage() {
                 <div>
                   <label className="text-sm text-gray-500 block mb-1">QR Code</label>
                   <div className="bg-gray-100 p-4 rounded-lg flex justify-center">
-                    <img src={selectedOrder.qrCode} alt="eSIM QR Code" className="w-40 h-40" />
+                    <img
+                      src={
+                        selectedOrder.qrCode.startsWith('data:')
+                          ? selectedOrder.qrCode
+                          : selectedOrder.qrCode.startsWith('http')
+                            ? selectedOrder.qrCode
+                            : `data:image/png;base64,${selectedOrder.qrCode}`
+                      }
+                      alt="eSIM QR Code"
+                      className="w-40 h-40"
+                    />
                   </div>
                 </div>
               )}

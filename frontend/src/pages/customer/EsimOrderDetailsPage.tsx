@@ -158,7 +158,13 @@ export default function EsimOrderDetailsPage() {
               </h2>
               <div className="bg-white p-4 rounded-lg border-2 border-gray-200 mb-3">
                 <img
-                  src={order.qrCode.startsWith('data:') ? order.qrCode : `data:image/png;base64,${order.qrCode}`}
+                  src={
+                    order.qrCode.startsWith('data:')
+                      ? order.qrCode
+                      : order.qrCode.startsWith('http')
+                        ? order.qrCode
+                        : `data:image/png;base64,${order.qrCode}`
+                  }
                   alt="eSIM QR Code"
                   className="w-48 h-48 object-contain"
                 />
