@@ -52,11 +52,12 @@ export const config = {
     webhookSecret: process.env.STRIPE_WEBHOOK_SECRET || '',
   },
 
-  paypal: {
-    clientId: process.env.PAYPAL_CLIENT_ID || '',
-    secret: process.env.PAYPAL_SECRET || '',
-    mode: process.env.PAYPAL_MODE || 'sandbox',
-  },
+  // PayPal removed — not supported
+  // paypal: {
+  //   clientId: process.env.PAYPAL_CLIENT_ID || '',
+  //   secret: process.env.PAYPAL_SECRET || '',
+  //   mode: process.env.PAYPAL_MODE || 'sandbox',
+  // },
 
   // Email
   sendgrid: {
@@ -82,10 +83,10 @@ export const config = {
     level: process.env.LOG_LEVEL || 'debug',
   },
 
-  // Application
+  // Application - MULTI-CURRENCY MODEL REMOVED, only NPR supported
   app: {
-    defaultCurrency: process.env.DEFAULT_CURRENCY || 'USD',
-    supportedCurrencies: ['USD', 'NPR', 'EUR', 'GBP'],
+    defaultCurrency: 'NPR',
+    supportedCurrencies: ['NPR'],
   },
 };
 

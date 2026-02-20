@@ -2,12 +2,13 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { esimApi } from '@/services/api';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/store';
-import { convertPrice } from '@/store/slices/currencySlice';
+// MULTI-CURRENCY MODEL REMOVED
+// import { useSelector } from 'react-redux';
+// import { RootState } from '@/store';
+// import { convertPrice } from '@/store/slices/currencySlice';
 import {
   Smartphone, Search, Filter, Globe, Wifi, Clock, ChevronRight,
-  AlertCircle, CheckCircle, Loader2, XCircle, RefreshCw,
+  AlertCircle, CheckCircle, Loader2, XCircle, RefreshCw, Zap,
 } from 'lucide-react';
 
 type OrderStatus = 'ALL' | 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'ACTIVATED' | 'EXPIRED' | 'FAILED' | 'CANCELLED' | 'REFUNDED';
@@ -25,21 +26,14 @@ const statusConfig: Record<string, { color: string; bg: string; icon: any }> = {
 
 export default function MyEsimsPage() {
   const navigate = useNavigate();
-  const { currentCurrency, currencies, exchangeRates } = useSelector(
-    (state: RootState) => state.currency
-  );
+  // MULTI-CURRENCY MODEL REMOVED - Only NPR supported
   const [statusFilter, setStatusFilter] = useState<OrderStatus>('ALL');
   const [searchTerm, setSearchTerm] = useState('');
 
-  const formatPrice = (amount: number, sourceCurrency: string = 'USD') => {
+  const formatPrice = (amount: number, _sourceCurrency: string = 'NPR') => {
     const num = Number(amount);
     if (isNaN(num)) return '—';
-    if (currentCurrency === sourceCurrency) {
-      const info = currencies.find(c => c.code === sourceCurrency);
-      const symbol = info?.symbol || sourceCurrency;
-      return `${symbol} ${Number(amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-    }
-    return convertPrice(Number(amount), currentCurrency, exchangeRates, currencies, sourceCurrency);
+    return `रू ${num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   };
 
   const { data: orders, isLoading, error } = useQuery({
@@ -232,6 +226,15 @@ export default function MyEsimsPage() {
                       <StatusIcon className="h-3 w-3" />
                       {order.status}
                     </span>
+                    {['COMPLETED', 'ACTIVATED', 'EXPIRED'].includes(order.status) && order.iccid && (
+                      <button
+                        onClick={(e) => { e.stopPropagation(); navigate(`/customer/esim/${order.id}?topup=true`); }}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 text-xs font-medium rounded-full hover:bg-emerald-100 transition-colors border border-emerald-200"
+                      >
+                        <Zap className="h-3 w-3" />
+                        Top Up
+                      </button>
+                    )}
                     <span className="text-xs text-gray-400">
                       {new Date(order.createdAt).toLocaleDateString('en-US', {
                         month: 'short', day: 'numeric', year: 'numeric',

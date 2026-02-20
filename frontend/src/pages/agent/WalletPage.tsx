@@ -160,7 +160,7 @@ export default function WalletPage() {
           <form onSubmit={handleSubmitRequest} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Amount (USD) *
+                Amount (NPR) *
               </label>
               <input
                 type="number"
@@ -170,7 +170,7 @@ export default function WalletPage() {
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 className="input"
-                placeholder="Minimum $100"
+                placeholder="Minimum NPR 100"
               />
             </div>
 

@@ -151,6 +151,75 @@ router.get(
 // ADMIN ROUTES
 // ============================================================================
 
+// GET /api/esim/orders/:id/topup-packages - Get available top-up packages for an eSIM
+router.get(
+  '/orders/:id/topup-packages',
+  authenticate,
+  asyncHandler(async (req: AuthRequest, res) => {
+    const result = await esimService.getTopUpPackages(req.params.id, req.user!.id);
+
+    res.json({
+      success: true,
+      data: result,
+    });
+  })
+);
+
+// POST /api/esim/orders/:id/topup - Apply a top-up to an existing eSIM
+router.post(
+  '/orders/:id/topup',
+  authenticate,
+  asyncHandler(async (req: AuthRequest, res) => {
+    const { packageId } = req.body;
+
+    if (!packageId) {
+      return res.status(400).json({
+        success: false,
+        error: 'Package ID is required',
+      });
+    }
+
+    try {
+      const result = await esimService.applyTopUp(
+        req.params.id,
+        req.user!.id,
+        packageId
+      );
+
+      res.json({
+        success: true,
+        message: 'eSIM topped up successfully',
+        data: result,
+      });
+    } catch (error: any) {
+      const statusCode = error.statusCode || 500;
+      logger.error(`eSIM top-up route error: ${error.message}`, { statusCode, orderId: req.params.id });
+      res.status(statusCode).json({
+        success: false,
+        error: error.message || 'Failed to apply top-up',
+      });
+    }
+  })
+);
+
+// GET /api/esim/orders/:id/topup-history - Get top-up history for an eSIM
+router.get(
+  '/orders/:id/topup-history',
+  authenticate,
+  asyncHandler(async (req: AuthRequest, res) => {
+    const history = await esimService.getTopUpHistory(req.params.id, req.user!.id);
+
+    res.json({
+      success: true,
+      data: history,
+    });
+  })
+);
+
+// ============================================================================
+// ADMIN ROUTES (below)
+// ============================================================================
+
 // GET /api/esim/admin/orders - Get all eSIM orders (admin)
 router.get(
   '/admin/orders',

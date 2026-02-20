@@ -3,8 +3,9 @@ import { useQuery } from '@tanstack/react-query';
 import { esimApi, paymentApi } from '@/services/api';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
-import { convertPrice } from '@/store/slices/currencySlice';
-import { FALLBACK_EXCHANGE_RATES } from '@/utils/currency';
+// MULTI-CURRENCY MODEL REMOVED
+// import { convertPrice } from '@/store/slices/currencySlice';
+// import { FALLBACK_EXCHANGE_RATES } from '@/utils/currency';
 import { useNavigate } from 'react-router-dom';
 import { Smartphone, Globe, Wifi, Clock, Search, Check, ShoppingBag, CreditCard, Wallet } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -28,9 +29,7 @@ type PaymentMethod = 'ESEWA' | 'KHALTI' | 'STRIPE';
 export default function EsimPage() {
   const navigate = useNavigate();
   const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
-  const { currentCurrency, currencies, exchangeRates } = useSelector(
-    (state: RootState) => state.currency
-  );
+  // MULTI-CURRENCY MODEL REMOVED - Only NPR supported
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRegion, setSelectedRegion] = useState<string>('all');
   const [selectedProduct, setSelectedProduct] = useState<EsimProduct | null>(null);
@@ -38,15 +37,9 @@ export default function EsimPage() {
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [step, setStep] = useState<'details' | 'payment'>('details');
 
-  // Currency formatting helper - converts from source currency to user's selected currency
-  const formatPrice = (amount: number, sourceCurrency: string = 'USD') => {
-    if (currentCurrency === sourceCurrency) {
-      // Same currency, no conversion needed
-      const info = currencies.find(c => c.code === sourceCurrency);
-      const symbol = info?.symbol || sourceCurrency;
-      return `${symbol} ${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-    }
-    return convertPrice(amount, currentCurrency, exchangeRates, currencies, sourceCurrency);
+  // MULTI-CURRENCY MODEL REMOVED - Always format in NPR
+  const formatPrice = (amount: number, _sourceCurrency: string = 'NPR') => {
+    return `रू ${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   };
 
   const { data: products, isLoading } = useQuery({
@@ -70,20 +63,16 @@ export default function EsimPage() {
         dataAmount: p.dataAmount || p.data_amount || '',
         validity: p.validityDays || p.validity || 0,
         price: p.price || 0,
-        currency: p.currency || 'USD',
+        currency: 'NPR', // MULTI-CURRENCY MODEL REMOVED
         provider: p.providerName || p.provider || 'Airalo',
         features: p.features || [],
       })) : [];
     },
   });
 
-  // Convert amount from source currency to NPR for local gateways
-  const convertToNPR = (amount: number, sourceCurrency: string): number => {
-    if (sourceCurrency === 'NPR') return amount;
-    const fallbackRates = FALLBACK_EXCHANGE_RATES;
-    const rates = Object.keys(exchangeRates).length > 0 ? exchangeRates : fallbackRates;
-    const sourceRate = rates[sourceCurrency] || 1;
-    return Math.round(amount / sourceRate);
+  // MULTI-CURRENCY MODEL REMOVED - No conversion needed, always NPR
+  const convertToNPR = (amount: number, _sourceCurrency: string): number => {
+    return Math.round(amount);
   };
 
   const handlePurchase = (product: EsimProduct) => {

@@ -9,7 +9,8 @@ import {
   Mail, Phone, Smartphone, Plane, Hotel, Car, Globe,
 } from 'lucide-react';
 import { useState, useMemo } from 'react';
-import CurrencySelector from './CurrencySelector';
+// MULTI-CURRENCY MODEL REMOVED - CurrencySelector disabled
+// import CurrencySelector from './CurrencySelector';
 
 const NAV_ICONS: Record<string, any> = {
   home: Home,
@@ -152,7 +153,8 @@ export default function Header() {
                 )}
               </div>
               <div className="flex items-center space-x-4">
-                <CurrencySelector />
+                {/* MULTI-CURRENCY MODEL REMOVED - CurrencySelector disabled */}
+                {/* <CurrencySelector /> */}
                 {topBarMessage && (
                   <span className="flex items-center">
                     <span className="w-2 h-2 bg-accent-500 rounded-full mr-2 animate-pulse"></span>

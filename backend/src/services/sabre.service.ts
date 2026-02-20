@@ -334,7 +334,7 @@ export class SabreService {
             total: parseFloat(airItineraryPricingInfo?.ItinTotalFare?.TotalFare?.Amount || '0'),
             base: parseFloat(airItineraryPricingInfo?.ItinTotalFare?.BaseFare?.Amount || '0'),
             taxes: parseFloat(airItineraryPricingInfo?.ItinTotalFare?.Taxes?.TotalTax?.Amount || '0'),
-            currency: airItineraryPricingInfo?.ItinTotalFare?.TotalFare?.CurrencyCode || 'USD',
+            currency: airItineraryPricingInfo?.ItinTotalFare?.TotalFare?.CurrencyCode || 'NPR',
           },
           itineraries: [],
           validatingCarrier: itinerary.ValidatingCarrier?.Code || '',

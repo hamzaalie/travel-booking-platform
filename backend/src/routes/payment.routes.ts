@@ -235,9 +235,10 @@ router.post(
 );
 
 // ============================================================================
-// PAYPAL ROUTES
+// PAYPAL ROUTES — REMOVED (PayPal is no longer supported)
 // ============================================================================
 
+/*
 // POST /api/payments/paypal/create
 router.post(
   '/paypal/create',
@@ -291,5 +292,6 @@ router.post(
     });
   })
 );
+*/
 
 export default router;

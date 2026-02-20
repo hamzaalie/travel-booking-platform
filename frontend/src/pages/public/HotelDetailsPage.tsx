@@ -273,11 +273,11 @@ export default function HotelDetailsPage() {
                       <div className="text-right ml-4">
                         <div className="text-sm text-gray-600 mb-1">Total Price</div>
                         <div className="text-2xl font-bold text-primary-950">
-                          {offer.price.currency} {offer.price.total.toFixed(2)}
+                          {/* MULTI-CURRENCY MODEL REMOVED */} रू {offer.price.total.toFixed(2)}
                         </div>
                         {offer.price.taxes && offer.price.taxes > 0 && (
                           <div className="text-xs text-gray-500">
-                            Including taxes: {offer.price.currency} {offer.price.taxes.toFixed(2)}
+                            Including taxes: रू {offer.price.taxes.toFixed(2)}
                           </div>
                         )}
                       </div>
@@ -302,7 +302,7 @@ export default function HotelDetailsPage() {
                       className="btn btn-primary w-full flex items-center justify-center font-bold"
                     >
                       <CreditCard className="h-5 w-5 mr-2" />
-                      Book Now - {offer.price.currency} {offer.price.total.toFixed(2)}
+                      Book Now - रू {offer.price.total.toFixed(2)}
                     </button>
                   </div>
                 ))}
@@ -349,7 +349,7 @@ export default function HotelDetailsPage() {
                   <span className="text-gray-600">Starting from</span>
                   <div className="text-right">
                     <span className="text-2xl sm:text-3xl font-bold text-primary-950">
-                      {hotel.offers[0]?.price.currency} {Math.min(...hotel.offers.map(o => o.price.total)).toFixed(2)}
+                      {/* MULTI-CURRENCY MODEL REMOVED */} रू {Math.min(...hotel.offers.map(o => o.price.total)).toFixed(2)}
                     </span>
                     <div className="text-sm text-gray-600">/night</div>
                   </div>

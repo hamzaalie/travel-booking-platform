@@ -39,6 +39,30 @@ router.get(
   })
 );
 
+// Helper: get or create api_providers setting
+async function getOrCreateApiProviders(): Promise<any[]> {
+  const setting = await prisma.siteSetting.findUnique({
+    where: { key: 'api_providers' },
+  });
+  if (setting) {
+    return JSON.parse(String(setting.value));
+  }
+  // Return null to signal it doesn't exist yet
+  return [];
+}
+
+async function saveApiProviders(providers: any[]): Promise<void> {
+  await prisma.siteSetting.upsert({
+    where: { key: 'api_providers' },
+    update: { value: JSON.stringify(providers) },
+    create: {
+      key: 'api_providers',
+      value: JSON.stringify(providers),
+      category: 'api',
+    },
+  });
+}
+
 // PUT /api/admin-extended/api-providers/:id/toggle - Toggle API provider
 router.put(
   '/api-providers/:id/toggle',
@@ -47,22 +71,18 @@ router.put(
     const { isEnabled } = req.body;
 
     try {
-      const setting = await prisma.siteSetting.findUnique({
-        where: { key: 'api_providers' },
-      });
-      if (setting) {
-        const providers = JSON.parse(String(setting.value));
-        const idx = providers.findIndex((p: any) => p.id === id);
-        if (idx >= 0) {
-          providers[idx].isEnabled = isEnabled;
-          await prisma.siteSetting.update({
-            where: { key: 'api_providers' },
-            data: { value: JSON.stringify(providers) },
-          });
-        }
+      let providers = await getOrCreateApiProviders();
+      const idx = providers.findIndex((p: any) => p.id === id);
+      if (idx >= 0) {
+        providers[idx].isEnabled = isEnabled;
+      } else {
+        // Provider not in saved list yet - add it
+        providers.push({ id, isEnabled });
       }
+      await saveApiProviders(providers);
     } catch (err) {
-      logger.warn('API providers setting not found, creating default');
+      logger.error('Failed to toggle API provider', err);
+      return res.status(500).json({ success: false, message: 'Failed to toggle API provider' });
     }
 
     res.json({ success: true, message: 'API provider toggled' });
@@ -97,22 +117,17 @@ router.put(
     const config = req.body;
 
     try {
-      const setting = await prisma.siteSetting.findUnique({
-        where: { key: 'api_providers' },
-      });
-      if (setting) {
-        const providers = JSON.parse(String(setting.value));
-        const idx = providers.findIndex((p: any) => p.id === id);
-        if (idx >= 0) {
-          providers[idx].config = { ...providers[idx].config, ...config };
-          await prisma.siteSetting.update({
-            where: { key: 'api_providers' },
-            data: { value: JSON.stringify(providers) },
-          });
-        }
+      let providers = await getOrCreateApiProviders();
+      const idx = providers.findIndex((p: any) => p.id === id);
+      if (idx >= 0) {
+        providers[idx].config = { ...providers[idx].config, ...config };
+      } else {
+        providers.push({ id, config });
       }
+      await saveApiProviders(providers);
     } catch (err) {
-      logger.warn('Failed to update API config');
+      logger.error('Failed to update API config', err);
+      return res.status(500).json({ success: false, message: 'Failed to update configuration' });
     }
 
     res.json({ success: true, message: 'API configuration updated' });
@@ -127,22 +142,19 @@ router.put(
     const { type } = req.body;
 
     try {
-      const setting = await prisma.siteSetting.findUnique({
-        where: { key: 'api_providers' },
+      let providers = await getOrCreateApiProviders();
+      // Unset other primaries of same type, set the target
+      providers.forEach((p: any) => {
+        if (p.type === type) p.isPrimary = p.id === id;
       });
-      if (setting) {
-        const providers = JSON.parse(String(setting.value));
-        // Unset other primaries of same type
-        providers.forEach((p: any) => {
-          if (p.type === type) p.isPrimary = p.id === id;
-        });
-        await prisma.siteSetting.update({
-          where: { key: 'api_providers' },
-          data: { value: JSON.stringify(providers) },
-        });
+      // If provider not in list, add it
+      if (!providers.find((p: any) => p.id === id)) {
+        providers.push({ id, type, isPrimary: true });
       }
+      await saveApiProviders(providers);
     } catch (err) {
-      logger.warn('Failed to set primary provider');
+      logger.error('Failed to set primary provider', err);
+      return res.status(500).json({ success: false, message: 'Failed to set primary provider' });
     }
 
     res.json({ success: true, message: 'Primary provider updated' });
@@ -175,7 +187,7 @@ router.get(
     // Fetch real payment stats per gateway from the payments table
     let stats: Record<string, any> = {};
     try {
-      const gatewayNames = ['ESEWA', 'KHALTI', 'STRIPE', 'PAYPAL', 'WALLET'];
+      const gatewayNames = ['ESEWA', 'KHALTI', 'STRIPE', 'WALLET'];
       for (const gw of gatewayNames) {
         const [total, completed, failed, volumeResult] = await Promise.all([
           prisma.payment.count({ where: { gateway: gw as any } }),

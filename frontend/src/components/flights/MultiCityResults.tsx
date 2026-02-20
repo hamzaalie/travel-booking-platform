@@ -4,12 +4,14 @@
  */
 
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+// MULTI-CURRENCY MODEL REMOVED
+// import { useSelector } from 'react-redux';
 import { Plane, Clock, MapPin, ChevronDown, ChevronUp, Check } from 'lucide-react';
 import { type MultiCityFlightOffer } from '../../../shared/multiCityTypes';
 import { formatDuration, getAirlineCombinations, getTotalStops } from '../../../shared/multiCityTypes';
-import { RootState } from '@/store';
-import { convertPrice } from '@/store/slices/currencySlice';
+// MULTI-CURRENCY MODEL REMOVED
+// import { RootState } from '@/store';
+// import { convertPrice } from '@/store/slices/currencySlice';
 
 interface MultiCityResultsProps {
   offers: MultiCityFlightOffer[];
@@ -24,24 +26,13 @@ export const MultiCityResults: React.FC<MultiCityResultsProps> = ({
   isLoading,
   onSelectOffer,
   selectedOfferId,
-  currency = 'USD',
+  currency: _currency = 'NPR',
 }) => {
   const [expandedOfferId, setExpandedOfferId] = useState<string | null>(null);
 
-  // Currency conversion from Redux
-  const { currentCurrency, currencies, exchangeRates } = useSelector(
-    (state: RootState) => state.currency
-  );
-
-  const formatCurrencyPrice = (amount: number, sourceCurrency?: string) => {
-    const source = sourceCurrency || currency || 'USD';
-    const target = currentCurrency || currency;
-    if (target === source) {
-      const info = currencies.find(c => c.code === source);
-      const symbol = info?.symbol || source;
-      return `${symbol} ${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-    }
-    return convertPrice(amount, target, exchangeRates, currencies, source);
+  // MULTI-CURRENCY MODEL REMOVED - Only NPR supported
+  const formatCurrencyPrice = (amount: number, _sourceCurrency?: string) => {
+    return `रू ${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   };
 
   if (isLoading) {

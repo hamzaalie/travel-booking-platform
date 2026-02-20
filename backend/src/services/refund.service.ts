@@ -206,11 +206,9 @@ export class RefundService {
               break;
 
             case 'PAYPAL':
-              gatewayRefund = await paymentService.refundPayPalPayment(
-                payment.transactionId,
-                refundCalc.refundAmount
-              );
-              transactionId = gatewayRefund.id;
+              // PayPal removed — no longer supported
+              logger.warn('PayPal refund not available (PayPal removed), marking as pending');
+              refundStatus = 'PENDING';
               break;
 
             default:

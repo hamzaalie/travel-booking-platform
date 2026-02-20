@@ -52,7 +52,7 @@ export default function CookiePolicyPage() {
                 <h3 className="font-semibold text-primary-950 mb-2">Functional Cookies</h3>
                 <p className="text-gray-600 text-sm">
                   These cookies allow us to remember your preferences and provide enhanced features. 
-                  This includes your language preference, currency selection, and recent searches.
+                  This includes your language preference and recent searches.
                 </p>
               </div>
               
@@ -86,7 +86,7 @@ export default function CookiePolicyPage() {
               </p>
               <ul className="list-disc pl-6 text-gray-600 space-y-2">
                 <li><strong>Google Analytics:</strong> For understanding website traffic and user behavior</li>
-                <li><strong>Stripe/PayPal:</strong> For secure payment processing</li>
+                <li><strong>Stripe:</strong> For secure payment processing</li>
                 <li><strong>Intercom:</strong> For customer support chat functionality</li>
                 <li><strong>Facebook Pixel:</strong> For advertising and remarketing (optional)</li>
               </ul>

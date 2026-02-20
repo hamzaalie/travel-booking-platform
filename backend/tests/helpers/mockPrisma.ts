@@ -103,7 +103,7 @@ export const mockWallet = {
   id: 'wallet-123',
   agentId: 'agent-123',
   balance: new Decimal(1000),
-  currency: 'USD',
+  currency: 'NPR', // MULTI-CURRENCY MODEL REMOVED
   createdAt: new Date('2026-01-01'),
   updatedAt: new Date('2026-01-01'),
 };
@@ -167,7 +167,7 @@ export const mockPayment = {
   id: 'payment-123',
   bookingId: 'booking-123',
   amount: new Decimal(550),
-  currency: 'USD',
+  currency: 'NPR', // MULTI-CURRENCY MODEL REMOVED
   paymentMethod: 'STRIPE',
   gatewayPaymentId: 'pi_123456',
   status: 'COMPLETED',

@@ -62,7 +62,7 @@ async function testHotelVoucher() {
         taxes: 1800,
         serviceFee: 200,
         total: 14000,
-        currency: 'THB',
+        currency: 'NPR', // MULTI-CURRENCY MODEL REMOVED
         paymentStatus: 'PAID',
       },
       cancellationPolicy: {
@@ -78,7 +78,7 @@ async function testHotelVoucher() {
         petPolicy: 'Pets not allowed',
         additionalNotes: [
           'Please bring a valid ID and credit card for check-in',
-          'Airport shuttle available for 500 THB per person',
+          'Airport shuttle available for NPR 500 per person',
           'Spa and fitness center access included',
         ],
       },
@@ -143,12 +143,12 @@ async function testCarRentalVoucher() {
       insurance: {
         selectedCoverage: [],
         totalPrice: 210,
-        currency: 'USD',
+        currency: 'NPR', // MULTI-CURRENCY MODEL REMOVED
       },
       addOns: {
         selectedAddOns: [],
         totalPrice: 196,
-        currency: 'USD',
+        currency: 'NPR', // MULTI-CURRENCY MODEL REMOVED
       },
       pricing: {
         baseRate: 350,
@@ -157,7 +157,7 @@ async function testCarRentalVoucher() {
         taxes: 75.6,
         fees: 20,
         total: 851.6,
-        currency: 'USD',
+        currency: 'NPR', // MULTI-CURRENCY MODEL REMOVED
         deposit: 500,
       },
       policies: {

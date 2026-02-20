@@ -344,7 +344,7 @@ export default function AgentMarkupManagementPage() {
               {bulkSettings.markupType && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Markup Value {bulkSettings.markupType === 'PERCENTAGE' ? '(%)' : '(USD)'}
+                    Markup Value {bulkSettings.markupType === 'PERCENTAGE' ? '(%)' : '(NPR)'}
                   </label>
                   <input
                     type="number"
@@ -372,7 +372,7 @@ export default function AgentMarkupManagementPage() {
               {bulkSettings.discountType && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Discount Value {bulkSettings.discountType === 'PERCENTAGE' ? '(%)' : '(USD)'}
+                    Discount Value {bulkSettings.discountType === 'PERCENTAGE' ? '(%)' : '(NPR)'}
                   </label>
                   <input
                     type="number"

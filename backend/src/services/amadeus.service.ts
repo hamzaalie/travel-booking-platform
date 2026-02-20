@@ -543,7 +543,7 @@ export class AmadeusService {
       }),
       meta: {
         count: offers.length,
-        currency: offers[0]?.price?.currency || 'USD',
+        currency: offers[0]?.price?.currency || 'NPR',
         searchedAt: new Date().toISOString(),
       },
     };

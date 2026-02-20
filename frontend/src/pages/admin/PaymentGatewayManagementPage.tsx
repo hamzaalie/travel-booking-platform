@@ -106,31 +106,12 @@ const DEFAULT_GATEWAYS: PaymentGateway[] = [
     isPrimary: false,
     status: 'INACTIVE',
     environment: 'sandbox',
-    supportedCurrencies: ['USD', 'EUR', 'GBP', 'NPR'],
+    supportedCurrencies: ['NPR'],
     transactionFee: 2.9,
     feeType: 'PERCENTAGE',
     minAmount: 1,
     maxAmount: 999999,
     config: { publicKey: '', secretKey: '', webhookSecret: '' },
-    stats: { totalTransactions: 0, successfulTransactions: 0, failedTransactions: 0, totalVolume: 0, successRate: 0 },
-    lastTransaction: null,
-    lastError: null,
-  },
-  {
-    id: 'paypal',
-    name: 'PayPal',
-    provider: 'paypal',
-    logo: '🅿️',
-    isEnabled: false,
-    isPrimary: false,
-    status: 'INACTIVE',
-    environment: 'sandbox',
-    supportedCurrencies: ['USD', 'EUR', 'GBP'],
-    transactionFee: 3.49,
-    feeType: 'PERCENTAGE',
-    minAmount: 1,
-    maxAmount: 500000,
-    config: { publicKey: '', secretKey: '', merchantId: '' },
     stats: { totalTransactions: 0, successfulTransactions: 0, failedTransactions: 0, totalVolume: 0, successRate: 0 },
     lastTransaction: null,
     lastError: null,
@@ -176,7 +157,10 @@ export default function PaymentGatewayManagementPage() {
         return DEFAULT_GATEWAYS.map((def) => {
           const override = saved && Array.isArray(saved) ? saved.find((s: any) => s.id === def.id) : null;
           const gwStats = realStats[def.id] || null;
-          const merged = override ? { ...def, ...override } : { ...def };
+          // Merge but always force supportedCurrencies to NPR only
+          const merged = override
+            ? { ...def, ...override, supportedCurrencies: ['NPR'] }
+            : { ...def };
           if (gwStats) {
             const total = (gwStats.completed || 0) + (gwStats.failed || 0) + (gwStats.pending || 0) + (gwStats.refunded || 0);
             merged.stats = {
@@ -198,11 +182,34 @@ export default function PaymentGatewayManagementPage() {
   const toggleMutation = useMutation({
     mutationFn: ({ id, isEnabled }: { id: string; isEnabled: boolean }) =>
       adminPaymentGatewayApi.toggleGateway(id, isEnabled),
-    onSuccess: () => {
+    onMutate: async ({ id, isEnabled }) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['payment-gateways'] });
+      // Snapshot the previous value
+      const previousGateways = queryClient.getQueryData<PaymentGateway[]>(['payment-gateways']);
+      // Optimistically update the cache
+      queryClient.setQueryData<PaymentGateway[]>(['payment-gateways'], (old) =>
+        (old || []).map((g) =>
+          g.id === id
+            ? { ...g, isEnabled, status: isEnabled ? 'ACTIVE' as const : 'INACTIVE' as const }
+            : g
+        )
+      );
+      return { previousGateways };
+    },
+    onError: (_err, _vars, context) => {
+      // Roll back on error
+      if (context?.previousGateways) {
+        queryClient.setQueryData(['payment-gateways'], context.previousGateways);
+      }
+      toast.error('Failed to update payment gateway');
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['payment-gateways'] });
+    },
+    onSuccess: () => {
       toast.success('Payment gateway updated');
     },
-    onError: () => toast.error('Failed to update payment gateway'),
   });
 
   const testMutation = useMutation({

@@ -23,7 +23,8 @@ import fundRequestRoutes from './routes/fund-request.routes';
 import hotelRoutes from './routes/hotel.routes';
 import carRentalRoutes from './routes/car-rental.routes';
 import ssrRoutes from './routes/ssr.routes';
-import currencyRoutes from './routes/currency.routes';
+// MULTI-CURRENCY MODEL REMOVED
+// import currencyRoutes from './routes/currency.routes';
 import settingsRoutes from './routes/settings.routes';
 import contentRoutes from './routes/content.routes';
 import esimRoutes from './routes/esim.routes';
@@ -124,7 +125,8 @@ app.use('/api/fund-requests', fundRequestRoutes);
 app.use('/api/hotels', hotelRoutes);
 app.use('/api/car-rentals', carRentalRoutes);
 app.use('/api/ssr', ssrRoutes);
-app.use('/api/currency', currencyRoutes);
+// MULTI-CURRENCY MODEL REMOVED
+// app.use('/api/currency', currencyRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/content', contentRoutes);
 app.use('/api/esim', esimRoutes);

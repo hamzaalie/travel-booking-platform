@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
-import { convertPrice } from '@/store/slices/currencySlice';
+// MULTI-CURRENCY MODEL REMOVED
+// import { convertPrice } from '@/store/slices/currencySlice';
 import { Building2, User, Mail, CreditCard, Calendar, Users, MapPin } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -16,19 +17,9 @@ export default function HotelBookingPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, isAuthenticated } = useSelector((state: RootState) => state.auth);
-  const { currentCurrency, currencies, exchangeRates } = useSelector(
-    (state: RootState) => state.currency
-  );
-
-  // Format price with currency conversion
-  const formatPrice = (amount: number, sourceCurrency?: string) => {
-    const source = sourceCurrency || 'USD';
-    if (currentCurrency === source) {
-      const info = currencies.find(c => c.code === source);
-      const symbol = info?.symbol || source;
-      return `${symbol} ${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-    }
-    return convertPrice(amount, currentCurrency, exchangeRates, currencies, source);
+  // MULTI-CURRENCY MODEL REMOVED - Only NPR supported
+  const formatPrice = (amount: number, _sourceCurrency?: string) => {
+    return `रू ${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   };
   
   const [hotelData, setHotelData] = useState<any>(null);

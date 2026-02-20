@@ -127,7 +127,7 @@ export default function HotelSearchPage() {
             description: hotel.description || '',
             location: hotel.location || null,
             price: firstOffer?.price?.total || 0,
-            currency: firstOffer?.price?.currency || 'USD',
+            currency: 'NPR', // MULTI-CURRENCY MODEL REMOVED - always NPR
             amenities: hotel.amenities || [],
             photos: hotel.photos || [],
             offers: hotel.offers || [],
@@ -417,7 +417,8 @@ export default function HotelSearchPage() {
                         <p className="text-sm text-gray-600 mb-1">Starting from</p>
                         <div className="flex items-baseline space-x-2">
                           <span className="text-3xl sm:text-4xl font-bold text-primary-950">
-                            {hotel.currency === 'USD' ? '$' : hotel.currency} {parseFloat(hotel.price).toFixed(2)}
+                            {/* MULTI-CURRENCY MODEL REMOVED - Always NPR */}
+                            रू {parseFloat(hotel.price).toFixed(2)}
                           </span>
                           <span className="text-gray-600">/night</span>
                         </div>

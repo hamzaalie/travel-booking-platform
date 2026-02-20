@@ -227,7 +227,7 @@ const hotelPDF = await voucherService.generateHotelVoucher({
   confirmationNumber: 'CONF-789',
   hotel: { name: 'Grand Hotel', starRating: 5, ... },
   reservation: { checkInDate, checkOutDate, ... },
-  pricing: { total: 15000, currency: 'USD', ... },
+  pricing: { total: 15000, currency: 'NPR', ... },
   // ... other fields
 });
 

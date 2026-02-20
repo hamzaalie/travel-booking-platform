@@ -180,7 +180,7 @@ const DEFAULT_FOOTER_SETTINGS: FooterSettings = {
   newsletterDescription: 'Get exclusive deals and travel tips',
   showSocialLinks: true,
   showPaymentMethods: true,
-  paymentMethods: ['visa', 'mastercard', 'amex', 'esewa', 'khalti', 'paypal'],
+  paymentMethods: ['visa', 'mastercard', 'amex', 'esewa', 'khalti'],
   bottomLinks: [
     { label: 'Privacy', href: '/privacy-policy' },
     { label: 'Terms', href: '/terms' },

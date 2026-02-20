@@ -116,7 +116,7 @@ class HotelService {
         checkOutDate: params.checkOutDate,
         adults: params.adults,
         roomQuantity: params.rooms || 1,
-        currency: params.currency || 'USD',
+        currency: params.currency || 'NPR',
         bestRateOnly: params.bestRateOnly !== false,
       };
 
@@ -161,7 +161,7 @@ class HotelService {
             boardType: offer.boardType,
             guests: offer.guests?.adults || params.adults,
             price: {
-              currency: offer.price?.currency || 'USD',
+              currency: offer.price?.currency || 'NPR',
               total: parseFloat(offer.price?.total || '0'),
               base: parseFloat(offer.price?.base || '0'),
               taxes: offer.price?.taxes?.map((t: any) => parseFloat(t.amount || '0'))
@@ -569,7 +569,7 @@ class HotelService {
           taxes: Number(booking.totalAmount) * 0.15,
           serviceFee: 0,
           total: Number(booking.totalAmount),
-          currency: 'USD',
+          currency: 'NPR',
           paymentStatus: (booking as any).paymentStatus,
         },
         cancellationPolicy: {
@@ -620,7 +620,7 @@ class HotelService {
         ratings: params.ratings?.join(','),
         amenities: params.amenities?.join(','),
         priceRange: params.priceRange,
-        currency: params.currency || 'USD',
+        currency: params.currency || 'NPR',
         bestRateOnly: params.bestRateOnly !== false,
       };
 
@@ -671,7 +671,7 @@ class HotelService {
             boardType: offer.boardType,
             guests: offer.guests?.adults || params.adults,
             price: {
-              currency: offer.price?.currency || 'USD',
+              currency: offer.price?.currency || 'NPR',
               total: parseFloat(offer.price?.total || '0'),
               base: parseFloat(offer.price?.base || '0'),
               taxes: offer.price?.taxes?.map((t: any) => parseFloat(t.amount || '0'))

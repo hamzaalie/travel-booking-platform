@@ -190,68 +190,147 @@ export default function ApiManagementPage() {
     environment: 'production' as 'sandbox' | 'production',
   });
 
-  // Fetch API providers - falls back to defaults
+  // Helper to merge saved providers with defaults
+  const mergeWithDefaults = (saved: ApiProvider[] | null): ApiProvider[] => {
+    if (!saved || saved.length === 0) return DEFAULT_PROVIDERS;
+    return DEFAULT_PROVIDERS.map((def) => {
+      const override = saved.find((s: ApiProvider) => s.id === def.id);
+      return override ? { ...def, ...override, config: { ...def.config, ...(override.config || {}) }, stats: { ...def.stats, ...(override.stats || {}) } } : def;
+    });
+  };
+
+  // Helper to optimistically update provider cache
+  const updateProviderCache = (updater: (providers: ApiProvider[]) => ApiProvider[]) => {
+    const queryKeys = queryClient.getQueriesData<ApiProvider[]>({ queryKey: ['api-providers'] });
+    const snapshots: { key: any; data: ApiProvider[] | undefined }[] = [];
+    queryKeys.forEach(([key, data]) => {
+      snapshots.push({ key, data });
+      queryClient.setQueryData(key, updater(data || DEFAULT_PROVIDERS));
+    });
+    return snapshots;
+  };
+
+  const rollbackCache = (snapshots: { key: any; data: ApiProvider[] | undefined }[]) => {
+    snapshots.forEach(({ key, data }) => queryClient.setQueryData(key, data));
+  };
+
+  // Fetch API providers - merge saved with defaults
   const { data: providers = DEFAULT_PROVIDERS, isLoading } = useQuery({
     queryKey: ['api-providers', typeFilter],
     queryFn: async () => {
       try {
         const response: any = await adminApiManagementApi.getProviders({ type: typeFilter !== 'all' ? typeFilter : undefined });
-        return response.data?.providers || DEFAULT_PROVIDERS;
+        return mergeWithDefaults(response.data?.providers);
       } catch {
         return DEFAULT_PROVIDERS;
       }
     },
   });
 
-  // Toggle API enabled/disabled
+  // Toggle API enabled/disabled - with optimistic updates
   const toggleMutation = useMutation({
     mutationFn: ({ id, isEnabled }: { id: string; isEnabled: boolean }) =>
       adminApiManagementApi.toggleProvider(id, isEnabled),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['api-providers'] });
-      toast.success('API provider updated');
+    onMutate: async ({ id, isEnabled }) => {
+      await queryClient.cancelQueries({ queryKey: ['api-providers'] });
+      const snapshots = updateProviderCache((old) =>
+        old.map((p) => (p.id === id ? { ...p, isEnabled } : p))
+      );
+      return { snapshots };
     },
-    onError: () => {
+    onError: (_err, _vars, context) => {
+      if (context?.snapshots) rollbackCache(context.snapshots);
       toast.error('Failed to update API provider');
     },
+    onSuccess: () => {
+      toast.success('API provider updated');
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['api-providers'] });
+    },
   });
 
-  // Test connection
+  // Test connection - with optimistic CHECKING state
   const testMutation = useMutation({
     mutationFn: (id: string) => adminApiManagementApi.testConnection(id),
-    onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: ['api-providers'] });
-      toast.success(`Connection test successful for ${id}`);
+    onMutate: async (id) => {
+      await queryClient.cancelQueries({ queryKey: ['api-providers'] });
+      const snapshots = updateProviderCache((old) =>
+        old.map((p) => (p.id === id ? { ...p, status: 'CHECKING' as const } : p))
+      );
+      return { snapshots };
     },
-    onError: (_, id) => {
-      toast.error(`Connection test failed for ${id}`);
+    onSuccess: (response: any, id) => {
+      const result = response.data;
+      // Update status from server response
+      updateProviderCache((old) =>
+        old.map((p) =>
+          p.id === id
+            ? { ...p, status: result?.status || 'CONNECTED', lastChecked: result?.checkedAt || new Date().toISOString(), lastError: result?.status === 'ERROR' ? 'Connection failed' : null }
+            : p
+        )
+      );
+      if (result?.status === 'CONNECTED') {
+        toast.success(`Connection test successful for ${id}`);
+      } else {
+        toast.error(`Connection test failed for ${id}`);
+      }
+    },
+    onError: (_err, _id, context) => {
+      if (context?.snapshots) rollbackCache(context.snapshots);
+      toast.error('Connection test failed');
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['api-providers'] });
     },
   });
 
-  // Update config
+  // Update config - with optimistic updates
   const updateConfigMutation = useMutation({
     mutationFn: ({ id, config }: { id: string; config: any }) =>
       adminApiManagementApi.updateConfig(id, config),
+    onMutate: async ({ id, config }) => {
+      await queryClient.cancelQueries({ queryKey: ['api-providers'] });
+      const snapshots = updateProviderCache((old) =>
+        old.map((p) => (p.id === id ? { ...p, config: { ...p.config, ...config } } : p))
+      );
+      return { snapshots };
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['api-providers'] });
       setIsConfigModalOpen(false);
       toast.success('API configuration updated');
     },
-    onError: () => {
+    onError: (_err, _vars, context) => {
+      if (context?.snapshots) rollbackCache(context.snapshots);
       toast.error('Failed to update configuration');
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['api-providers'] });
     },
   });
 
-  // Set primary
+  // Set primary - with optimistic updates
   const setPrimaryMutation = useMutation({
     mutationFn: ({ id, type }: { id: string; type: string }) =>
       adminApiManagementApi.setPrimary(id, type),
+    onMutate: async ({ id, type }) => {
+      await queryClient.cancelQueries({ queryKey: ['api-providers'] });
+      const snapshots = updateProviderCache((old) =>
+        old.map((p) =>
+          p.type === type ? { ...p, isPrimary: p.id === id } : p
+        )
+      );
+      return { snapshots };
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['api-providers'] });
       toast.success('Primary provider updated');
     },
-    onError: () => {
+    onError: (_err, _vars, context) => {
+      if (context?.snapshots) rollbackCache(context.snapshots);
       toast.error('Failed to set primary provider');
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['api-providers'] });
     },
   });
 

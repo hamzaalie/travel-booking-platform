@@ -1169,17 +1169,13 @@ function GeneralSettings({ data, onSave, isSaving }: { data: any; onSave: (d: an
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Default Currency</label>
-          <select
-            value={formData.defaultCurrency}
-            onChange={(e) => setFormData({ ...formData, defaultCurrency: e.target.value })}
-            className="input w-full"
-          >
-            <option value="NPR">NPR - Nepalese Rupee</option>
-            <option value="USD">USD - US Dollar</option>
-            <option value="EUR">EUR - Euro</option>
-            <option value="GBP">GBP - British Pound</option>
-            <option value="INR">INR - Indian Rupee</option>
-          </select>
+          {/* MULTI-CURRENCY MODEL REMOVED - Only NPR supported */}
+          <input
+            type="text"
+            value="NPR - Nepalese Rupee"
+            className="input w-full bg-gray-50"
+            readOnly
+          />
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Timezone</label>

@@ -1,16 +1,18 @@
 import { useRef, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { esimApi } from '@/services/api';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/store';
-import { convertPrice } from '@/store/slices/currencySlice';
+// MULTI-CURRENCY MODEL REMOVED
+// import { useSelector } from 'react-redux';
+// import { RootState } from '@/store';
+// import { convertPrice } from '@/store/slices/currencySlice';
 import {
   ArrowLeft, Globe, Wifi, Clock, Smartphone, Copy, CheckCircle,
   AlertCircle, Loader2, QrCode, Signal, CreditCard,
-  ChevronDown, ChevronUp,
+  ChevronDown, ChevronUp, Zap,
 } from 'lucide-react';
 import EsimQrCode from '@/components/EsimQrCode';
+import EsimTopUpModal from '@/components/esim/EsimTopUpModal';
 import { useState } from 'react';
 
 const statusConfig: Record<string, { color: string; bg: string; text: string }> = {
@@ -26,13 +28,13 @@ const statusConfig: Record<string, { color: string; bg: string; text: string }> 
 
 export default function EsimOrderDetailsPage() {
   const { id } = useParams<{ id: string }>();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { currentCurrency, currencies, exchangeRates } = useSelector(
-    (state: RootState) => state.currency
-  );
+  // MULTI-CURRENCY MODEL REMOVED - Only NPR supported
   const [copied, setCopied] = useState<string | null>(null);
   const copiedTimerRef = useRef<ReturnType<typeof setTimeout>>();
   const [showInstructions, setShowInstructions] = useState(true);
+  const [showTopUpModal, setShowTopUpModal] = useState(searchParams.get('topup') === 'true');
 
   const copyToClipboard = useCallback(async (text: string, field: string) => {
     try {
@@ -45,13 +47,8 @@ export default function EsimOrderDetailsPage() {
     }
   }, []);
 
-  const formatPrice = (amount: number, sourceCurrency: string = 'USD') => {
-    if (currentCurrency === sourceCurrency) {
-      const info = currencies.find(c => c.code === sourceCurrency);
-      const symbol = info?.symbol || sourceCurrency;
-      return `${symbol} ${Number(amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-    }
-    return convertPrice(Number(amount), currentCurrency, exchangeRates, currencies, sourceCurrency);
+  const formatPrice = (amount: number, _sourceCurrency: string = 'NPR') => {
+    return `रू ${Number(amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   };
 
   const { data: order, isLoading, error } = useQuery({
@@ -143,6 +140,15 @@ export default function EsimOrderDetailsPage() {
             <span className="text-xl font-bold text-gray-900">
               {formatPrice(order.totalAmount, order.currency)}
             </span>
+            {isActive && order.iccid && (
+              <button
+                onClick={() => setShowTopUpModal(true)}
+                className="inline-flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-sm font-semibold rounded-lg hover:from-emerald-600 hover:to-teal-700 transition-all shadow-sm"
+              >
+                <Zap className="h-4 w-4" />
+                Top Up
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -231,10 +237,21 @@ export default function EsimOrderDetailsPage() {
       {/* Data Usage (for active eSIMs) */}
       {isActive && (
         <div className="bg-white rounded-lg shadow-sm border p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <Signal className="h-5 w-5" />
-            Data Usage
-          </h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <Signal className="h-5 w-5" />
+              Data Usage
+            </h2>
+            {order.iccid && (
+              <button
+                onClick={() => setShowTopUpModal(true)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-700 text-sm font-medium rounded-lg hover:bg-emerald-100 transition-colors border border-emerald-200"
+              >
+                <Zap className="h-3.5 w-3.5" />
+                Add More Data
+              </button>
+            )}
+          </div>
           {usageLoading ? (
             <div className="flex items-center gap-2 text-gray-500">
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -397,6 +414,54 @@ export default function EsimOrderDetailsPage() {
           </div>
         </div>
       )}
+
+      {/* Expired eSIM - Prompt to top up */}
+      {order.status === 'EXPIRED' && order.iccid && (
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 flex items-start gap-3">
+          <Zap className="h-5 w-5 text-amber-600 mt-0.5 shrink-0" />
+          <div className="flex-1">
+            <p className="font-medium text-amber-800">eSIM Data Expired</p>
+            <p className="text-sm text-amber-700 mb-3">Your data plan has expired. You can top up this eSIM with a new data package without needing to install a new eSIM.</p>
+            <button
+              onClick={() => setShowTopUpModal(true)}
+              className="inline-flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-sm font-semibold rounded-lg hover:from-emerald-600 hover:to-teal-700 transition-all shadow-sm"
+            >
+              <Zap className="h-4 w-4" />
+              Top Up Now
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Low data warning with top-up prompt */}
+      {usage && typeof usage.daysRemaining === 'number' && usage.daysRemaining <= 2 && usage.daysRemaining > 0 && isActive && order.iccid && (
+        <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 flex items-start gap-3">
+          <AlertCircle className="h-5 w-5 text-orange-600 mt-0.5 shrink-0" />
+          <div className="flex-1">
+            <p className="font-medium text-orange-800">Running Low on Data</p>
+            <p className="text-sm text-orange-700 mb-3">
+              Your eSIM has only {usage.daysRemaining} day{usage.daysRemaining !== 1 ? 's' : ''} remaining. 
+              Top up now to stay connected!
+            </p>
+            <button
+              onClick={() => setShowTopUpModal(true)}
+              className="inline-flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-600 text-white text-sm font-semibold rounded-lg hover:from-emerald-600 hover:to-teal-700 transition-all shadow-sm"
+            >
+              <Zap className="h-4 w-4" />
+              Top Up Now
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Top-Up Modal */}
+      <EsimTopUpModal
+        orderId={order.id}
+        orderIccid={order.iccid || ''}
+        productName={order.product?.name || 'eSIM'}
+        isOpen={showTopUpModal}
+        onClose={() => setShowTopUpModal(false)}
+      />
     </div>
   );
 }

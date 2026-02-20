@@ -55,7 +55,7 @@ POST /api/flights/search/multi-city
         "id": "offer-1",
         "segments": [[[/* flight details */]], [[/* flight details */]]],
         "price": {
-          "currency": "USD",
+          "currency": "NPR",
           "total": 1250.00,
           "base": 980.00,
           "fees": 50.00,
@@ -74,7 +74,7 @@ POST /api/flights/search/multi-city
     ],
     "meta": {
       "count": 15,
-      "currency": "USD",
+      "currency": "NPR",
       "searchedAt": "2026-01-17T10:30:00Z"
     }
   }
@@ -313,7 +313,7 @@ export const flightApi = {
 - [ ] Save/share itinerary functionality
 - [ ] Alternative route suggestions
 - [ ] Real-time price tracking
-- [ ] Multi-currency support
+- [x] ~~Multi-currency support~~ (Removed - NPR only)
 - [ ] Loyalty program integration
 
 ## Architecture Decisions

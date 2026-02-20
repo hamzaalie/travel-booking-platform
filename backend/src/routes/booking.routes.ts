@@ -30,7 +30,7 @@ const createBookingSchema = Joi.object({
       .min(1)
       .required(),
     paymentGateway: Joi.string()
-      .valid('ESEWA', 'KHALTI', 'STRIPE', 'PAYPAL', 'WALLET')
+      .valid('ESEWA', 'KHALTI', 'STRIPE', 'WALLET')
       .required(),
     tripType: Joi.string().valid('ONE_WAY', 'ROUND_TRIP', 'MULTI_CITY').required(),
   }),
@@ -181,7 +181,7 @@ router.get(
         : '1 x 23kg',
       ticketNumber: passengers[0]?.ticketNumber,
       totalPrice: booking.totalAmount?.toNumber() || 0,
-      currency: (booking as any).currency || flightDetails?.price?.currency || 'USD',
+      currency: (booking as any).currency || flightDetails?.price?.currency || 'NPR', // MULTI-CURRENCY MODEL REMOVED
     };
 
     const filePath = await pdfService.generateTicket(ticketData);
@@ -236,7 +236,7 @@ router.get(
       subtotal: booking.baseFare?.toNumber() || 0,
       tax: booking.taxes?.toNumber() || 0,
       total: booking.totalAmount?.toNumber() || 0,
-      currency: (booking as any).currency || flightDetails?.price?.currency || 'USD',
+      currency: (booking as any).currency || flightDetails?.price?.currency || 'NPR', // MULTI-CURRENCY MODEL REMOVED
     };
 
     const filePath = await pdfService.generateInvoice(invoiceData);

@@ -348,11 +348,11 @@ export const paymentApi = {
   verifyEsewa: (data: any) =>
     api.post('/payments/esewa/verify', data),
   
-  createPayPalOrder: (data: any) =>
-    api.post('/payments/paypal/create', data),
-  
-  capturePayPalPayment: (orderId: string, bookingId: string) =>
-    api.post('/payments/paypal/capture', { orderId, bookingId }),
+  // PayPal removed — not supported
+  // createPayPalOrder: (data: any) =>
+  //   api.post('/payments/paypal/create', data),
+  // capturePayPalPayment: (orderId: string, bookingId: string) =>
+  //   api.post('/payments/paypal/capture', { orderId, bookingId }),
 };
 
 // Hotel API
@@ -379,41 +379,35 @@ export const carRentalApi = {
     api.post('/car-rentals/book', data),
 };
 
-// Currency API
+// --- MULTI-CURRENCY MODEL REMOVED ---
+// Currency API has been disabled. Only NPR is supported.
+// export const currencyApi = {
+//   getCurrencies: () => api.get('/currency'),
+//   detect: () => api.get('/currency/detect'),
+//   getCurrency: (code: string) => api.get(`/currency/${code}`),
+//   convert: (amount: number, from: string, to: string) => api.post('/currency/convert', { amount, from, to }),
+//   getExchangeRate: (code: string) => api.get(`/currency/exchange-rate/${code}`),
+//   getCountries: () => api.get('/currency/countries/list'),
+//   updateCurrency: (id: string, data: any) => api.put(`/currency/${id}`, data),
+//   createCurrency: (data: any) => api.post('/currency', data),
+//   deleteCurrency: (id: string) => api.delete(`/currency/${id}`),
+//   setDefaultCurrency: (id: string) => api.put(`/currency/${id}/default`),
+//   refreshRates: () => api.post('/currency/refresh-rates'),
+// };
+
+// Stub currencyApi for backward compatibility (all methods return empty/noop)
 export const currencyApi = {
-  getCurrencies: () =>
-    api.get('/currency'),
-  
-  detect: () =>
-    api.get('/currency/detect'),
-  
-  getCurrency: (code: string) =>
-    api.get(`/currency/${code}`),
-  
-  convert: (amount: number, from: string, to: string) =>
-    api.post('/currency/convert', { amount, from, to }),
-  
-  getExchangeRate: (code: string) =>
-    api.get(`/currency/exchange-rate/${code}`),
-  
-  getCountries: () =>
-    api.get('/currency/countries/list'),
-  
-  // Admin
-  updateCurrency: (id: string, data: any) =>
-    api.put(`/currency/${id}`, data),
-  
-  createCurrency: (data: any) =>
-    api.post('/currency', data),
-  
-  deleteCurrency: (id: string) =>
-    api.delete(`/currency/${id}`),
-  
-  setDefaultCurrency: (id: string) =>
-    api.put(`/currency/${id}/default`),
-  
-  refreshRates: () =>
-    api.post('/currency/refresh-rates'),
+  getCurrencies: () => Promise.resolve({ data: [] }),
+  detect: () => Promise.resolve({ data: { currencyCode: 'NPR' } }),
+  getCurrency: (_code: string) => Promise.resolve({ data: null }),
+  convert: (_amount: number, _from: string, _to: string) => Promise.resolve({ data: { result: _amount } }),
+  getExchangeRate: (_code: string) => Promise.resolve({ data: { rate: 1 } }),
+  getCountries: () => Promise.resolve({ data: [] }),
+  updateCurrency: (_id: string, _data: any) => Promise.resolve({ data: null }),
+  createCurrency: (_data: any) => Promise.resolve({ data: null }),
+  deleteCurrency: (_id: string) => Promise.resolve({ data: null }),
+  setDefaultCurrency: (_id: string) => Promise.resolve({ data: null }),
+  refreshRates: () => Promise.resolve({ data: null }),
 };
 
 // Site Settings API
@@ -543,6 +537,16 @@ export const esimApi = {
   
   checkUsage: (orderId: string) =>
     api.get(`/esim/orders/${orderId}/usage`),
+  
+  // Top-up
+  getTopUpPackages: (orderId: string) =>
+    api.get(`/esim/orders/${orderId}/topup-packages`),
+  
+  applyTopUp: (orderId: string, packageId: string) =>
+    api.post(`/esim/orders/${orderId}/topup`, { packageId }),
+  
+  getTopUpHistory: (orderId: string) =>
+    api.get(`/esim/orders/${orderId}/topup-history`),
   
   // Admin
   getAdminOrders: (params?: { status?: string; search?: string; limit?: number; page?: number }) =>

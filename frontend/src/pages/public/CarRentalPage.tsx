@@ -136,7 +136,7 @@ export default function CarRentalPage() {
           airConditioning: car.vehicle?.airConditioning !== false,
           pricePerDay: parseFloat(car.price?.base || car.price?.total || 0) / calculateDays(),
           totalPrice: parseFloat(car.price?.total || 0),
-          currency: car.price?.currency || 'USD',
+          currency: 'NPR', // MULTI-CURRENCY MODEL REMOVED
           image: car.vehicle?.imageUrl || null,
           features: [],
           vendor: car.provider || {},
@@ -481,14 +481,14 @@ export default function CarRentalPage() {
                         <p className="text-xs text-gray-600 mb-1">From</p>
                         <div className="flex items-baseline space-x-1">
                           <span className="text-2xl sm:text-3xl font-bold text-primary-950">
-                            {car.currency === 'USD' ? '$' : car.currency} {car.pricePerDay?.toFixed(2) || '0.00'}
+                            {/* MULTI-CURRENCY MODEL REMOVED */} रू {car.pricePerDay?.toFixed(2) || '0.00'}
                           </span>
                           <span className="text-sm text-gray-600">/day</span>
                         </div>
                         {calculateDays() > 0 && car.totalPrice > 0 && (
                           <p className="text-sm text-gray-600 mt-1">
                             Total: <span className="font-semibold">
-                              {car.currency === 'USD' ? '$' : car.currency} {car.totalPrice?.toFixed(2) || '0.00'}
+                              {/* MULTI-CURRENCY MODEL REMOVED */} रू {car.totalPrice?.toFixed(2) || '0.00'}
                             </span>
                           </p>
                         )}

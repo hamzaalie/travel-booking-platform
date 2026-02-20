@@ -205,7 +205,7 @@ export class EsimService {
                   : `${pkg.amount} MB`,
               validityDays: pkg.day || 0,
               price: pkg.price || 0,
-              currency: 'USD',
+              currency: 'NPR',
             });
           }
         }
@@ -642,6 +642,227 @@ export class EsimService {
       logger.error('Failed to sync eSIM products:', error.message);
       throw new AppError('Failed to sync products', 500);
     }
+  }
+
+  /**
+   * Get available top-up packages for an existing eSIM
+   * Airalo provides top-up packages tied to the same country/region as the original eSIM
+   */
+  async getTopUpPackages(orderId: string, userId: string): Promise<{
+    packages: Array<{
+      id: string;
+      name: string;
+      dataAmount: string;
+      validityDays: number;
+      price: number;
+      currency: string;
+    }>;
+    iccid: string;
+  }> {
+    const order = await this.getOrderById(orderId, userId);
+
+    if (!order.iccid) {
+      throw new AppError('eSIM has not been provisioned yet. Cannot top up.', 400);
+    }
+
+    if (!['COMPLETED', 'ACTIVATED'].includes(order.status)) {
+      throw new AppError('eSIM must be active or completed to top up.', 400);
+    }
+
+    try {
+      await this.ensureAuthenticated();
+
+      // Airalo: GET /sims/{iccid}/topups returns available top-up packages
+      const response = await this.client.get(`/sims/${order.iccid}/topups`);
+      const topupPackages = response.data.data || [];
+
+      const packages = topupPackages.map((pkg: any) => ({
+        id: pkg.id || pkg.package_id,
+        name: pkg.title || pkg.name || `${pkg.amount >= 1024 ? `${(pkg.amount / 1024).toFixed(0)} GB` : `${pkg.amount} MB`} - ${pkg.day} days`,
+        dataAmount: pkg.is_unlimited
+          ? 'Unlimited'
+          : pkg.amount >= 1024
+            ? `${(pkg.amount / 1024).toFixed(pkg.amount % 1024 === 0 ? 0 : 1)} GB`
+            : `${pkg.amount} MB`,
+        validityDays: pkg.day || pkg.validity || 0,
+        price: pkg.price || 0,
+        currency: 'NPR',
+      }));
+
+      return { packages, iccid: order.iccid };
+    } catch (error: any) {
+      logger.error('Failed to fetch top-up packages:', error.response?.data || error.message);
+
+      // Fallback: Return packages from the same country as the original eSIM
+      if (order.product?.countries?.length) {
+        const countryCode = order.product.countries[0];
+        const { products } = await this.getProducts({ country: countryCode, limit: 20 });
+        return {
+          packages: products.map(p => ({
+            id: p.id,
+            name: p.name,
+            dataAmount: p.dataAmount,
+            validityDays: p.validityDays,
+            price: p.price,
+            currency: 'NPR',
+          })),
+          iccid: order.iccid,
+        };
+      }
+
+      throw new AppError('Failed to fetch top-up packages', 500);
+    }
+  }
+
+  /**
+   * Apply a top-up to an existing eSIM
+   * Creates a new order with Airalo that adds data to the existing ICCID
+   */
+  async applyTopUp(
+    orderId: string,
+    userId: string,
+    packageId: string
+  ): Promise<{
+    topUpId: string;
+    status: string;
+    dataAmount: string;
+    validityDays: number;
+    amount: number;
+  }> {
+    if (!this.config.apiKey || !this.config.apiSecret) {
+      throw new AppError('eSIM service is not configured. Please contact support.', 503);
+    }
+
+    const order = await this.getOrderById(orderId, userId);
+
+    if (!order.iccid) {
+      throw new AppError('eSIM has not been provisioned yet. Cannot top up.', 400);
+    }
+
+    if (!['COMPLETED', 'ACTIVATED'].includes(order.status)) {
+      throw new AppError('eSIM must be active or completed to top up.', 400);
+    }
+
+    try {
+      await this.ensureAuthenticated();
+      logger.info(`eSIM top-up started: orderId=${orderId}, iccid=${order.iccid}, packageId=${packageId}`);
+
+      // Get package details for recording
+      let packageName = packageId;
+      let dataAmount = '';
+      let validityDays = 0;
+      let price = 0;
+
+      try {
+        const { packages } = await this.getTopUpPackages(orderId, userId);
+        const selectedPkg = packages.find(p => p.id === packageId);
+        if (selectedPkg) {
+          packageName = selectedPkg.name;
+          dataAmount = selectedPkg.dataAmount;
+          validityDays = selectedPkg.validityDays;
+          price = selectedPkg.price;
+        }
+      } catch {
+        // If we can't get package details, proceed anyway
+        logger.warn(`Could not get package details for ${packageId}, proceeding with top-up`);
+      }
+
+      // Airalo: POST /orders with package_id and iccid for top-up
+      const topupFormData = new FormData();
+      topupFormData.append('package_id', packageId);
+      topupFormData.append('quantity', '1');
+      topupFormData.append('iccid', order.iccid);
+      topupFormData.append('type', 'sim'); // indicates top-up to existing SIM
+
+      const response = await axios.post(
+        `${this.config.baseUrl}/orders`,
+        topupFormData,
+        {
+          headers: {
+            ...topupFormData.getHeaders(),
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${this.accessToken}`,
+          },
+          timeout: 30000,
+        }
+      );
+
+      const topupData = response.data.data;
+      if (!topupData) {
+        throw new AppError('Invalid response from eSIM provider', 502);
+      }
+
+      logger.info(`Airalo top-up order created: id=${topupData.id}`);
+
+      // Record top-up in database
+      const topUp = await prisma.esimTopUp.create({
+        data: {
+          orderId: order.id,
+          userId,
+          packageId,
+          packageName: packageName || packageId,
+          dataAmount: dataAmount || 'Unknown',
+          validityDays: validityDays || 0,
+          amount: price || 0,
+          currency: 'NPR',
+          status: 'COMPLETED',
+          externalOrderId: String(topupData.id),
+          providerResponse: topupData,
+        },
+      });
+
+      // Update the original order status to ACTIVATED if it was COMPLETED
+      if (order.status === 'COMPLETED') {
+        await prisma.esimOrder.update({
+          where: { id: orderId },
+          data: { status: 'ACTIVATED' },
+        });
+      }
+
+      logger.info(`eSIM top-up recorded: ${topUp.id} for order ${orderId}`);
+
+      return {
+        topUpId: topUp.id,
+        status: 'COMPLETED',
+        dataAmount: dataAmount || 'Unknown',
+        validityDays,
+        amount: price,
+      };
+    } catch (error: any) {
+      const airaloError = error.response?.data;
+      const statusCode = error.response?.status;
+      const errorDetail = airaloError?.message || airaloError?.error || error.message;
+
+      logger.error('Failed to apply eSIM top-up:', {
+        message: error.message,
+        statusCode,
+        airaloResponse: airaloError ? JSON.stringify(airaloError) : 'N/A',
+        orderId,
+        packageId,
+      });
+
+      if (error instanceof AppError) {
+        throw error;
+      }
+
+      throw new AppError(
+        `eSIM top-up failed: ${errorDetail || 'Unknown error'}`,
+        statusCode === 401 ? 401 : statusCode === 422 ? 422 : 500
+      );
+    }
+  }
+
+  /**
+   * Get top-up history for an eSIM order
+   */
+  async getTopUpHistory(orderId: string, userId: string) {
+    // Verify order belongs to user
+    await this.getOrderById(orderId, userId);
+
+    return await prisma.esimTopUp.findMany({
+      where: { orderId },
+      orderBy: { createdAt: 'desc' },
+    });
   }
 
   /**

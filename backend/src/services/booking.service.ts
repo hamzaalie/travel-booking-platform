@@ -125,7 +125,7 @@ export class BookingService {
           totalAmount: pricing.totalPrice,
           currency: pricedOffer?.data?.flightOffers?.[0]?.price?.currency
             || data.flightOffer?.price?.currency
-            || 'USD',
+            || 'NPR',
           commissionAmount: pricing.commission,
           status: 'PENDING',
           ticketUrls: [],

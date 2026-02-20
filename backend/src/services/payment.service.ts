@@ -22,43 +22,21 @@ interface PaymentIntentData {
  */
 export class PaymentService {
   private stripe: Stripe;
-  private paypalBaseUrl: string;
+  // PayPal removed — not supported
+  // private paypalBaseUrl: string;
 
   constructor() {
     this.stripe = new Stripe(config.stripe.secretKey, {
       apiVersion: '2023-10-16',
     });
-    this.paypalBaseUrl = config.paypal.mode === 'live' 
-      ? 'https://api-m.paypal.com' 
-      : 'https://api-m.sandbox.paypal.com';
+    // PayPal removed
+    // this.paypalBaseUrl = config.paypal.mode === 'live'
+    //   ? 'https://api-m.paypal.com'
+    //   : 'https://api-m.sandbox.paypal.com';
   }
 
-  /**
-   * Get PayPal access token
-   */
-  private async getPayPalAccessToken(): Promise<string> {
-    try {
-      const auth = Buffer.from(
-        `${config.paypal.clientId}:${config.paypal.secret}`
-      ).toString('base64');
-
-      const response = await axios.post(
-        `${this.paypalBaseUrl}/v1/oauth2/token`,
-        'grant_type=client_credentials',
-        {
-          headers: {
-            Authorization: `Basic ${auth}`,
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-        }
-      );
-
-      return response.data.access_token;
-    } catch (error) {
-      logger.error('PayPal authentication error:', error);
-      throw new AppError('Failed to authenticate with PayPal', 500);
-    }
-  }
+  // PayPal removed — all PayPal methods commented out
+  // private async getPayPalAccessToken(): Promise<string> { ... }
 
   /**
    * STRIPE: Create payment intent
@@ -542,8 +520,9 @@ export class PaymentService {
   }
 
   /**
-   * PAYPAL: Create order (simplified - production needs full OAuth flow)
+   * PAYPAL: REMOVED — PayPal is no longer supported
    */
+  /*
   async createPayPalOrder(data: PaymentIntentData) {
     try {
       const auth = Buffer.from(
@@ -588,9 +567,6 @@ export class PaymentService {
     }
   }
 
-  /**
-   * PAYPAL: Capture payment
-   */
   async capturePayPalPayment(orderId: string) {
     try {
       const auth = Buffer.from(
@@ -616,6 +592,7 @@ export class PaymentService {
       throw new AppError('Failed to capture PayPal payment', 500);
     }
   }
+  */
 
   /**
    * Refund Stripe payment
@@ -636,8 +613,9 @@ export class PaymentService {
   }
 
   /**
-   * Refund PayPal payment
+   * Refund PayPal payment — REMOVED (PayPal no longer supported)
    */
+  /*
   async refundPayPalPayment(captureId: string, amount: number): Promise<any> {
     try {
       const accessToken = await this.getPayPalAccessToken();
@@ -652,7 +630,7 @@ export class PaymentService {
           },
           body: JSON.stringify({
             amount: {
-              currency_code: 'USD',
+              currency_code: 'NPR',
               value: amount.toFixed(2),
             },
           }),
@@ -672,6 +650,7 @@ export class PaymentService {
       throw new AppError('Failed to process PayPal refund', 500);
     }
   }
+  */
 }
 
 export const paymentService = new PaymentService();

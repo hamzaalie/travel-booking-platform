@@ -241,7 +241,7 @@ export const MultiCitySearchPage: React.FC = () => {
               {selectedOffer ? (
                 <span className="flex items-center space-x-2">
                   <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                  <span>Flight selected • {searchResults.meta.currency} {selectedOffer.price.total.toLocaleString()}</span>
+                  <span>Flight selected • NPR {selectedOffer.price.total.toLocaleString()}</span>
                 </span>
               ) : (
                 `${searchResults.meta.count} options available`

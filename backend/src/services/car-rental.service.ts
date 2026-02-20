@@ -99,7 +99,7 @@ class CarRentalService {
         pickupDateTime: `${params.pickupDate}T${params.pickupTime}`,
         dropoffLocationCode: params.dropoffLocationCode || params.pickupLocationCode,
         dropoffDateTime: `${params.dropoffDate}T${params.dropoffTime}`,
-        currency: params.currency || 'USD',
+        currency: params.currency || 'NPR',
         providerCodes: params.providerCodes?.join(','),
         rateClass: params.rateClass,
       };
@@ -155,7 +155,7 @@ class CarRentalService {
           time: params.dropoffTime,
         },
         price: {
-          currency: offer.price?.currency || 'USD',
+          currency: offer.price?.currency || 'NPR',
           total: parseFloat(offer.price?.total || '0'),
           base: parseFloat(offer.price?.base || '0'),
           taxes: offer.price?.taxes?.map((t: any) => parseFloat(t.amount || '0'))
@@ -315,7 +315,7 @@ class CarRentalService {
           } as any,
           excess: 1000,
           pricePerDay: 15,
-          currency: 'USD',
+          currency: 'NPR',
           recommended: true,
         },
         [InsuranceType.TP]: {
@@ -330,7 +330,7 @@ class CarRentalService {
           },
           excess: 1500,
           pricePerDay: 10,
-          currency: 'USD',
+          currency: 'NPR',
           recommended: true,
         },
         [InsuranceType.SLI]: {
@@ -345,7 +345,7 @@ class CarRentalService {
           },
           excess: 0,
           pricePerDay: 12,
-          currency: 'USD',
+          currency: 'NPR',
           recommended: true,
         },
         [InsuranceType.PAI]: {
@@ -360,7 +360,7 @@ class CarRentalService {
           },
           excess: 0,
           pricePerDay: 8,
-          currency: 'USD',
+          currency: 'NPR',
         },
         [InsuranceType.SCDW]: {
           type: InsuranceType.SCDW,
@@ -374,7 +374,7 @@ class CarRentalService {
           },
           excess: 0,
           pricePerDay: 20,
-          currency: 'USD',
+          currency: 'NPR',
         },
         [InsuranceType.WINDSCREEN]: {
           type: InsuranceType.WINDSCREEN,
@@ -388,7 +388,7 @@ class CarRentalService {
           },
           excess: 0,
           pricePerDay: 5,
-          currency: 'USD',
+          currency: 'NPR',
         },
         [InsuranceType.TIRE]: {
           type: InsuranceType.TIRE,
@@ -402,7 +402,7 @@ class CarRentalService {
           },
           excess: 0,
           pricePerDay: 5,
-          currency: 'USD',
+          currency: 'NPR',
         },
         [InsuranceType.ROADSIDE]: {
           type: InsuranceType.ROADSIDE,
@@ -416,7 +416,7 @@ class CarRentalService {
           },
           excess: 0,
           pricePerDay: 7,
-          currency: 'USD',
+          currency: 'NPR',
         },
       };
 
@@ -428,7 +428,7 @@ class CarRentalService {
           includedCoverage: [InsuranceType.CDW, InsuranceType.TP],
           pricePerDay: 20,
           savings: 5,
-          currency: 'USD',
+          currency: 'NPR',
           excess: 1000,
           recommended: false,
         },
@@ -438,7 +438,7 @@ class CarRentalService {
           includedCoverage: [InsuranceType.CDW, InsuranceType.TP, InsuranceType.SLI],
           pricePerDay: 30,
           savings: 7,
-          currency: 'USD',
+          currency: 'NPR',
           excess: 500,
           recommended: true,
         },
@@ -457,7 +457,7 @@ class CarRentalService {
           ],
           pricePerDay: 45,
           savings: 15,
-          currency: 'USD',
+          currency: 'NPR',
           excess: 0,
           recommended: false,
         },
@@ -527,7 +527,7 @@ class CarRentalService {
             pricePerDay: 10,
             pricePerRental: undefined,
             priceTotal: 0,
-            currency: 'USD',
+            currency: 'NPR',
           },
           specifications: {
             brand: 'Garmin',
@@ -541,7 +541,7 @@ class CarRentalService {
           available: true,
           pricing: {
             pricePerDay: 8,
-            currency: 'USD',
+            currency: 'NPR',
           },
           specifications: {
             features: ['4G/5G connectivity', 'Connect up to 5 devices', 'Unlimited data'],
@@ -554,7 +554,7 @@ class CarRentalService {
           available: true,
           pricing: {
             pricePerDay: 10,
-            currency: 'USD',
+            currency: 'NPR',
           },
           specifications: {
             ageRange: '0-1 years',
@@ -569,7 +569,7 @@ class CarRentalService {
           available: true,
           pricing: {
             pricePerDay: 10,
-            currency: 'USD',
+            currency: 'NPR',
           },
           specifications: {
             ageRange: '1-4 years',
@@ -584,7 +584,7 @@ class CarRentalService {
           available: true,
           pricing: {
             pricePerDay: 8,
-            currency: 'USD',
+            currency: 'NPR',
           },
           specifications: {
             ageRange: '4-12 years',
@@ -599,7 +599,7 @@ class CarRentalService {
           available: true,
           pricing: {
             pricePerDay: 10,
-            currency: 'USD',
+            currency: 'NPR',
           },
           requirements: ['Valid driver license', 'Minimum age 25', 'Present at pickup'],
         },
@@ -610,7 +610,7 @@ class CarRentalService {
           available: true,
           pricing: {
             pricePerRental: 15,
-            currency: 'USD',
+            currency: 'NPR',
           },
           specifications: {
             features: ['Installation assistance', 'Required in some areas'],
@@ -623,7 +623,7 @@ class CarRentalService {
           available: true,
           pricing: {
             pricePerDay: 12,
-            currency: 'USD',
+            currency: 'NPR',
           },
           specifications: {
             capacity: '4-6 pairs of skis',
@@ -637,7 +637,7 @@ class CarRentalService {
           available: true,
           pricing: {
             pricePerDay: 15,
-            currency: 'USD',
+            currency: 'NPR',
           },
           specifications: {
             capacity: '2-4 bikes',
@@ -651,7 +651,7 @@ class CarRentalService {
           available: true,
           pricing: {
             pricePerDay: 20,
-            currency: 'USD',
+            currency: 'NPR',
           },
           specifications: {
             capacity: '400 liters',
@@ -665,7 +665,7 @@ class CarRentalService {
           available: true,
           pricing: {
             pricePerRental: 5,
-            currency: 'USD',
+            currency: 'NPR',
           },
         },
         {
@@ -675,7 +675,7 @@ class CarRentalService {
           available: true,
           pricing: {
             pricePerRental: 3,
-            currency: 'USD',
+            currency: 'NPR',
           },
           specifications: {
             features: ['Multiple ports', 'Fast charging'],
@@ -688,7 +688,7 @@ class CarRentalService {
           available: true,
           pricing: {
             pricePerDay: 15,
-            currency: 'USD',
+            currency: 'NPR',
           },
           specifications: {
             features: ['HD recording', 'Loop recording', 'Accident evidence'],
@@ -701,7 +701,7 @@ class CarRentalService {
           available: true,
           pricing: {
             pricePerRental: undefined,
-            currency: 'USD',
+            currency: 'NPR',
           },
           specifications: {
             features: ['Convenience fee applies', 'Return with empty tank'],
@@ -714,7 +714,7 @@ class CarRentalService {
           available: true,
           pricing: {
             pricePerRental: 10,
-            currency: 'USD',
+            currency: 'NPR',
           },
           specifications: {
             features: ['Automatic toll payment', 'No stopping required'],
@@ -803,7 +803,7 @@ class CarRentalService {
           addOnsTotal: Number(booking.totalAmount) * 0.05,
           taxes: Number(booking.totalAmount) * 0.1,
           total: Number(booking.totalAmount),
-          currency: 'USD',
+          currency: 'NPR',
           depositRequired: 500,
           paymentStatus: (booking as any).paymentStatus,
         },
@@ -903,7 +903,7 @@ class CarRentalService {
             time: params.dropoffTime,
           },
           price: {
-            currency: params.currency || 'USD',
+            currency: params.currency || 'NPR',
             total: Math.round(total * 100) / 100,
             base: Math.round(basePrice * 100) / 100,
             taxes: Math.round(taxes * 100) / 100,

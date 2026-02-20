@@ -73,11 +73,11 @@ export default function TermsOfServicePage() {
             </div>
             <div className="prose prose-gray max-w-none">
               <ul className="list-disc pl-6 text-gray-600 space-y-2">
-                <li>All prices are displayed in the selected currency</li>
+                <li>All prices are displayed in NPR (Nepalese Rupee)</li>
                 <li>Payment is required at the time of booking unless otherwise specified</li>
                 <li>We accept major credit cards, debit cards, and digital wallets</li>
                 <li>B2B agents may use wallet balance for bookings</li>
-                <li>Currency conversion rates are determined at the time of transaction</li>
+                {/* MULTI-CURRENCY MODEL REMOVED - currency conversion line removed */}
               </ul>
             </div>
           </section>

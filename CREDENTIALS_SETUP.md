@@ -230,7 +230,7 @@ EMAIL_FROM="noreply@travelbooking.com"
 EMAIL_FROM_NAME="Travel Booking Platform"
 
 # Application
-DEFAULT_CURRENCY=USD
+DEFAULT_CURRENCY=NPR
 ```
 
 ---

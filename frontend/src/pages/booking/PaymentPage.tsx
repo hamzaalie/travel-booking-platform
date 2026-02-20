@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
-import { convertPrice } from '@/store/slices/currencySlice';
-import { FALLBACK_EXCHANGE_RATES } from '@/utils/currency';
+// MULTI-CURRENCY MODEL REMOVED
+// import { convertPrice } from '@/store/slices/currencySlice';
+// import { FALLBACK_EXCHANGE_RATES } from '@/utils/currency';
 import { bookingApi, paymentApi, hotelApi, walletApi, carRentalApi } from '@/services/api';
 import { Wallet, Loader2, ArrowLeft, Building2, Plane, Car } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -11,19 +12,11 @@ import toast from 'react-hot-toast';
 export default function PaymentPage() {
   const navigate = useNavigate();
   const { user } = useSelector((state: RootState) => state.auth);
-  const { currentCurrency, currencies, exchangeRates } = useSelector(
-    (state: RootState) => state.currency
-  );
+  // MULTI-CURRENCY MODEL REMOVED - Only NPR supported
 
-  // Format price with currency conversion
-  const formatPrice = (amount: number, sourceCurrency?: string) => {
-    const source = sourceCurrency || 'USD';
-    if (currentCurrency === source) {
-      const info = currencies.find(c => c.code === source);
-      const symbol = info?.symbol || source;
-      return `${symbol} ${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-    }
-    return convertPrice(amount, currentCurrency, exchangeRates, currencies, source);
+  // Format price - always NPR
+  const formatPrice = (amount: number, _sourceCurrency?: string) => {
+    return `रू ${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   };
   
   const [bookingData, setBookingData] = useState<any>(null);
@@ -70,25 +63,14 @@ export default function PaymentPage() {
     }
   };
 
-  // Get the source currency of the booking
+  // MULTI-CURRENCY MODEL REMOVED - Source currency always NPR
   const getSourceCurrency = () => {
-    if (!bookingData) return 'USD';
-    if (bookingData.type === 'HOTEL') return bookingData.offer?.price?.currency || 'USD';
-    if (bookingData.type === 'CAR') return bookingData.car?.currency || 'USD';
-    return bookingData.flightOffer?.price?.currency || 'USD';
+    return 'NPR';
   };
 
-  // Convert amount from source currency to NPR for local payment gateways (eSewa, Khalti)
+  // MULTI-CURRENCY MODEL REMOVED - No conversion needed, always NPR
   const convertToNPR = (amount: number): number => {
-    const sourceCurrency = getSourceCurrency();
-    if (sourceCurrency === 'NPR') return amount;
-
-    const fallbackRates = FALLBACK_EXCHANGE_RATES;
-    const rates = Object.keys(exchangeRates).length > 0 ? exchangeRates : fallbackRates;
-    const sourceRate = rates[sourceCurrency] || 1;
-    // sourceRate is how much 1 NPR equals in source currency
-    // So amount_in_NPR = amount_in_source / sourceRate
-    return Math.round(amount / sourceRate);
+    return Math.round(amount);
   };
 
   const handleWalletPayment = async () => {
@@ -190,22 +172,23 @@ export default function PaymentPage() {
 
     try {
       const total = calculateTotal();
-      let currency = 'USD';
+      // MULTI-CURRENCY MODEL REMOVED - always NPR
+      let currency = 'NPR';
       let customerEmail = '';
       let customerName = '';
 
       if (bookingData.type === 'HOTEL') {
-        currency = bookingData.offer?.price?.currency || 'USD';
+        currency = 'NPR';
         customerEmail = bookingData.contactInfo?.email || '';
         customerName = `${bookingData.guestInfo?.firstName} ${bookingData.guestInfo?.lastName}`;
       } else if (bookingData.type === 'CAR') {
-        currency = bookingData.car?.currency || 'USD';
+        currency = 'NPR';
         customerEmail = bookingData.driverInfo?.email || '';
         customerName = `${bookingData.driverInfo?.firstName} ${bookingData.driverInfo?.lastName}`;
       } else {
-        const { flightOffer } = bookingData!;
+        const { flightOffer: _flightOffer } = bookingData!;
         const passenger = bookingData!.passengers[0];
-        currency = flightOffer.price?.currency || 'USD';
+        currency = 'NPR';
         customerEmail = passenger.email || bookingData.contactInfo?.email;
         customerName = `${passenger.firstName} ${passenger.lastName}`;
       }
@@ -508,7 +491,8 @@ export default function PaymentPage() {
               <div className="flex justify-between items-center">
                 <span className="text-xl font-bold text-gray-900">Total Amount</span>
                 <span className="text-2xl sm:text-3xl font-bold text-primary-950">
-                  {formatPrice(total, bookingData.type === 'HOTEL' ? bookingData.offer?.price?.currency : bookingData.type === 'CAR' ? bookingData.car?.currency : bookingData.flightOffer?.price?.currency || 'USD')}
+                  {/* MULTI-CURRENCY MODEL REMOVED */}
+                  {formatPrice(total)}
                 </span>
               </div>
             </div>
@@ -561,7 +545,7 @@ export default function PaymentPage() {
                 </>
               ) : (
                 <>
-                  Pay {formatPrice(total, bookingData.type === 'HOTEL' ? bookingData.offer?.price?.currency : bookingData.type === 'CAR' ? bookingData.car?.currency : bookingData.flightOffer?.price?.currency || 'USD')}
+                  Pay {formatPrice(total)}
                 </>
               )}
             </button>
