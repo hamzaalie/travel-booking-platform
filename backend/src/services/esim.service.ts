@@ -3,6 +3,7 @@ import { logger } from '../config/logger';
 import { AppError } from '../middleware/error.middleware';
 import axios, { AxiosInstance } from 'axios';
 import FormData from 'form-data';
+import { toNPR } from '../utils/currencyConverter';
 
 /**
  * eSIM Service
@@ -204,7 +205,7 @@ export class EsimService {
                   ? `${(pkg.amount / 1024).toFixed(pkg.amount % 1024 === 0 ? 0 : 1)} GB`
                   : `${pkg.amount} MB`,
               validityDays: pkg.day || 0,
-              price: pkg.price || 0,
+              price: toNPR(pkg.price || 0, 'USD'),
               currency: 'NPR',
             });
           }
@@ -685,7 +686,7 @@ export class EsimService {
             ? `${(pkg.amount / 1024).toFixed(pkg.amount % 1024 === 0 ? 0 : 1)} GB`
             : `${pkg.amount} MB`,
         validityDays: pkg.day || pkg.validity || 0,
-        price: pkg.price || 0,
+        price: toNPR(pkg.price || 0, 'USD'),
         currency: 'NPR',
       }));
 

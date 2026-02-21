@@ -2,6 +2,7 @@ import axios, { AxiosInstance } from 'axios';
 import { config } from '../config';
 import { logger } from '../config/logger';
 import { AppError } from '../middleware/error.middleware';
+import { toNPR } from '../utils/currencyConverter';
 
 interface AmadeusAuth {
   access_token: string;
@@ -313,11 +314,14 @@ export class AmadeusService {
         })),
       })),
       price: {
-        currency: offer.price.currency,
-        total: offer.price.total,
-        base: offer.price.base,
-        fees: offer.price.fees,
-        grandTotal: offer.price.grandTotal,
+        currency: 'NPR',
+        total: String(toNPR(parseFloat(offer.price.total || '0'), offer.price.currency)),
+        base: String(toNPR(parseFloat(offer.price.base || '0'), offer.price.currency)),
+        fees: offer.price.fees?.map((fee: any) => ({
+          ...fee,
+          amount: String(toNPR(parseFloat(fee.amount || '0'), offer.price.currency)),
+        })),
+        grandTotal: String(toNPR(parseFloat(offer.price.grandTotal || '0'), offer.price.currency)),
       },
       pricingOptions: offer.pricingOptions,
       validatingAirlineCodes: offer.validatingAirlineCodes,
@@ -508,18 +512,19 @@ export class AmadeusService {
         });
 
         const price = offer.price;
+        const sourceCurrency = price.currency || 'USD';
         const travelerPricings = offer.travelerPricings || [];
 
         return {
           id: offer.id,
           segments: groupedSegments,
           price: {
-            currency: price.currency,
-            total: parseFloat(price.total),
-            base: parseFloat(price.base),
-            fees: price.fees?.reduce((sum: number, fee: any) => sum + parseFloat(fee.amount), 0) || 0,
-            taxes: price.taxes?.reduce((sum: number, tax: any) => sum + parseFloat(tax.amount), 0) || 0,
-            perPassenger: this.extractPerPassengerPricing(travelerPricings),
+            currency: 'NPR',
+            total: toNPR(parseFloat(price.total), sourceCurrency),
+            base: toNPR(parseFloat(price.base), sourceCurrency),
+            fees: toNPR(price.fees?.reduce((sum: number, fee: any) => sum + parseFloat(fee.amount), 0) || 0, sourceCurrency),
+            taxes: toNPR(price.taxes?.reduce((sum: number, tax: any) => sum + parseFloat(tax.amount), 0) || 0, sourceCurrency),
+            perPassenger: this.extractPerPassengerPricing(travelerPricings, sourceCurrency),
           },
           fareDetails: {
             cabinClass: travelerPricings[0]?.fareDetailsBySegment?.[0]?.cabin || 'ECONOMY',
@@ -543,7 +548,7 @@ export class AmadeusService {
       }),
       meta: {
         count: offers.length,
-        currency: offers[0]?.price?.currency || 'NPR',
+        currency: 'NPR',
         searchedAt: new Date().toISOString(),
       },
     };
@@ -552,12 +557,12 @@ export class AmadeusService {
   /**
    * Extract per-passenger pricing from traveler pricings
    */
-  private extractPerPassengerPricing(travelerPricings: any[]) {
+  private extractPerPassengerPricing(travelerPricings: any[], sourceCurrency: string = 'USD') {
     const pricing: any = {};
 
     travelerPricings.forEach((tp: any) => {
       const type = tp.travelerType?.toLowerCase() || 'adult';
-      const total = parseFloat(tp.price?.total || '0');
+      const total = toNPR(parseFloat(tp.price?.total || '0'), sourceCurrency);
 
       if (type.includes('adult')) {
         pricing.adult = total;

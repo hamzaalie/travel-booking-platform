@@ -1,6 +1,7 @@
 import { amadeusService } from './amadeus.service';
 import { logger } from '../config/logger';
 import { AppError } from '../middleware/error.middleware';
+import { toNPR } from '../utils/currencyConverter';
 import {
   InsuranceType,
   AddOnType,
@@ -155,14 +156,14 @@ class CarRentalService {
           time: params.dropoffTime,
         },
         price: {
-          currency: offer.price?.currency || 'NPR',
-          total: parseFloat(offer.price?.total || '0'),
-          base: parseFloat(offer.price?.base || '0'),
-          taxes: offer.price?.taxes?.map((t: any) => parseFloat(t.amount || '0'))
-            .reduce((a: number, b: number) => a + b, 0),
+          currency: 'NPR',
+          total: toNPR(parseFloat(offer.price?.total || '0'), offer.price?.currency || 'USD'),
+          base: toNPR(parseFloat(offer.price?.base || '0'), offer.price?.currency || 'USD'),
+          taxes: toNPR(offer.price?.taxes?.map((t: any) => parseFloat(t.amount || '0'))
+            .reduce((a: number, b: number) => a + b, 0) || 0, offer.price?.currency || 'USD'),
           extraFees: offer.price?.fees?.map((fee: any) => ({
             name: fee.description || 'Additional Fee',
-            amount: parseFloat(fee.amount || '0'),
+            amount: toNPR(parseFloat(fee.amount || '0'), offer.price?.currency || 'USD'),
           })),
         },
         mileage: {
@@ -173,7 +174,7 @@ class CarRentalService {
         cancellation: offer.policies?.cancellation ? {
           allowed: offer.policies.cancellation.allowed !== false,
           deadline: offer.policies.cancellation.deadline,
-          fee: parseFloat(offer.policies.cancellation.fee || '0'),
+          fee: toNPR(parseFloat(offer.policies.cancellation.fee || '0'), offer.price?.currency || 'USD'),
         } : undefined,
         policies: {
           deposit: offer.policies?.deposit?.description,

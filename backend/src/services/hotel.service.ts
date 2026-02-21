@@ -1,6 +1,7 @@
 import { amadeusService } from './amadeus.service';
 import { logger } from '../config/logger';
 import { AppError } from '../middleware/error.middleware';
+import { toNPR } from '../utils/currencyConverter';
 import { 
   EnhancedHotelSearchParams, 
   EnhancedHotelResult,
@@ -161,15 +162,15 @@ class HotelService {
             boardType: offer.boardType,
             guests: offer.guests?.adults || params.adults,
             price: {
-              currency: offer.price?.currency || 'NPR',
-              total: parseFloat(offer.price?.total || '0'),
-              base: parseFloat(offer.price?.base || '0'),
-              taxes: offer.price?.taxes?.map((t: any) => parseFloat(t.amount || '0'))
-                .reduce((a: number, b: number) => a + b, 0),
+              currency: 'NPR',
+              total: toNPR(parseFloat(offer.price?.total || '0'), offer.price?.currency || 'USD'),
+              base: toNPR(parseFloat(offer.price?.base || '0'), offer.price?.currency || 'USD'),
+              taxes: toNPR(offer.price?.taxes?.map((t: any) => parseFloat(t.amount || '0'))
+                .reduce((a: number, b: number) => a + b, 0) || 0, offer.price?.currency || 'USD'),
             },
             cancellation: offer.policies?.cancellation ? {
               deadline: offer.policies.cancellation.deadline,
-              amount: parseFloat(offer.policies.cancellation.amount || '0'),
+              amount: toNPR(parseFloat(offer.policies.cancellation.amount || '0'), offer.price?.currency || 'USD'),
               description: offer.policies.cancellation.description?.text || '',
             } : undefined,
           })),
@@ -671,15 +672,15 @@ class HotelService {
             boardType: offer.boardType,
             guests: offer.guests?.adults || params.adults,
             price: {
-              currency: offer.price?.currency || 'NPR',
-              total: parseFloat(offer.price?.total || '0'),
-              base: parseFloat(offer.price?.base || '0'),
-              taxes: offer.price?.taxes?.map((t: any) => parseFloat(t.amount || '0'))
-                .reduce((a: number, b: number) => a + b, 0),
+              currency: 'NPR',
+              total: toNPR(parseFloat(offer.price?.total || '0'), offer.price?.currency || 'USD'),
+              base: toNPR(parseFloat(offer.price?.base || '0'), offer.price?.currency || 'USD'),
+              taxes: toNPR(offer.price?.taxes?.map((t: any) => parseFloat(t.amount || '0'))
+                .reduce((a: number, b: number) => a + b, 0) || 0, offer.price?.currency || 'USD'),
             },
             cancellation: offer.policies?.cancellation ? {
               deadline: offer.policies.cancellation.deadline,
-              amount: parseFloat(offer.policies.cancellation.amount || '0'),
+              amount: toNPR(parseFloat(offer.policies.cancellation.amount || '0'), offer.price?.currency || 'USD'),
               description: offer.policies.cancellation.description?.text || '',
             } : undefined,
           })),

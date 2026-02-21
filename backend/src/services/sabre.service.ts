@@ -1,6 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 import { logger } from '../config/logger';
 import { AppError } from '../middleware/error.middleware';
+import { toNPR } from '../utils/currencyConverter';
 
 /**
  * Sabre GDS Integration Service
@@ -327,14 +328,15 @@ export class SabreService {
         const airItinerary = itinerary.AirItinerary;
         const airItineraryPricingInfo = itinerary.AirItineraryPricingInfo;
 
+        const sabreCurrency = airItineraryPricingInfo?.ItinTotalFare?.TotalFare?.CurrencyCode || 'USD';
         const offer: FlightOffer = {
           id: `SAB-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
           source: 'SABRE',
           price: {
-            total: parseFloat(airItineraryPricingInfo?.ItinTotalFare?.TotalFare?.Amount || '0'),
-            base: parseFloat(airItineraryPricingInfo?.ItinTotalFare?.BaseFare?.Amount || '0'),
-            taxes: parseFloat(airItineraryPricingInfo?.ItinTotalFare?.Taxes?.TotalTax?.Amount || '0'),
-            currency: airItineraryPricingInfo?.ItinTotalFare?.TotalFare?.CurrencyCode || 'NPR',
+            total: toNPR(parseFloat(airItineraryPricingInfo?.ItinTotalFare?.TotalFare?.Amount || '0'), sabreCurrency),
+            base: toNPR(parseFloat(airItineraryPricingInfo?.ItinTotalFare?.BaseFare?.Amount || '0'), sabreCurrency),
+            taxes: toNPR(parseFloat(airItineraryPricingInfo?.ItinTotalFare?.Taxes?.TotalTax?.Amount || '0'), sabreCurrency),
+            currency: 'NPR',
           },
           itineraries: [],
           validatingCarrier: itinerary.ValidatingCarrier?.Code || '',
