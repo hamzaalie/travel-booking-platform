@@ -181,7 +181,7 @@ router.get(
         : '1 x 23kg',
       ticketNumber: passengers[0]?.ticketNumber,
       totalPrice: booking.totalAmount?.toNumber() || 0,
-      currency: (booking as any).currency || flightDetails?.price?.currency || 'NPR', // MULTI-CURRENCY MODEL REMOVED
+      currency: 'NPR',
     };
 
     const filePath = await pdfService.generateTicket(ticketData);
@@ -213,30 +213,47 @@ router.get(
     const firstSeg = flightDetails?.itineraries?.[0]?.segments?.[0];
     const lastSeg = flightDetails?.itineraries?.[0]?.segments?.slice(-1)[0];
 
+    const baseFare = booking.baseFare?.toNumber() || 0;
+    const taxes = booking.taxes?.toNumber() || 0;
+    const serviceFee = (booking.markup?.toNumber() || 0) + (booking.agentMarkup?.toNumber() || 0);
+    const totalAmount = booking.totalAmount?.toNumber() || 0;
+
+    const items: Array<{ description: string; quantity: number; unitPrice: number; total: number }> = [
+      {
+        description: `Flight: ${firstSeg?.departure?.iataCode || booking.origin || 'N/A'} → ${lastSeg?.arrival?.iataCode || booking.destination || 'N/A'} (${passengers?.length || 1} passenger${passengers?.length > 1 ? 's' : ''})`,
+        quantity: 1,
+        unitPrice: baseFare,
+        total: baseFare,
+      },
+    ];
+
+    if (serviceFee > 0) {
+      items.push({
+        description: 'Service Fee',
+        quantity: 1,
+        unitPrice: serviceFee,
+        total: serviceFee,
+      });
+    }
+
+    items.push({
+      description: 'Taxes & Fees',
+      quantity: 1,
+      unitPrice: taxes,
+      total: taxes,
+    });
+
     const invoiceData = {
       invoiceNumber: `INV-${booking.bookingReference}`,
       date: booking.createdAt.toISOString().split('T')[0],
       bookingReference: booking.bookingReference,
       customerName: booking.user.firstName + ' ' + booking.user.lastName,
       customerEmail: booking.user.email,
-      items: [
-        {
-          description: `Flight: ${firstSeg?.departure?.iataCode || booking.origin || 'N/A'} → ${lastSeg?.arrival?.iataCode || booking.destination || 'N/A'} (${passengers?.length || 1} passenger${passengers?.length > 1 ? 's' : ''})`,
-          quantity: 1,
-          unitPrice: booking.baseFare?.toNumber() || 0,
-          total: booking.baseFare?.toNumber() || 0,
-        },
-        {
-          description: 'Taxes & Fees',
-          quantity: 1,
-          unitPrice: booking.taxes?.toNumber() || 0,
-          total: booking.taxes?.toNumber() || 0,
-        },
-      ],
-      subtotal: booking.baseFare?.toNumber() || 0,
-      tax: booking.taxes?.toNumber() || 0,
-      total: booking.totalAmount?.toNumber() || 0,
-      currency: (booking as any).currency || flightDetails?.price?.currency || 'NPR', // MULTI-CURRENCY MODEL REMOVED
+      items,
+      subtotal: baseFare + serviceFee,
+      tax: taxes,
+      total: totalAmount,
+      currency: 'NPR',
     };
 
     const filePath = await pdfService.generateInvoice(invoiceData);

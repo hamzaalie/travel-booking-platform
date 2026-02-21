@@ -140,7 +140,7 @@ class PDFService {
 
         doc.fontSize(11).fillColor('#6b7280').text('Total Amount', 50, paymentY + 35);
         doc.fontSize(16).fillColor('#10b981').text(
-          `${ticketData.currency} ${ticketData.totalPrice.toFixed(2)}`,
+          `${ticketData.currency} ${ticketData.totalPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
           200,
           paymentY + 30
         );
@@ -207,6 +207,9 @@ class PDFService {
         const doc = new PDFDocument({ size: 'A4', margin: 50 });
         const stream = fs.createWriteStream(filePath);
 
+        // Helper to format numbers with commas
+        const fmtAmt = (n: number) => n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
         doc.pipe(stream);
 
         // Header
@@ -231,16 +234,22 @@ class PDFService {
         doc.fontSize(11).fillColor('#1f2937').text(invoiceData.customerName, 50, 195);
         doc.fontSize(11).fillColor('#6b7280').text(invoiceData.customerEmail, 50, 210);
 
+        // Column positions: Description(50) | Qty(300) | Unit Price(340) | Total(460)
+        const colDesc = 50;
+        const colQty = 300;
+        const colPrice = 345;
+        const colTotal = 470;
+
         // Items Table
         const tableTop = 250;
         doc.moveTo(50, tableTop).lineTo(562, tableTop).stroke('#1f2937');
 
         // Table Headers
         doc.fontSize(11).fillColor('#1f2937');
-        doc.text('Description', 50, tableTop + 10);
-        doc.text('Qty', 380, tableTop + 10);
-        doc.text('Unit Price', 430, tableTop + 10);
-        doc.text('Total', 510, tableTop + 10);
+        doc.text('Description', colDesc, tableTop + 10);
+        doc.text('Qty', colQty, tableTop + 10);
+        doc.text('Unit Price', colPrice, tableTop + 10);
+        doc.text('Total', colTotal, tableTop + 10);
 
         doc.moveTo(50, tableTop + 30).lineTo(562, tableTop + 30).stroke('#e5e7eb');
 
@@ -248,10 +257,10 @@ class PDFService {
         let currentY = tableTop + 40;
         invoiceData.items.forEach((item, index) => {
           doc.fontSize(10).fillColor('#1f2937');
-          doc.text(item.description, 50, currentY, { width: 320 });
-          doc.text(item.quantity.toString(), 380, currentY);
-          doc.text(`${invoiceData.currency} ${item.unitPrice.toFixed(2)}`, 430, currentY);
-          doc.text(`${invoiceData.currency} ${item.total.toFixed(2)}`, 510, currentY);
+          doc.text(item.description, colDesc, currentY, { width: 240 });
+          doc.text(item.quantity.toString(), colQty, currentY);
+          doc.text(`${invoiceData.currency} ${fmtAmt(item.unitPrice)}`, colPrice, currentY, { width: 115 });
+          doc.text(`${invoiceData.currency} ${fmtAmt(item.total)}`, colTotal, currentY, { width: 92 });
           
           currentY += 30;
           if (index < invoiceData.items.length - 1) {
@@ -263,17 +272,17 @@ class PDFService {
 
         // Totals
         currentY += 20;
-        doc.fontSize(11).fillColor('#6b7280').text('Subtotal:', 400, currentY);
-        doc.fillColor('#1f2937').text(`${invoiceData.currency} ${invoiceData.subtotal.toFixed(2)}`, 510, currentY);
+        doc.fontSize(11).fillColor('#6b7280').text('Subtotal:', 380, currentY);
+        doc.fillColor('#1f2937').text(`${invoiceData.currency} ${fmtAmt(invoiceData.subtotal)}`, colTotal, currentY);
 
         currentY += 25;
-        doc.fillColor('#6b7280').text('Tax:', 400, currentY);
-        doc.fillColor('#1f2937').text(`${invoiceData.currency} ${invoiceData.tax.toFixed(2)}`, 510, currentY);
+        doc.fillColor('#6b7280').text('Tax:', 380, currentY);
+        doc.fillColor('#1f2937').text(`${invoiceData.currency} ${fmtAmt(invoiceData.tax)}`, colTotal, currentY);
 
         currentY += 30;
-        doc.rect(380, currentY - 10, 182, 40).fill('#667eea');
-        doc.fontSize(14).fillColor('white').text('Total:', 400, currentY);
-        doc.fontSize(16).fillColor('white').text(`${invoiceData.currency} ${invoiceData.total.toFixed(2)}`, 510, currentY);
+        doc.rect(370, currentY - 10, 192, 40).fill('#667eea');
+        doc.fontSize(14).fillColor('white').text('Total:', 390, currentY);
+        doc.fontSize(14).fillColor('white').text(`${invoiceData.currency} ${fmtAmt(invoiceData.total)}`, colTotal, currentY);
 
         // Footer
         doc.fontSize(9).fillColor('#9ca3af').text(

@@ -6,6 +6,7 @@ import { pricingService } from './pricing.service';
 import { walletService } from './wallet.service';
 import { auditService } from './audit.service';
 import emailService from './email.service';
+import { toNPR } from '../utils/currencyConverter';
 
 interface BookingPassenger {
   firstName: string;
@@ -47,10 +48,11 @@ export class BookingService {
       
       try {
         pricedOffer = await amadeusService.priceFlightOffer(data.flightOffer);
-        baseFare = parseFloat(pricedOffer.data.flightOffers[0].price.base);
-        totalPrice = parseFloat(pricedOffer.data.flightOffers[0].price.total);
+        const pricedCurrency = pricedOffer.data.flightOffers[0].price.currency || 'USD';
+        baseFare = toNPR(parseFloat(pricedOffer.data.flightOffers[0].price.base), pricedCurrency);
+        totalPrice = toNPR(parseFloat(pricedOffer.data.flightOffers[0].price.total), pricedCurrency);
       } catch (priceError) {
-        // Fallback to original price if revalidation fails
+        // Fallback to original price (already converted to NPR by our search formatting)
         logger.warn('Price revalidation failed, using original price', priceError);
         baseFare = parseFloat(data.flightOffer.price?.base || '0');
         totalPrice = parseFloat(data.flightOffer.price?.total || data.flightOffer.price?.grandTotal || '0');
@@ -123,9 +125,7 @@ export class BookingService {
           markup: pricing.globalMarkup,
           agentMarkup: pricing.agentMarkup,
           totalAmount: pricing.totalPrice,
-          currency: pricedOffer?.data?.flightOffers?.[0]?.price?.currency
-            || data.flightOffer?.price?.currency
-            || 'NPR',
+          currency: 'NPR',
           commissionAmount: pricing.commission,
           status: 'PENDING',
           ticketUrls: [],
