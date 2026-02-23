@@ -666,8 +666,10 @@ export class EsimService {
       throw new AppError('eSIM has not been provisioned yet. Cannot top up.', 400);
     }
 
-    if (!['COMPLETED', 'ACTIVATED'].includes(order.status)) {
-      throw new AppError('eSIM must be active or completed to top up.', 400);
+    // Allow top-up for active, completed, and expired eSIMs (expired can be reactivated with a top-up)
+    const topUpAllowedStatuses = ['COMPLETED', 'ACTIVATED', 'PROCESSING', 'EXPIRED'];
+    if (!topUpAllowedStatuses.includes(order.status)) {
+      throw new AppError(`eSIM must be active, completed, or expired to top up. Current status: ${order.status}`, 400);
     }
 
     try {
@@ -692,26 +694,60 @@ export class EsimService {
 
       return { packages, iccid: order.iccid };
     } catch (error: any) {
-      logger.error('Failed to fetch top-up packages:', error.response?.data || error.message);
+      logger.error('Failed to fetch top-up packages from Airalo:', error.response?.data || error.message);
 
-      // Fallback: Return packages from the same country as the original eSIM
+      // Fallback: Return packages from database directly (avoid calling Airalo again)
       if (order.product?.countries?.length) {
         const countryCode = order.product.countries[0];
-        const { products } = await this.getProducts({ country: countryCode, limit: 20 });
-        return {
-          packages: products.map(p => ({
-            id: p.id,
-            name: p.name,
-            dataAmount: p.dataAmount,
-            validityDays: p.validityDays,
-            price: p.price,
-            currency: 'NPR',
-          })),
-          iccid: order.iccid,
-        };
+        try {
+          // Query local database for cached products matching the same country
+          const cachedProducts = await prisma.esimProduct.findMany({
+            where: {
+              isActive: true,
+              countries: { has: countryCode },
+            },
+            take: 20,
+          });
+
+          if (cachedProducts.length > 0) {
+            return {
+              packages: cachedProducts.map(p => ({
+                id: p.externalId,
+                name: p.name,
+                dataAmount: p.dataAmount,
+                validityDays: p.validityDays,
+                price: Number(p.price),
+                currency: p.currency,
+              })),
+              iccid: order.iccid,
+            };
+          }
+        } catch (dbError: any) {
+          logger.error('Failed to fetch cached products from database:', dbError.message);
+        }
+
+        // Last resort: try getProducts which has its own DB fallback
+        try {
+          const { products } = await this.getProducts({ country: countryCode, limit: 20 });
+          if (products.length > 0) {
+            return {
+              packages: products.map(p => ({
+                id: p.id,
+                name: p.name,
+                dataAmount: p.dataAmount,
+                validityDays: p.validityDays,
+                price: p.price,
+                currency: 'NPR',
+              })),
+              iccid: order.iccid,
+            };
+          }
+        } catch (fallbackError: any) {
+          logger.error('Fallback getProducts also failed:', fallbackError.message);
+        }
       }
 
-      throw new AppError('Failed to fetch top-up packages', 500);
+      throw new AppError('Failed to fetch top-up packages. Please try again later.', 500);
     }
   }
 
@@ -740,8 +776,9 @@ export class EsimService {
       throw new AppError('eSIM has not been provisioned yet. Cannot top up.', 400);
     }
 
-    if (!['COMPLETED', 'ACTIVATED'].includes(order.status)) {
-      throw new AppError('eSIM must be active or completed to top up.', 400);
+    const topUpAllowedStatuses = ['COMPLETED', 'ACTIVATED', 'PROCESSING', 'EXPIRED'];
+    if (!topUpAllowedStatuses.includes(order.status)) {
+      throw new AppError(`eSIM must be active, completed, or expired to top up. Current status: ${order.status}`, 400);
     }
 
     try {

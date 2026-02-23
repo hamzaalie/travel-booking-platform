@@ -241,6 +241,9 @@ export class AdminService {
     fromDate?: Date;
     toDate?: Date;
     limit?: number;
+    search?: string;
+    channel?: string;
+    page?: number;
   }) {
     const where: any = {};
 
@@ -252,28 +255,55 @@ export class AdminService {
       if (filters.toDate) where.departureDate.lte = filters.toDate;
     }
 
-    return await prisma.booking.findMany({
-      where,
-      include: {
-        user: {
-          select: {
-            email: true,
-            firstName: true,
-            lastName: true,
+    // Search by booking reference, PNR, or user email
+    if (filters?.search) {
+      where.OR = [
+        { bookingReference: { contains: filters.search, mode: 'insensitive' } },
+        { pnr: { contains: filters.search, mode: 'insensitive' } },
+        { user: { email: { contains: filters.search, mode: 'insensitive' } } },
+      ];
+    }
+
+    // Filter by channel (B2C or B2B)
+    if (filters?.channel === 'B2C') {
+      where.agentId = null;
+    } else if (filters?.channel === 'B2B') {
+      where.agentId = { not: null };
+    }
+
+    const limit = filters?.limit || 20;
+    const page = filters?.page || 1;
+    const skip = (page - 1) * limit;
+
+    const [bookings, total] = await Promise.all([
+      prisma.booking.findMany({
+        where,
+        include: {
+          user: {
+            select: {
+              email: true,
+              firstName: true,
+              lastName: true,
+              role: true,
+            },
           },
-        },
-        agent: {
-          select: {
-            agencyName: true,
+          agent: {
+            select: {
+              agencyName: true,
+            },
           },
+          payments: true,
         },
-        payments: true,
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-      take: filters?.limit || 100,
-    });
+        orderBy: {
+          createdAt: 'desc',
+        },
+        take: limit,
+        skip,
+      }),
+      prisma.booking.count({ where }),
+    ]);
+
+    return { bookings, total };
   }
 
   /**

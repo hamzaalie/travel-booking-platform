@@ -246,6 +246,13 @@ export class PaymentService {
         .update(message)
         .digest('base64');
 
+      // Ensure frontendUrl has a proper protocol prefix
+      let frontendBaseUrl = data.successUrl ? '' : (config.frontendUrl || 'http://localhost:3000');
+      if (frontendBaseUrl && !/^https?:\/\//i.test(frontendBaseUrl)) {
+        frontendBaseUrl = `https://${frontendBaseUrl}`;
+        logger.warn(`FRONTEND_URL missing protocol, auto-prepended https: ${frontendBaseUrl}`);
+      }
+
       const paymentData = {
         amount: totalAmount,
         tax_amount: '0',
@@ -254,8 +261,8 @@ export class PaymentService {
         product_code: config.esewa.merchantId,
         product_service_charge: '0',
         product_delivery_charge: '0',
-        success_url: data.successUrl || `${config.frontendUrl}/payment/esewa/success`,
-        failure_url: data.failureUrl || `${config.frontendUrl}/payment/esewa/failure`,
+        success_url: data.successUrl || `${frontendBaseUrl}/payment/esewa/success`,
+        failure_url: data.failureUrl || `${frontendBaseUrl}/payment/esewa/failure`,
         signed_field_names: 'total_amount,transaction_uuid,product_code',
         signature: signature,
       };

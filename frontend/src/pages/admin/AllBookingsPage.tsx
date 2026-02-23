@@ -12,8 +12,8 @@ export default function AllBookingsPage() {
   const { data: bookings, isLoading } = useQuery({
     queryKey: ['allBookings'],
     queryFn: async () => {
-      const response: any = await adminApi.getAllBookings();
-      return response.data;
+      const response: any = await adminApi.getAllBookings({ limit: 100 });
+      return response.data?.bookings || response.data;
     },
   });
 
@@ -59,7 +59,7 @@ export default function AllBookingsPage() {
     confirmed: bookings?.filter((b: any) => b.status === 'CONFIRMED').length || 0,
     pending: bookings?.filter((b: any) => b.status === 'PENDING').length || 0,
     cancelled: bookings?.filter((b: any) => b.status === 'CANCELLED').length || 0,
-    totalRevenue: bookings?.reduce((sum: number, b: any) => sum + (b.totalPrice || 0), 0) || 0,
+    totalRevenue: bookings?.reduce((sum: number, b: any) => sum + (parseFloat(b.totalAmount) || 0), 0) || 0,
   };
 
   return (
@@ -180,7 +180,7 @@ export default function AllBookingsPage() {
                       {new Date(booking.createdAt).toLocaleDateString()}
                     </td>
                     <td className="px-4 py-3">
-                      <div className="font-bold text-gray-900">NPR {(booking.totalPrice ?? 0).toFixed(2)}</div>
+                      <div className="font-bold text-gray-900">NPR {(parseFloat(booking.totalAmount) || 0).toFixed(2)}</div>
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center space-x-2">

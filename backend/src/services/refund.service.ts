@@ -373,7 +373,7 @@ export class RefundService {
             },
           },
         },
-        orderBy: { processedAt: 'desc' },
+        orderBy: { createdAt: 'desc' },
         skip,
         take: limit,
       }),

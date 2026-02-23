@@ -103,14 +103,17 @@ router.get(
   '/bookings',
   authorizePermission(Permission.VIEW_ALL_BOOKINGS),
   asyncHandler(async (req, res) => {
-    const bookings = await adminService.getAllBookings({
+    const result = await adminService.getAllBookings({
       status: req.query.status as string | undefined,
       limit: req.query.limit ? parseInt(req.query.limit as string) : undefined,
+      search: req.query.search as string | undefined,
+      channel: req.query.channel as string | undefined,
+      page: req.query.page ? parseInt(req.query.page as string) : undefined,
     });
 
     res.json({
       success: true,
-      data: bookings,
+      data: result,
     });
   })
 );

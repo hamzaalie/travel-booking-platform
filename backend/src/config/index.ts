@@ -2,10 +2,19 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+// Ensure FRONTEND_URL always has a protocol prefix
+function ensureProtocol(url: string): string {
+  if (!url) return url;
+  if (!/^https?:\/\//i.test(url)) {
+    return `https://${url}`;
+  }
+  return url;
+}
+
 export const config = {
   env: process.env.NODE_ENV || 'development',
   port: parseInt(process.env.PORT || '5000', 10),
-  frontendUrl: process.env.FRONTEND_URL || 'http://localhost:3000',
+  frontendUrl: ensureProtocol(process.env.FRONTEND_URL || 'http://localhost:3000'),
 
   // JWT Configuration
   jwt: {

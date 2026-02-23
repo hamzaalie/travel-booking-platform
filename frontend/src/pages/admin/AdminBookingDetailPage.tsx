@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { bookingApi, adminApi, API_BASE_URL } from '@/services/api';
+import { bookingApi, adminApi } from '@/services/api';
 import {
   Plane,
   Calendar,
@@ -64,6 +64,18 @@ const PENALTY_RULES = [
   { label: 'Severe Penalty (75%)', percentage: 75 },
   { label: 'Non-Refundable (100%)', percentage: 100 },
 ];
+
+const triggerBlobDownload = (data: any, filename: string) => {
+  const blob = new Blob([data], { type: 'application/pdf' });
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.URL.revokeObjectURL(url);
+};
 
 export default function AdminBookingDetailPage() {
   const { id } = useParams();
@@ -271,7 +283,16 @@ export default function AdminBookingDetailPage() {
         {/* Quick Actions */}
         <div className="flex items-center gap-2">
           <button
-            onClick={() => window.open(`${API_BASE_URL}/bookings/${id}/ticket/download`, '_blank')}
+            onClick={async () => {
+              try {
+                toast.loading('Generating ticket...', { id: 'ticket-dl' });
+                const response = await bookingApi.downloadTicket(id!) as any;
+                triggerBlobDownload(response, `ticket-${booking?.bookingReference || id}.pdf`);
+                toast.success('Ticket downloaded!', { id: 'ticket-dl' });
+              } catch {
+                toast.error('Failed to download ticket', { id: 'ticket-dl' });
+              }
+            }}
             className="btn btn-secondary text-sm flex items-center gap-1.5"
             title="Download E-Ticket"
           >
@@ -279,7 +300,16 @@ export default function AdminBookingDetailPage() {
             E-Ticket
           </button>
           <button
-            onClick={() => window.open(`${API_BASE_URL}/bookings/${id}/invoice/download`, '_blank')}
+            onClick={async () => {
+              try {
+                toast.loading('Generating invoice...', { id: 'invoice-dl' });
+                const response = await bookingApi.downloadInvoice(id!) as any;
+                triggerBlobDownload(response, `invoice-${booking?.bookingReference || id}.pdf`);
+                toast.success('Invoice downloaded!', { id: 'invoice-dl' });
+              } catch {
+                toast.error('Failed to download invoice', { id: 'invoice-dl' });
+              }
+            }}
             className="btn btn-secondary text-sm flex items-center gap-1.5"
             title="Download Invoice"
           >
@@ -671,14 +701,32 @@ export default function AdminBookingDetailPage() {
               <p className="text-sm text-gray-500 mb-4">Download e-ticket, invoice, or resend to customer</p>
               <div className="space-y-2">
                 <button
-                  onClick={() => window.open(`${API_BASE_URL}/bookings/${id}/ticket/download`, '_blank')}
+                  onClick={async () => {
+                    try {
+                      toast.loading('Generating ticket...', { id: 'ticket-dl' });
+                      const response = await bookingApi.downloadTicket(id!) as any;
+                      triggerBlobDownload(response, `ticket-${booking?.bookingReference || id}.pdf`);
+                      toast.success('Ticket downloaded!', { id: 'ticket-dl' });
+                    } catch {
+                      toast.error('Failed to download ticket', { id: 'ticket-dl' });
+                    }
+                  }}
                   className="w-full btn btn-secondary text-sm flex items-center justify-center gap-2"
                 >
                   <Download className="h-4 w-4" />
                   Download E-Ticket
                 </button>
                 <button
-                  onClick={() => window.open(`${API_BASE_URL}/bookings/${id}/invoice/download`, '_blank')}
+                  onClick={async () => {
+                    try {
+                      toast.loading('Generating invoice...', { id: 'invoice-dl' });
+                      const response = await bookingApi.downloadInvoice(id!) as any;
+                      triggerBlobDownload(response, `invoice-${booking?.bookingReference || id}.pdf`);
+                      toast.success('Invoice downloaded!', { id: 'invoice-dl' });
+                    } catch {
+                      toast.error('Failed to download invoice', { id: 'invoice-dl' });
+                    }
+                  }}
                   className="w-full btn btn-secondary text-sm flex items-center justify-center gap-2"
                 >
                   <Printer className="h-4 w-4" />

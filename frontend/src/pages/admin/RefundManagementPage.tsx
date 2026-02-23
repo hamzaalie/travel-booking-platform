@@ -1,155 +1,82 @@
-import { useState, useEffect } from 'react';
-import { DollarSign, CheckCircle, XCircle, Clock, Search } from 'lucide-react';
+import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { refundApi } from '@/services/api';
+import { DollarSign, CheckCircle, XCircle, Clock, Search, RefreshCw, Eye, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-interface RefundRequest {
-  id: string;
-  bookingReference: string;
-  userId: string;
-  userName: string;
-  userEmail: string;
-  pnr: string;
-  route: string;
-  departureDate: string;
-  originalAmount: number;
-  penalty: number;
-  refundAmount: number;
-  reason: string;
-  status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'PROCESSED';
-  requestedAt: string;
-  processedAt?: string;
-  processedBy?: string;
-  adminRemarks?: string;
-}
+const STATUS_STYLES: Record<string, { bg: string; text: string; icon: typeof Clock }> = {
+  PENDING: { bg: 'bg-yellow-100', text: 'text-yellow-800', icon: Clock },
+  PROCESSING: { bg: 'bg-blue-100', text: 'text-blue-800', icon: RefreshCw },
+  COMPLETED: { bg: 'bg-green-100', text: 'text-green-800', icon: CheckCircle },
+  FAILED: { bg: 'bg-red-100', text: 'text-red-800', icon: XCircle },
+};
 
 export default function RefundManagementPage() {
-  const [requests, setRequests] = useState<RefundRequest[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [filterStatus, setFilterStatus] = useState<string>('PENDING');
+  const queryClient = useQueryClient();
+  const [filterStatus, setFilterStatus] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedRequest, setSelectedRequest] = useState<RefundRequest | null>(null);
-  const [showModal, setShowModal] = useState(false);
-  const [actionType, setActionType] = useState<'APPROVE' | 'REJECT'>('APPROVE');
-  const [adminRemarks, setAdminRemarks] = useState('');
-  const [adjustedRefund, setAdjustedRefund] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedRefund, setSelectedRefund] = useState<any>(null);
 
-  useEffect(() => {
-    fetchRefundRequests();
-  }, []);
+  // Fetch refunds from real API
+  const { data, isLoading } = useQuery({
+    queryKey: ['admin-refunds', filterStatus, currentPage],
+    queryFn: async () => {
+      const params: any = { page: currentPage, limit: 20 };
+      if (filterStatus) params.status = filterStatus;
+      const response: any = await refundApi.getAll(params);
+      return response.data;
+    },
+  });
 
-  const fetchRefundRequests = async () => {
-    try {
-      setIsLoading(true);
-      // TODO: Replace with actual API call
-      const mockData: RefundRequest[] = [
-        {
-          id: '1',
-          bookingReference: 'BK123456',
-          userId: 'user1',
-          userName: 'John Doe',
-          userEmail: 'john@example.com',
-          pnr: 'ABC123',
-          route: 'JFK → LAX',
-          departureDate: '2026-02-15',
-          originalAmount: 850,
-          penalty: 150,
-          refundAmount: 700,
-          reason: 'Travel plans changed due to family emergency',
-          status: 'PENDING',
-          requestedAt: new Date().toISOString(),
-        },
-        {
-          id: '2',
-          bookingReference: 'BK123455',
-          userId: 'user2',
-          userName: 'Jane Smith',
-          userEmail: 'jane@example.com',
-          pnr: 'XYZ789',
-          route: 'LAX → NYC',
-          departureDate: '2026-03-20',
-          originalAmount: 650,
-          penalty: 100,
-          refundAmount: 550,
-          reason: 'Medical reasons',
-          status: 'APPROVED',
-          requestedAt: new Date(Date.now() - 86400000).toISOString(),
-          processedAt: new Date().toISOString(),
-          processedBy: 'Admin',
-          adminRemarks: 'Approved as per policy',
-        },
-      ];
-      setRequests(mockData);
-    } catch (error) {
-      console.error('Failed to fetch refund requests:', error);
-      toast.error('Failed to load refund requests');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const refunds: any[] = data?.data || [];
+  const pagination = data?.pagination || { page: 1, totalPages: 1, total: 0 };
 
-  const handleAction = (request: RefundRequest, action: 'APPROVE' | 'REJECT') => {
-    setSelectedRequest(request);
-    setActionType(action);
-    setAdminRemarks('');
-    setAdjustedRefund(request.refundAmount.toString());
-    setShowModal(true);
-  };
+  // Retry failed refund
+  const retryMutation = useMutation({
+    mutationFn: (id: string) => refundApi.retry(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-refunds'] });
+      toast.success('Refund retry initiated');
+    },
+    onError: () => toast.error('Failed to retry refund'),
+  });
 
-  const confirmAction = async () => {
-    if (!selectedRequest) return;
-
-    if (actionType === 'REJECT' && !adminRemarks) {
-      toast.error('Please provide a reason for rejection');
-      return;
-    }
-
-    const finalRefund = parseFloat(adjustedRefund);
-    if (actionType === 'APPROVE' && (isNaN(finalRefund) || finalRefund < 0)) {
-      toast.error('Please enter a valid refund amount');
-      return;
-    }
-
-    try {
-      // TODO: API call to process refund request
-      // await refundApi.process(selectedRequest.id, {
-      //   action: actionType,
-      //   refundAmount: finalRefund,
-      //   adminRemarks,
-      // });
-
-      toast.success(`Refund request ${actionType.toLowerCase()}ed successfully`);
-      setShowModal(false);
-      fetchRefundRequests();
-    } catch (error) {
-      console.error('Action error:', error);
-      toast.error(`Failed to ${actionType.toLowerCase()} refund request`);
-    }
-  };
-
-  const filteredRequests = requests.filter((req) => {
-    const matchesStatus = filterStatus === 'ALL' || req.status === filterStatus;
-    const matchesSearch =
-      req.bookingReference.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      req.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      req.pnr.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesStatus && matchesSearch;
+  // Client-side search filter
+  const filteredRefunds = refunds.filter((refund: any) => {
+    if (!searchTerm) return true;
+    const term = searchTerm.toLowerCase();
+    return (
+      refund.booking?.bookingReference?.toLowerCase().includes(term) ||
+      refund.booking?.pnr?.toLowerCase().includes(term) ||
+      refund.booking?.user?.email?.toLowerCase().includes(term) ||
+      refund.booking?.user?.firstName?.toLowerCase().includes(term) ||
+      refund.booking?.user?.lastName?.toLowerCase().includes(term)
+    );
   });
 
   const getStatusBadge = (status: string) => {
-    const badges = {
-      PENDING: { color: 'bg-yellow-100 text-yellow-800', icon: Clock },
-      APPROVED: { color: 'bg-accent-100 text-primary-950', icon: CheckCircle },
-      REJECTED: { color: 'bg-red-100 text-red-800', icon: XCircle },
-      PROCESSED: { color: 'bg-green-100 text-green-800', icon: CheckCircle },
-    };
-    const badge = badges[status as keyof typeof badges];
-    const Icon = badge.icon;
+    const style = STATUS_STYLES[status] || STATUS_STYLES.PENDING;
+    const Icon = style.icon;
     return (
-      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${badge.color}`}>
+      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${style.bg} ${style.text}`}>
         <Icon className="h-3 w-3 mr-1" />
         {status}
       </span>
     );
+  };
+
+  const parseDecimal = (val: any) => {
+    if (val === null || val === undefined) return 0;
+    return parseFloat(String(val)) || 0;
+  };
+
+  // Stats from loaded data
+  const stats = {
+    pending: refunds.filter((r: any) => r.status === 'PENDING').length,
+    processing: refunds.filter((r: any) => r.status === 'PROCESSING').length,
+    completed: refunds.filter((r: any) => r.status === 'COMPLETED').length,
+    failed: refunds.filter((r: any) => r.status === 'FAILED').length,
   };
 
   if (isLoading) {
@@ -157,7 +84,7 @@ export default function RefundManagementPage() {
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
           <DollarSign className="h-12 w-12 text-primary-950 mx-auto mb-4 animate-pulse" />
-          <p className="text-gray-600">Loading refund requests...</p>
+          <p className="text-gray-600">Loading refunds...</p>
         </div>
       </div>
     );
@@ -172,7 +99,7 @@ export default function RefundManagementPage() {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
             <input
               type="text"
-              placeholder="Search by booking ref, PNR, or name..."
+              placeholder="Search by booking ref, PNR, or email..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
@@ -180,14 +107,14 @@ export default function RefundManagementPage() {
           </div>
           <select
             value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
+            onChange={(e) => { setFilterStatus(e.target.value); setCurrentPage(1); }}
             className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
           >
-            <option value="ALL">All Status</option>
+            <option value="">All Status</option>
             <option value="PENDING">Pending</option>
-            <option value="APPROVED">Approved</option>
-            <option value="REJECTED">Rejected</option>
-            <option value="PROCESSED">Processed</option>
+            <option value="PROCESSING">Processing</option>
+            <option value="COMPLETED">Completed</option>
+            <option value="FAILED">Failed</option>
           </select>
         </div>
       </div>
@@ -197,32 +124,26 @@ export default function RefundManagementPage() {
         <div className="card bg-yellow-50">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-yellow-700 mb-1">Pending Review</p>
-              <p className="text-3xl font-bold text-yellow-900">
-                {requests.filter((r) => r.status === 'PENDING').length}
-              </p>
+              <p className="text-sm text-yellow-700 mb-1">Pending</p>
+              <p className="text-3xl font-bold text-yellow-900">{stats.pending}</p>
             </div>
             <Clock className="h-12 w-12 text-yellow-600" />
           </div>
         </div>
-        <div className="card bg-accent-50">
+        <div className="card bg-blue-50">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-primary-900 mb-1">Approved</p>
-              <p className="text-3xl font-bold text-primary-950">
-                {requests.filter((r) => r.status === 'APPROVED').length}
-              </p>
+              <p className="text-sm text-blue-700 mb-1">Processing</p>
+              <p className="text-3xl font-bold text-blue-900">{stats.processing}</p>
             </div>
-            <CheckCircle className="h-12 w-12 text-primary-950" />
+            <RefreshCw className="h-12 w-12 text-blue-600" />
           </div>
         </div>
         <div className="card bg-green-50">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-green-700 mb-1">Processed</p>
-              <p className="text-3xl font-bold text-green-900">
-                {requests.filter((r) => r.status === 'PROCESSED').length}
-              </p>
+              <p className="text-sm text-green-700 mb-1">Completed</p>
+              <p className="text-3xl font-bold text-green-900">{stats.completed}</p>
             </div>
             <CheckCircle className="h-12 w-12 text-green-600" />
           </div>
@@ -230,22 +151,20 @@ export default function RefundManagementPage() {
         <div className="card bg-red-50">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-red-700 mb-1">Rejected</p>
-              <p className="text-3xl font-bold text-red-900">
-                {requests.filter((r) => r.status === 'REJECTED').length}
-              </p>
+              <p className="text-sm text-red-700 mb-1">Failed</p>
+              <p className="text-3xl font-bold text-red-900">{stats.failed}</p>
             </div>
             <XCircle className="h-12 w-12 text-red-600" />
           </div>
         </div>
       </div>
 
-      {/* Requests List */}
+      {/* Refunds List */}
       <div className="card">
-        {filteredRequests.length === 0 ? (
+        {filteredRefunds.length === 0 ? (
           <div className="text-center py-12">
             <DollarSign className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600">No refund requests found</p>
+            <p className="text-gray-600">No refunds found</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -265,7 +184,7 @@ export default function RefundManagementPage() {
                     Status
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Requested
+                    Created
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Actions
@@ -273,98 +192,156 @@ export default function RefundManagementPage() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredRequests.map((request) => (
-                  <tr key={request.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4">
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">{request.bookingReference}</p>
-                        <p className="text-sm text-gray-500">PNR: {request.pnr}</p>
-                        <p className="text-sm text-gray-500">{request.route}</p>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">{request.userName}</p>
-                        <p className="text-sm text-gray-500">{request.userEmail}</p>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div>
-                        <p className="text-sm text-gray-500">Original: NPR {request.originalAmount.toFixed(2)}</p>
-                        <p className="text-sm text-red-600">Penalty: -NPR {request.penalty.toFixed(2)}</p>
-                        <p className="text-sm font-bold text-green-600">Refund: NPR {request.refundAmount.toFixed(2)}</p>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      {getStatusBadge(request.status)}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-500">
-                      {new Date(request.requestedAt).toLocaleString()}
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex space-x-2">
-                        {request.status === 'PENDING' && (
-                          <>
-                            <button
-                              onClick={() => handleAction(request, 'APPROVE')}
-                              className="text-green-600 hover:text-green-900"
-                              title="Approve Refund"
-                            >
-                              <CheckCircle className="h-5 w-5" />
-                            </button>
-                            <button
-                              onClick={() => handleAction(request, 'REJECT')}
-                              className="text-red-600 hover:text-red-900"
-                              title="Reject Refund"
-                            >
-                              <XCircle className="h-5 w-5" />
-                            </button>
-                          </>
+                {filteredRefunds.map((refund: any) => {
+                  const amount = parseDecimal(refund.amount);
+                  const penalty = parseDecimal(refund.penaltyAmount);
+                  const refundAmount = parseDecimal(refund.refundAmount);
+
+                  return (
+                    <tr key={refund.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4">
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">
+                            {refund.booking?.bookingReference || 'N/A'}
+                          </p>
+                          {refund.booking?.pnr && (
+                            <p className="text-sm text-gray-500">PNR: {refund.booking.pnr}</p>
+                          )}
+                          <p className="text-sm text-gray-500">
+                            {refund.booking?.origin} → {refund.booking?.destination}
+                          </p>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">
+                            {refund.booking?.user?.firstName} {refund.booking?.user?.lastName}
+                          </p>
+                          <p className="text-sm text-gray-500">{refund.booking?.user?.email}</p>
+                          {refund.booking?.agent && (
+                            <p className="text-xs text-blue-600">Agent: {refund.booking.agent.agencyName}</p>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div>
+                          <p className="text-sm text-gray-500">
+                            Original: NPR {amount.toFixed(2)}
+                          </p>
+                          <p className="text-sm text-red-600">
+                            Penalty: -NPR {penalty.toFixed(2)}
+                          </p>
+                          <p className="text-sm font-bold text-green-600">
+                            Refund: NPR {refundAmount.toFixed(2)}
+                          </p>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        {getStatusBadge(refund.status)}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-500">
+                        {new Date(refund.createdAt).toLocaleString()}
+                        {refund.processedAt && (
+                          <p className="text-xs text-gray-400 mt-1">
+                            Processed: {new Date(refund.processedAt).toLocaleString()}
+                          </p>
                         )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={() => setSelectedRefund(refund)}
+                            className="text-primary-950 hover:text-primary-800"
+                            title="View Details"
+                          >
+                            <Eye className="h-5 w-5" />
+                          </button>
+                          {refund.status === 'FAILED' && (
+                            <button
+                              onClick={() => retryMutation.mutate(refund.id)}
+                              disabled={retryMutation.isPending}
+                              className="text-orange-600 hover:text-orange-900 disabled:opacity-50"
+                              title="Retry Refund"
+                            >
+                              {retryMutation.isPending ? (
+                                <Loader2 className="h-5 w-5 animate-spin" />
+                              ) : (
+                                <RefreshCw className="h-5 w-5" />
+                              )}
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
         )}
+
+        {/* Pagination */}
+        {pagination.totalPages > 1 && (
+          <div className="flex items-center justify-between mt-4 pt-4 border-t">
+            <p className="text-sm text-gray-600">
+              Showing page {pagination.page} of {pagination.totalPages} ({pagination.total} total)
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage <= 1}
+                className="btn btn-secondary text-sm disabled:opacity-50"
+              >
+                Previous
+              </button>
+              <button
+                onClick={() => setCurrentPage((p) => Math.min(pagination.totalPages, p + 1))}
+                disabled={currentPage >= pagination.totalPages}
+                className="btn btn-secondary text-sm disabled:opacity-50"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Action Modal */}
-      {showModal && selectedRequest && (
+      {/* Detail Modal */}
+      {selectedRefund && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">
-              {actionType === 'APPROVE' ? 'Approve' : 'Reject'} Refund Request
-            </h3>
-            
+            <h3 className="text-xl font-bold text-gray-900 mb-4">Refund Details</h3>
+
             <div className="space-y-4 mb-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-sm text-gray-600 mb-2">Booking Reference</p>
-                  <p className="font-semibold">{selectedRequest.bookingReference}</p>
+                  <p className="text-sm text-gray-600 mb-1">Booking Reference</p>
+                  <p className="font-semibold">{selectedRefund.booking?.bookingReference || 'N/A'}</p>
                 </div>
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-sm text-gray-600 mb-2">PNR</p>
-                  <p className="font-semibold">{selectedRequest.pnr}</p>
+                  <p className="text-sm text-gray-600 mb-1">PNR</p>
+                  <p className="font-semibold">{selectedRefund.booking?.pnr || 'N/A'}</p>
                 </div>
               </div>
 
               <div className="bg-gray-50 p-4 rounded-lg">
-                <p className="text-sm text-gray-600 mb-2">Customer</p>
-                <p className="font-semibold">{selectedRequest.userName}</p>
-                <p className="text-sm text-gray-600">{selectedRequest.userEmail}</p>
+                <p className="text-sm text-gray-600 mb-1">Customer</p>
+                <p className="font-semibold">
+                  {selectedRefund.booking?.user?.firstName} {selectedRefund.booking?.user?.lastName}
+                </p>
+                <p className="text-sm text-gray-600">{selectedRefund.booking?.user?.email}</p>
               </div>
 
               <div className="bg-gray-50 p-4 rounded-lg">
-                <p className="text-sm text-gray-600 mb-2">Flight Details</p>
-                <p className="text-sm">
-                  <span className="font-medium">Route:</span> {selectedRequest.route}
+                <p className="text-sm text-gray-600 mb-1">Route</p>
+                <p className="font-semibold">
+                  {selectedRefund.booking?.origin} → {selectedRefund.booking?.destination}
                 </p>
-                <p className="text-sm">
-                  <span className="font-medium">Departure:</span> {new Date(selectedRequest.departureDate).toLocaleDateString()}
-                </p>
+                {selectedRefund.booking?.departureDate && (
+                  <p className="text-sm text-gray-500">
+                    Departure: {new Date(selectedRefund.booking.departureDate).toLocaleDateString()}
+                  </p>
+                )}
               </div>
 
               <div className="bg-accent-50 p-4 rounded-lg">
@@ -372,76 +349,67 @@ export default function RefundManagementPage() {
                 <div className="space-y-1 text-sm">
                   <div className="flex justify-between">
                     <span>Original Amount:</span>
-                    <span className="font-semibold">NPR {selectedRequest.originalAmount.toFixed(2)}</span>
+                    <span className="font-semibold">NPR {parseDecimal(selectedRefund.amount).toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-red-600">
-                    <span>Cancellation Penalty:</span>
-                    <span className="font-semibold">-NPR {selectedRequest.penalty.toFixed(2)}</span>
+                    <span>Penalty:</span>
+                    <span className="font-semibold">-NPR {parseDecimal(selectedRefund.penaltyAmount).toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between border-t pt-1">
-                    <span className="font-medium">Calculated Refund:</span>
-                    <span className="font-bold text-green-600">NPR {selectedRequest.refundAmount.toFixed(2)}</span>
+                    <span className="font-medium">Refund Amount:</span>
+                    <span className="font-bold text-green-600">
+                      NPR {parseDecimal(selectedRefund.refundAmount).toFixed(2)}
+                    </span>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <p className="text-sm text-gray-600 mb-2">Cancellation Reason</p>
-                <p className="text-sm">{selectedRequest.reason}</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <p className="text-sm text-gray-600 mb-1">Status</p>
+                  {getStatusBadge(selectedRefund.status)}
+                </div>
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <p className="text-sm text-gray-600 mb-1">Created</p>
+                  <p className="text-sm font-medium">
+                    {new Date(selectedRefund.createdAt).toLocaleString()}
+                  </p>
+                </div>
               </div>
 
-              {actionType === 'APPROVE' && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Final Refund Amount (NPR) *
-                  </label>
-                  <input
-                    type="number"
-                    value={adjustedRefund}
-                    onChange={(e) => setAdjustedRefund(e.target.value)}
-                    className="input"
-                    min="0"
-                    max={selectedRequest.originalAmount}
-                    step="0.01"
-                    required
-                  />
-                  <p className="text-xs text-gray-500 mt-1">
-                    Adjust if additional penalties or exceptions apply
-                  </p>
+              {selectedRefund.reason && (
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <p className="text-sm text-gray-600 mb-1">Reason</p>
+                  <p className="text-sm">{selectedRefund.reason}</p>
+                </div>
+              )}
+
+              {selectedRefund.refundData?.adminNotes && (
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <p className="text-sm text-gray-600 mb-1">Admin Notes</p>
+                  <p className="text-sm">{selectedRefund.refundData.adminNotes}</p>
                 </div>
               )}
             </div>
 
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Admin Remarks {actionType === 'REJECT' ? '(Required)' : '(Optional)'}
-              </label>
-              <textarea
-                value={adminRemarks}
-                onChange={(e) => setAdminRemarks(e.target.value)}
-                className="input"
-                rows={3}
-                placeholder={actionType === 'APPROVE' ? 'Add any notes...' : 'Explain reason for rejection...'}
-                required={actionType === 'REJECT'}
-              />
-            </div>
-
-            <div className="flex space-x-3">
+            <div className="flex gap-3">
               <button
-                onClick={() => setShowModal(false)}
+                onClick={() => setSelectedRefund(null)}
                 className="btn btn-secondary flex-1"
               >
-                Cancel
+                Close
               </button>
-              <button
-                onClick={confirmAction}
-                className={`btn flex-1 ${
-                  actionType === 'APPROVE' ? 'btn-success' : 'btn-danger'
-                }`}
-                disabled={actionType === 'REJECT' && !adminRemarks}
-              >
-                {actionType === 'APPROVE' ? 'Approve Refund' : 'Reject Request'}
-              </button>
+              {selectedRefund.status === 'FAILED' && (
+                <button
+                  onClick={() => {
+                    retryMutation.mutate(selectedRefund.id);
+                    setSelectedRefund(null);
+                  }}
+                  className="btn btn-primary flex-1"
+                >
+                  Retry Refund
+                </button>
+              )}
             </div>
           </div>
         </div>

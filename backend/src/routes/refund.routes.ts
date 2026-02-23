@@ -7,7 +7,7 @@ import { AppError } from '../middleware/error.middleware';
 // Extend Request type to include user property
 interface AuthRequest extends Request {
   user?: {
-    userId: string;
+    id: string;
     email: string;
     role: string;
   };
@@ -28,7 +28,7 @@ router.post(
     try {
       const { bookingId } = req.params;
       const { reason } = req.body;
-      const adminId = req.user!.userId;
+      const adminId = req.user!.id;
 
       const refund = await refundService.processRefund(bookingId, adminId, reason);
 
@@ -57,7 +57,7 @@ router.get(
 
       // Authorization check
       const isAdmin = req.user!.role === 'SUPER_ADMIN';
-      const isOwner = refund.booking.userId === req.user!.userId;
+      const isOwner = refund.booking.userId === req.user!.id;
 
       if (!isAdmin && !isOwner) {
         throw new AppError('Not authorized to view this refund', 403);
@@ -124,7 +124,7 @@ router.post(
   async (req: AuthRequest, res, next) => {
     try {
       const { id } = req.params;
-      const adminId = req.user!.userId;
+      const adminId = req.user!.id;
 
       const refund = await refundService.retryRefund(id, adminId);
 

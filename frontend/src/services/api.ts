@@ -772,3 +772,20 @@ export const adminBookingCustomizationApi = {
   updateBooking: (id: string, data: any) =>
     api.put(`/admin-extended/bookings/${id}/customize`, data),
 };
+
+// ============================================================================
+// REFUND API
+// ============================================================================
+export const refundApi = {
+  getAll: (params?: { status?: string; page?: number; limit?: number }) =>
+    api.get('/refunds', { params }),
+
+  getById: (id: string) =>
+    api.get(`/refunds/${id}`),
+
+  process: (bookingId: string, data: { reason?: string }) =>
+    api.post(`/refunds/${bookingId}/process`, data),
+
+  retry: (id: string) =>
+    api.post(`/refunds/${id}/retry`),
+};
