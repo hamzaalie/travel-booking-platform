@@ -133,15 +133,26 @@ export default function BookingCustomizationPage() {
     onError: () => toast.error('Failed to customize booking'),
   });
 
+  const parseFlightDetails = (booking: any) => {
+    try {
+      return typeof booking.flightDetails === 'string'
+        ? JSON.parse(booking.flightDetails || '{}')
+        : (booking.flightDetails || {});
+    } catch {
+      return {};
+    }
+  };
+
   const openCustomize = (booking: any) => {
     setSelectedBooking(booking);
+    const fd = parseFlightDetails(booking);
     setCustomizeForm({
-      fareClass: booking.fareClass || booking.cabinClass || 'Y',
-      seatAssignment: booking.seatAssignment || '',
-      mealPreference: booking.mealPreference || '',
-      baggageAllowance: booking.baggageAllowance || '',
-      specialAssistance: booking.specialAssistance || '',
-      adminNotes: '',
+      fareClass: fd.fareClass || fd.cabinClass || booking.cabinClass || 'Y',
+      seatAssignment: fd.seatAssignment || '',
+      mealPreference: fd.mealPreference || '',
+      baggageAllowance: fd.baggageAllowance || '',
+      specialAssistance: fd.specialAssistance || '',
+      adminNotes: fd.adminNotes || '',
     });
     setIsCustomizeModalOpen(true);
   };
@@ -247,6 +258,8 @@ export default function BookingCustomizationPage() {
                 flightDetails = {};
               }
 
+              const fd = flightDetails;
+
               return (
                 <div key={booking.id} className="card border-2 hover:shadow-md transition-shadow">
                   {/* Booking Header */}
@@ -300,7 +313,11 @@ export default function BookingCustomizationPage() {
                           <div className="space-y-2 text-sm">
                             <div className="flex justify-between">
                               <span className="text-gray-500">Fare Class:</span>
-                              <span className="font-medium">{flightDetails.cabinClass || booking.cabinClass || 'Economy (Y)'}</span>
+                              <span className="font-medium">
+                                {fd.fareClass
+                                  ? `${fd.fareClass} - ${FARE_CLASSES.find(fc => fc.code === fd.fareClass)?.name || fd.fareClass}`
+                                  : fd.cabinClass || booking.cabinClass || 'Economy (Y)'}
+                              </span>
                             </div>
                             <div className="flex justify-between">
                               <span className="text-gray-500">Base Fare:</span>
@@ -334,19 +351,19 @@ export default function BookingCustomizationPage() {
                           <div className="space-y-2 text-sm">
                             <div className="flex justify-between">
                               <span className="text-gray-500">Seat:</span>
-                              <span className="font-medium">{booking.seatAssignment || 'Not assigned'}</span>
+                              <span className="font-medium">{fd.seatAssignment || 'Not assigned'}</span>
                             </div>
                             <div className="flex justify-between">
                               <span className="text-gray-500">Meal:</span>
-                              <span className="font-medium">{booking.mealPreference || 'Standard'}</span>
+                              <span className="font-medium">{fd.mealPreference || 'Standard'}</span>
                             </div>
                             <div className="flex justify-between">
                               <span className="text-gray-500">Baggage:</span>
-                              <span className="font-medium">{booking.baggageAllowance || 'Standard'}</span>
+                              <span className="font-medium">{fd.baggageAllowance || 'Standard'}</span>
                             </div>
                             <div className="flex justify-between">
                               <span className="text-gray-500">Assistance:</span>
-                              <span className="font-medium">{booking.specialAssistance || 'None'}</span>
+                              <span className="font-medium">{fd.specialAssistance || 'None'}</span>
                             </div>
                           </div>
                         </div>

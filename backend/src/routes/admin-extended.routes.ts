@@ -596,45 +596,51 @@ router.put(
     try {
       // Update booking with customization data stored in flightDetails JSON
       const booking = await prisma.booking.findUnique({ where: { id } });
-      if (booking) {
-        const flightDetails = typeof booking.flightDetails === 'string'
-          ? JSON.parse(booking.flightDetails)
-          : (booking.flightDetails || {});
-
-        const updatedDetails = {
-          ...flightDetails,
-          fareClass,
-          seatAssignment,
-          mealPreference,
-          baggageAllowance,
-          specialAssistance,
-          adminNotes,
-          lastCustomizedAt: new Date().toISOString(),
-          customizedBy: (req as AuthRequest).user?.id,
-        };
-
-        await prisma.booking.update({
-          where: { id },
-          data: { flightDetails: JSON.stringify(updatedDetails) },
-        });
-
-        // Create audit log
-        await prisma.auditLog.create({
-          data: {
-            userId: (req as AuthRequest).user?.id || '',
-            action: 'BOOKING_CUSTOMIZED',
-            entity: 'Booking',
-            entityId: id,
-            changes: JSON.stringify({ fareClass, seatAssignment, mealPreference, baggageAllowance }),
-          },
-        });
+      if (!booking) {
+        return res.status(404).json({ success: false, message: 'Booking not found' });
       }
+
+      // Prisma Json fields are returned as objects, but may be strings in edge cases
+      const flightDetails = typeof booking.flightDetails === 'string'
+        ? JSON.parse(booking.flightDetails)
+        : (booking.flightDetails || {});
+
+      const updatedDetails = {
+        ...flightDetails,
+        fareClass: fareClass || undefined,
+        seatAssignment: seatAssignment || undefined,
+        mealPreference: mealPreference || undefined,
+        baggageAllowance: baggageAllowance || undefined,
+        specialAssistance: specialAssistance || undefined,
+        adminNotes: adminNotes || undefined,
+        lastCustomizedAt: new Date().toISOString(),
+        customizedBy: req.user?.id,
+      };
+
+      const updated = await prisma.booking.update({
+        where: { id },
+        data: { flightDetails: updatedDetails },
+        include: {
+          user: { select: { email: true, firstName: true, lastName: true } },
+        },
+      });
+
+      // Create audit log
+      await prisma.auditLog.create({
+        data: {
+          userId: req.user?.id || '',
+          action: 'BOOKING_CUSTOMIZED',
+          entity: 'Booking',
+          entityId: id,
+          changes: JSON.stringify({ fareClass, seatAssignment, mealPreference, baggageAllowance, specialAssistance, adminNotes }),
+        },
+      });
+
+      res.json({ success: true, message: 'Booking customized successfully', data: updated });
     } catch (err) {
       logger.error('Failed to customize booking:', err);
       return res.status(500).json({ success: false, message: 'Failed to customize booking' });
     }
-
-    res.json({ success: true, message: 'Booking customized successfully' });
   })
 );
 
