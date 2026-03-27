@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "build": "tsc",
+    "build": "npx tsc",
+      "postinstall": "npm install typescript",
     "start": "node dist/backend/src/server.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
@@ -17,6 +18,7 @@
     "test:email": "tsx src/scripts/test-email.ts"
   },
   "dependencies": {
+    "typescript": "^5.3.3",
     "@prisma/client": "^5.8.1",
     "@sendgrid/mail": "^8.1.6",
     "@types/multer": "^2.0.0",
@@ -62,7 +64,6 @@
     "prisma": "^5.8.1",
     "supertest": "^7.1.4",
     "ts-jest": "^29.4.6",
-    "tsx": "^4.7.0",
-    "typescript": "^5.3.3"
+    "tsx": "^4.7.0"
   }
 }
