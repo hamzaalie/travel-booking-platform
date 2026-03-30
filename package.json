@@ -29,7 +29,7 @@
     "lint": "npm run lint --workspaces",
     "prisma:generate": "npm run prisma:generate --workspace=backend",
     "prisma:migrate": "npm run prisma:migrate --workspace=backend",
-    "prisma:migrate:deploy": "cd backend && npx prisma migrate deploy",
+    "prisma:migrate:deploy": "cd backend && npx prisma@5.8.1 migrate deploy",
     "prisma:studio": "npm run prisma:studio --workspace=backend"
   },
   "devDependencies": {
