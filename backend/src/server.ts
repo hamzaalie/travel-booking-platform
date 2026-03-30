@@ -136,7 +136,7 @@ app.use('/api/admin-extended', adminExtendedRoutes);
 
 // Serve frontend in production
 if (config.env === 'production') {
-  const frontendPath = path.join(__dirname, '../../frontend/dist');
+  const frontendPath = path.join(process.cwd(), 'frontend/dist');
   app.use(express.static(frontendPath));
   
   // Handle SPA routing - serve index.html for all non-API routes
