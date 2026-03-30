@@ -17,7 +17,7 @@
     "build:frontend": "npm run build --workspace=frontend",
     "build:production": "npm run build:frontend && npm run build:backend",
     "start": "node backend/dist/backend/src/server.js",
-    "postinstall": "npm run prisma:generate && npm run build",
+    "postinstall": "npm run prisma:generate && npm run prisma:migrate:deploy && npm run build",
     "test": "npm run test --workspaces",
     "test:unit": "npm run test --workspace=frontend && npm run test --workspace=backend",
     "test:e2e": "playwright test",
